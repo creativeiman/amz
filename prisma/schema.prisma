@@ -1,0 +1,213 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?
+  plan          Plan      @default(BASIC)
+  businessName  String?
+  primaryMarketplace String?
+  productCategories String[] @default([])
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  accounts      Account[]
+  sessions      Session[]
+  scans         Scan[]
+  payments      Payment[]
+  teamMembers   TeamMember[]
+  teamInvites   TeamInvite[]
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Scan {
+  id              String      @id @default(cuid())
+  userId          String
+  productName     String
+  category        Category
+  marketplaces    String[]    // Array of marketplace codes: ["USA", "UK", "DE"]
+  netWeight       String?
+  asin            String?
+  fbaShipmentId   String?
+  batchNumber     String?
+  productDescription String?
+  labelUrl        String      // URL to uploaded label image
+  extractedText   String?     // OCR extracted text
+  results         Json?       // Full compliance results as JSON
+  score           Int?        // Overall compliance score (0-100)
+  riskLevel       RiskLevel?  // HIGH, MEDIUM, LOW
+  status          ScanStatus  @default(PROCESSING)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  
+  user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  issues          Issue[]
+}
+
+model Issue {
+  id              String      @id @default(cuid())
+  scanId          String
+  requirement     String      // e.g., "Choking Hazard Warning"
+  marketplace     String      // USA, UK, DE
+  category        Category
+  criticality     Criticality // CRITICAL, WARNING, RECOMMENDATION
+  status          IssueStatus @default(FAILED) // PASSED, FAILED, WARNING
+  description     String      // Human-readable description
+  suggestion      String      // Actionable suggestion
+  regulation      String?     // Reference to specific regulation
+  priority        String?     // Fix priority guidance
+  visualExample   String?     // URL to example image
+  createdAt       DateTime    @default(now())
+  
+  scan            Scan        @relation(fields: [scanId], references: [id], onDelete: Cascade)
+}
+
+model Payment {
+  id              String      @id @default(cuid())
+  userId          String
+  stripePaymentId String      @unique
+  amount          Int         // Amount in cents
+  currency        String      @default("usd")
+  plan            Plan
+  status          PaymentStatus @default(PENDING)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  
+  user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model RegulatoryRule {
+  id              String      @id @default(cuid())
+  category        Category
+  marketplace     String      // USA, UK, DE
+  requirement     String      // e.g., "Choking Hazard Warning"
+  description     String      // Detailed description
+  regulation      String      // Official regulation reference
+  criticality     Criticality
+  isRequired      Boolean     @default(true)
+  example         String?     // Example of compliant text
+  visualExample   String?     // URL to example image
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+}
+
+model TeamMember {
+  id              String      @id @default(cuid())
+  userId          String
+  teamOwnerId     String
+  role            TeamRole    @default(VIEWER)
+  permissions     String[]    @default([])
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  
+  user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  teamOwner       User        @relation("TeamOwner", fields: [teamOwnerId], references: [id], onDelete: Cascade)
+}
+
+model TeamInvite {
+  id              String      @id @default(cuid())
+  email           String
+  teamOwnerId     String
+  role            TeamRole    @default(VIEWER)
+  token           String      @unique
+  expiresAt       DateTime
+  createdAt       DateTime    @default(now())
+  
+  teamOwner       User        @relation(fields: [teamOwnerId], references: [id], onDelete: Cascade)
+}
+
+// Enums
+enum Plan {
+  BASIC     // Free plan - 1 scan
+  DELUXE    // $8/month - unlimited scans
+  ONETIME   // $39.99 - single comprehensive scan
+}
+
+enum Category {
+  TOYS
+  BABY_PRODUCTS
+  COSMETICS_PERSONAL_CARE
+}
+
+enum RiskLevel {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum ScanStatus {
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum Criticality {
+  CRITICAL
+  WARNING
+  RECOMMENDATION
+}
+
+enum IssueStatus {
+  PASSED
+  FAILED
+  WARNING
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+enum TeamRole {
+  ADMIN
+  EDITOR
+  VIEWER
+}

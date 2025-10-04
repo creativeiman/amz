@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Inter, Lato } from 'next/font/google'
 import './globals.css'
 import { Providers } from './providers'
+import { Toaster } from 'react-hot-toast'
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -36,7 +37,7 @@ export const metadata: Metadata = {
     siteName: 'LabelCompliance',
     images: [
       {
-        url: '/og-image.jpg',
+        url: '/og-image.svg',
         width: 1200,
         height: 630,
         alt: 'LabelCompliance - Amazon Label Compliance Checker',
@@ -49,7 +50,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'LabelCompliance - Amazon Label Compliance Checker',
     description: 'AI-powered compliance validation for Amazon sellers. Prevent costly suspensions and ensure regulatory compliance.',
-    images: ['/og-image.jpg'],
+    images: ['/og-image.svg'],
   },
   robots: {
     index: true,
@@ -74,6 +75,30 @@ export default function RootLayout({
       <body className={`${inter.className} antialiased`}>
         <Providers>
           {children}
+          <Toaster 
+            position="top-right"
+            toastOptions={{
+              duration: 4000,
+              style: {
+                background: '#363636',
+                color: '#fff',
+              },
+              success: {
+                duration: 3000,
+                iconTheme: {
+                  primary: '#10B981',
+                  secondary: '#fff',
+                },
+              },
+              error: {
+                duration: 5000,
+                iconTheme: {
+                  primary: '#EF4444',
+                  secondary: '#fff',
+                },
+              },
+            }}
+          />
         </Providers>
       </body>
     </html>

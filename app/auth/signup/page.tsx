@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { signIn } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Eye, EyeOff, Mail, Lock, User, Building, ArrowRight, CheckCircle } from 'lucide-react'
 import { toast } from 'react-hot-toast'
@@ -21,7 +21,16 @@ export default function SignUpPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [selectedPlan, setSelectedPlan] = useState('free')
   const router = useRouter()
+  const searchParams = useSearchParams()
+
+  useEffect(() => {
+    const plan = searchParams.get('plan')
+    if (plan) {
+      setSelectedPlan(plan)
+    }
+  }, [searchParams])
 
   const marketplaces = ['USA', 'UK', 'Germany']
   const categories = ['Toys', 'Baby Products', 'Cosmetics/Personal Care']
@@ -75,15 +84,29 @@ export default function SignUpPage() {
           name: formData.name,
           email: formData.email,
           password: formData.password,
-          businessName: formData.businessName,
-          primaryMarketplace: formData.primaryMarketplace,
-          productCategories: formData.productCategories,
+          plan: selectedPlan,
         }),
       })
 
       if (response.ok) {
-        toast.success('Account created successfully! Please sign in.')
-        router.push('/auth/signin')
+        toast.success('Account created successfully! Welcome to LabelCompliance!')
+        
+        // Automatically sign in the user after successful registration
+        const signInResult = await signIn('credentials', {
+          email: formData.email,
+          password: formData.password,
+          redirect: false,
+        })
+        
+        if (signInResult?.error) {
+          // If auto sign-in fails, redirect to sign-in page
+          console.log('Auto sign-in failed:', signInResult.error)
+          router.push('/auth/signin')
+        } else {
+          // Successfully signed in, redirect to dashboard
+          console.log('Auto sign-in successful, redirecting to dashboard')
+          router.push('/dashboard')
+        }
       } else {
         const error = await response.json()
         toast.error(error.message || 'Failed to create account')
@@ -123,6 +146,14 @@ export default function SignUpPage() {
           <p className="mt-2 text-sm text-gray-600">
             Start your compliance journey today
           </p>
+          {selectedPlan && (
+            <div className="mt-4 inline-flex items-center px-4 py-2 bg-gradient-to-r from-purple-100 to-blue-100 text-purple-800 rounded-full text-sm font-semibold">
+              <CheckCircle className="w-4 h-4 mr-2" />
+              {selectedPlan === 'free' ? 'Free Plan Selected' : 
+               selectedPlan === 'deluxe' ? 'Deluxe Plan Selected' : 
+               'One-Time Plan Selected'}
+            </div>
+          )}
         </div>
 
         {/* Form */}

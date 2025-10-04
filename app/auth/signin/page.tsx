@@ -26,8 +26,10 @@ export default function SignInPage() {
       })
 
       if (result?.error) {
+        console.log('Sign-in error:', result.error)
         toast.error('Invalid email or password')
       } else {
+        console.log('Sign-in successful, redirecting to dashboard')
         toast.success('Welcome back!')
         router.push('/dashboard')
       }

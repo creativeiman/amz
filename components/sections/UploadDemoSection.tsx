@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { CloudUpload, FolderOpen, CheckCircle, AlertTriangle, AlertCircle, Info } from 'lucide-react'
+import { Upload, FolderOpen, CheckCircle, AlertTriangle, AlertCircle, Info, FileText } from 'lucide-react'
 
 const sampleReport = [
   {
@@ -64,7 +64,7 @@ export function UploadDemoSection() {
           {/* Upload Section */}
           <div className="lg:w-1/2">
             <div className="inline-flex items-center px-4 py-2 bg-orange-100 text-orange-700 rounded-full text-sm font-semibold mb-6">
-              <CloudUpload className="w-4 h-4 mr-2" />
+              <Upload className="w-4 h-4 mr-2" />
               Try It Free
             </div>
             <h2 className="text-4xl md:text-5xl font-bold mb-8 bg-gradient-to-r from-gray-900 via-blue-900 to-purple-900 bg-clip-text text-transparent">
@@ -84,7 +84,7 @@ export function UploadDemoSection() {
               onDrop={handleDrop}
             >
               <div className="p-6 bg-white/50 backdrop-blur-sm rounded-2xl inline-block mb-6 group-hover:scale-110 transition-transform duration-300">
-                <CloudUpload className="w-16 h-16 text-purple-500" />
+                <Upload className="w-16 h-16 text-purple-500" />
               </div>
               <h3 className="text-2xl font-bold mb-4 text-gray-900">Drag & Drop Your Label File</h3>
               <p className="text-gray-500 mb-8 text-lg">or</p>

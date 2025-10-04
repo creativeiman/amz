@@ -1,115 +1,192 @@
 'use client'
 
-import { Payments, CheckCircle, X, ArrowRight, Star, Rocket } from 'lucide-react'
+import { CreditCard, CheckCircle, X, ArrowRight, Star, Rocket } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 
 const plans = [
   {
     name: 'Basic',
-    description: 'For occasional sellers',
-    price: '$19',
-    period: 'per label',
+    description: 'Get started with free analysis',
+    price: 'Free',
+    period: '',
     features: [
-      'Single marketplace analysis',
+      'Preliminary scan',
+      'Marketplace check',
+      'Quick validation',
       'Basic compliance report',
-      'Issue identification',
     ],
     limitations: [
-      'Multi-marketplace support',
-      'Detailed recommendations',
+      'Limited to 3 scans per month',
+      'Basic support only',
     ],
-    buttonText: 'Choose Basic',
+    buttonText: 'Get Started Free',
     buttonStyle: 'outline',
     popular: false,
+    planId: 'free',
   },
   {
-    name: 'Professional',
+    name: 'Deluxe',
     description: 'For regular sellers',
-    price: '$49',
+    price: '$8',
     period: 'per month',
     features: [
-      '10 labels per month',
-      'Multi-marketplace analysis',
-      'Detailed compliance report',
-      'Specific recommendations',
-    ],
-    limitations: [
-      'Priority support',
-    ],
-    buttonText: 'Choose Professional',
-    buttonStyle: 'primary',
-    popular: true,
-  },
-  {
-    name: 'Enterprise',
-    description: 'For high-volume sellers',
-    price: '$199',
-    period: 'per month',
-    features: [
-      'Unlimited labels',
-      'All marketplace analysis',
-      'Expert compliance reports',
-      'Detailed recommendations',
-      'Priority support',
+      'Unlimited scans',
+      'Detailed analysis',
+      'Priority updates',
+      'Team collaboration',
+      'Ongoing monitoring',
+      'Advanced reports',
     ],
     limitations: [],
-    buttonText: 'Choose Enterprise',
+    buttonText: 'Choose Deluxe',
+    buttonStyle: 'primary',
+    popular: true,
+    planId: 'deluxe',
+  },
+  {
+    name: 'One-Time Use',
+    description: 'Perfect for geo-expansion',
+    price: '$39.99',
+    period: 'one-time',
+    features: [
+      'In-depth review',
+      'Single product analysis',
+      'Geo-expansion support',
+      'High-stakes launch support',
+      'Detailed recommendations',
+    ],
+    limitations: [
+      'Single use only',
+      'No recurring access',
+    ],
+    buttonText: 'Choose One-Time',
     buttonStyle: 'outline',
     popular: false,
+    planId: 'one-time',
   },
 ]
 
 export function PricingSection() {
+  const router = useRouter()
+  const [loading, setLoading] = useState<string | null>(null)
+
+  const handlePlanClick = async (planId: string) => {
+    setLoading(planId)
+    
+    try {
+      if (planId === 'free') {
+        // Redirect to signup for free plan
+        router.push('/auth/signup?plan=free')
+      } else if (planId === 'deluxe') {
+        // Redirect to Stripe checkout for Deluxe plan
+        const response = await fetch('/api/stripe/create-checkout-session', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            planId: 'deluxe',
+            price: 800, // $8.00 in cents
+            recurring: true,
+          }),
+        })
+        
+        const { url } = await response.json()
+        if (url) {
+          window.location.href = url
+        }
+      } else if (planId === 'one-time') {
+        // Redirect to Stripe checkout for One-Time plan
+        const response = await fetch('/api/stripe/create-checkout-session', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            planId: 'one-time',
+            price: 3999, // $39.99 in cents
+            recurring: false,
+          }),
+        })
+        
+        const { url } = await response.json()
+        if (url) {
+          window.location.href = url
+        }
+      }
+    } catch (error) {
+      console.error('Error processing plan selection:', error)
+    } finally {
+      setLoading(null)
+    }
+  }
+
   return (
     <section id="pricing" className="py-24 bg-gradient-to-br from-slate-50 via-white to-blue-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-20">
-          <div className="inline-flex items-center px-4 py-2 bg-green-100 text-green-700 rounded-full text-sm font-semibold mb-6">
-            <Payments className="w-4 h-4 mr-2" />
-            Pricing
-          </div>
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-gray-900 via-blue-900 to-purple-900 bg-clip-text text-transparent">
-            Simple Pricing Plans
+              <div className="inline-flex items-center px-4 py-2 bg-green-100 text-green-700 rounded-full text-sm font-semibold mb-6">
+                <CreditCard className="w-4 h-4 mr-2" />
+                Pricing
+              </div>
+          <h2 className="text-5xl font-extrabold text-gray-900 leading-tight mb-4">
+            Flexible Plans for Every Seller
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            Choose the plan that works best for your business needs with transparent, no-hidden-fees pricing.
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            Choose the perfect plan to ensure your Amazon products are always compliant.
           </p>
         </div>
 
         {/* Pricing Cards */}
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
           {plans.map((plan, index) => (
             <div
               key={index}
-              className={`group relative rounded-2xl shadow-lg overflow-hidden transition-all duration-300 hover:-translate-y-2 ${
+              className={`relative flex flex-col rounded-3xl shadow-xl overflow-hidden transition-all duration-300 hover:scale-[1.02] ${
                 plan.popular
-                  ? 'bg-gradient-to-br from-purple-600 to-blue-600 border-4 border-purple-200 shadow-2xl hover:shadow-purple-500/25'
-                  : 'bg-white/80 backdrop-blur-sm border border-white/50 hover:shadow-2xl'
+                  ? 'bg-gradient-to-br from-purple-700 to-blue-700 text-white ring-4 ring-purple-500'
+                  : 'bg-white/80 backdrop-blur-sm border border-gray-200'
               }`}
             >
-              {/* Popular Badge */}
               {plan.popular && (
-                <div className="absolute top-0 right-0 bg-gradient-to-l from-yellow-400 to-orange-500 text-white px-6 py-2 rounded-bl-2xl font-bold text-sm shadow-lg">
-                  <Star className="w-4 h-4 inline mr-1" />
+                <div className="absolute top-0 right-0 bg-purple-500 text-white text-xs font-bold px-4 py-2 rounded-bl-lg">
                   Popular
                 </div>
               )}
-
-              {/* Header */}
-              <div className={`p-8 ${plan.popular ? 'border-b border-white/20' : 'border-b border-gray-200/50'}`}>
-                <h3 className={`text-3xl font-bold mb-3 ${plan.popular ? 'text-white' : 'text-gray-900'}`}>
+              <div className="p-8 text-center">
+                <h3
+                  className={`text-2xl font-bold mb-2 ${
+                    plan.popular ? 'text-white' : 'text-gray-900'
+                  }`}
+                >
                   {plan.name}
                 </h3>
-                <p className={`text-lg mb-8 ${plan.popular ? 'text-white/90' : 'text-gray-600'}`}>
+                <p
+                  className={`text-sm ${
+                    plan.popular ? 'text-purple-200' : 'text-gray-500'
+                  }`}
+                >
                   {plan.description}
                 </p>
-                <div className="flex items-end mb-6">
-                  <span className={`text-5xl font-bold ${plan.popular ? 'text-white' : 'text-gray-900'}`}>
+                <div className="mt-6 mb-8">
+                  <span
+                    className={`text-5xl font-extrabold ${
+                      plan.popular ? 'text-white' : 'text-gray-900'
+                    }`}
+                  >
                     {plan.price}
                   </span>
-                  <span className={`ml-3 text-lg ${plan.popular ? 'text-white/80' : 'text-gray-500'}`}>
-                    {plan.period}
-                  </span>
+                  {plan.period && (
+                    <span
+                      className={`text-xl font-medium ${
+                        plan.popular ? 'text-purple-200' : 'text-gray-600'
+                      }`}
+                    >
+                      /{plan.period}
+                    </span>
+                  )}
                 </div>
               </div>
 
@@ -144,7 +221,9 @@ export function PricingSection() {
 
                 {/* CTA Button */}
                 <button
-                  className={`group w-full py-4 rounded-full font-bold transition-all duration-300 hover:scale-105 flex items-center justify-center ${
+                  onClick={() => handlePlanClick(plan.planId)}
+                  disabled={loading === plan.planId}
+                  className={`group w-full py-4 rounded-full font-bold transition-all duration-300 hover:scale-105 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed ${
                     plan.popular
                       ? 'bg-white text-purple-600 hover:bg-gray-100 shadow-xl'
                       : plan.buttonStyle === 'primary'
@@ -152,12 +231,21 @@ export function PricingSection() {
                       : 'bg-white border-2 border-purple-500 text-purple-600 hover:bg-purple-50'
                   }`}
                 >
-                  {plan.popular ? (
-                    <Rocket className="w-5 h-5 mr-2 group-hover:translate-x-1 transition-transform duration-300" />
+                  {loading === plan.planId ? (
+                    <>
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-current mr-2" />
+                      Processing...
+                    </>
                   ) : (
-                    <ArrowRight className="w-5 h-5 mr-2 group-hover:translate-x-1 transition-transform duration-300" />
+                    <>
+                      {plan.popular ? (
+                        <Rocket className="w-5 h-5 mr-2 group-hover:translate-x-1 transition-transform duration-300" />
+                      ) : (
+                        <ArrowRight className="w-5 h-5 mr-2 group-hover:translate-x-1 transition-transform duration-300" />
+                      )}
+                      {plan.buttonText}
+                    </>
                   )}
-                  {plan.buttonText}
                 </button>
               </div>
             </div>

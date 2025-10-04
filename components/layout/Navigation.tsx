@@ -90,18 +90,18 @@ export function Navigation() {
               </div>
             ) : (
               <div className="flex items-center space-x-3">
-                <button
-                  onClick={() => signIn()}
+                <Link
+                  href="/auth/signin"
                   className="text-gray-700 hover:text-gray-900 font-medium transition-colors"
                 >
                   Sign In
-                </button>
-                <Link
-                  href="/auth/signup"
+                </Link>
+                <a
+                  href="#pricing"
                   className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-2 rounded-full font-semibold hover:from-purple-700 hover:to-blue-700 transition-all duration-200 transform hover:scale-105 shadow-lg"
                 >
                   Get Started
-                </Link>
+                </a>
               </div>
             )}
           </div>
@@ -157,22 +157,20 @@ export function Navigation() {
                   </div>
                 ) : (
                   <div className="space-y-2">
-                    <button
-                      onClick={() => {
-                        signIn()
-                        setIsMenuOpen(false)
-                      }}
+                    <Link
+                      href="/auth/signin"
                       className="block w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-md"
+                      onClick={() => setIsMenuOpen(false)}
                     >
                       Sign In
-                    </button>
-                    <Link
-                      href="/auth/signup"
+                    </Link>
+                    <a
+                      href="#pricing"
                       className="block w-full text-center bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-2 rounded-full font-semibold hover:from-purple-700 hover:to-blue-700 transition-all duration-200"
                       onClick={() => setIsMenuOpen(false)}
                     >
                       Get Started
-                    </Link>
+                    </a>
                   </div>
                 )}
               </div>

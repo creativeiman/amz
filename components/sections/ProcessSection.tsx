@@ -1,6 +1,6 @@
 'use client'
 
-import { Timeline, Upload, Search, BarChart3, FileText, Rocket } from 'lucide-react'
+import { Clock, Upload, Search, BarChart3, FileText, Rocket } from 'lucide-react'
 
 const steps = [
   {
@@ -48,7 +48,7 @@ export function ProcessSection() {
         {/* Header */}
         <div className="text-center mb-20">
           <div className="inline-flex items-center px-4 py-2 bg-green-100 text-green-700 rounded-full text-sm font-semibold mb-6">
-            <Timeline className="w-4 h-4 mr-2" />
+            <Clock className="w-4 h-4 mr-2" />
             Simple Process
           </div>
           <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-gray-900 via-blue-900 to-purple-900 bg-clip-text text-transparent">

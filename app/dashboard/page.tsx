@@ -149,14 +149,11 @@ export default function DashboardPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <div className="flex items-center space-x-2">
-                <span className="text-xl font-bold text-orange-600">Label</span>
-                <div className="w-6 h-6 bg-orange-600 rounded-lg flex items-center justify-center">
-                  <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                  </svg>
-                </div>
-              </div>
+              <img 
+                src="/logo.png" 
+                alt="Product Label Checker" 
+                className="h-8 w-auto"
+              />
             </Link>
             
             <div className="flex items-center space-x-4">

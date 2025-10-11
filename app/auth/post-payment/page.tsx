@@ -172,14 +172,11 @@ function PostPaymentSignupContent() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <Link href="/" className="text-2xl font-bold text-orange-600">
-              <div className="flex items-center space-x-2">
-                <span className="text-2xl font-bold text-orange-600">Label</span>
-                <div className="w-8 h-8 bg-orange-600 rounded-lg flex items-center justify-center">
-                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                  </svg>
-                </div>
-              </div>
+              <img 
+                src="/logo.png" 
+                alt="Product Label Checker" 
+                className="h-10 w-auto"
+              />
             </Link>
             <div className="flex items-center space-x-4">
               <span className="text-sm text-gray-600">Payment Successful!</span>

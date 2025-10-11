@@ -43,15 +43,12 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8">
           {/* Brand Section */}
           <div className="lg:col-span-2">
-            <div className="flex items-center space-x-3 mb-6">
-              <div className="flex items-center space-x-2">
-                <span className="text-2xl font-bold text-orange-600">Label</span>
-                <div className="w-8 h-8 bg-orange-600 rounded-lg flex items-center justify-center">
-                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                  </svg>
-                </div>
-              </div>
+            <div className="flex items-center mb-6">
+              <img 
+                src="/logo.png" 
+                alt="Product Label Checker" 
+                className="h-12 w-auto"
+              />
             </div>
             <p className="text-gray-400 mb-6 max-w-md">
               AI-powered compliance validation for Amazon sellers. Prevent costly suspensions and ensure regulatory compliance across US, UK, and German marketplaces.

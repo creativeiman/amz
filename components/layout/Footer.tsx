@@ -45,7 +45,7 @@ export function Footer() {
           <div className="lg:col-span-2">
             <div className="flex items-center mb-6">
               <img 
-                src="/logo.png" 
+                src="/logo.svg" 
                 alt="Product Label Checker" 
                 className="h-12 w-auto"
               />

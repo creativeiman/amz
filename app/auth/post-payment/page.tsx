@@ -173,7 +173,7 @@ function PostPaymentSignupContent() {
           <div className="flex items-center justify-between">
             <Link href="/" className="text-2xl font-bold text-orange-600">
               <img 
-                src="/logo.png" 
+                src="/logo.svg" 
                 alt="Product Label Checker" 
                 className="h-10 w-auto"
               />

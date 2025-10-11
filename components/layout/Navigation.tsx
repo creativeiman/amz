@@ -24,7 +24,7 @@ export function Navigation() {
           {/* Logo */}
           <div className="flex items-center">
             <img 
-              src="/logo.png" 
+              src="/logo.svg" 
               alt="Product Label Checker" 
               className="h-10 w-auto"
             />

@@ -103,7 +103,7 @@ export default function SetupPage() {
                 </svg>
               </div>
               <img 
-                src="/logo.png" 
+                src="/logo.svg" 
                 alt="Product Label Checker" 
                 className="h-8 w-auto"
               />

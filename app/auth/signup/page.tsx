@@ -1,21 +1,18 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { signIn } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { Eye, EyeOff, Mail, Lock, User, Building, ArrowRight, CheckCircle } from 'lucide-react'
+import { Eye, EyeOff, Mail, Lock, User, ArrowRight, CheckCircle, ArrowLeft } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 
-export default function SignUpPage() {
+function SignUpForm() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     password: '',
     confirmPassword: '',
-    businessName: '',
-    primaryMarketplace: '',
-    productCategories: [] as string[],
     agreeToTerms: false,
   })
   const [showPassword, setShowPassword] = useState(false)
@@ -32,8 +29,6 @@ export default function SignUpPage() {
     }
   }, [searchParams])
 
-  const marketplaces = ['USA', 'UK', 'Germany']
-  const categories = ['Toys', 'Baby Products', 'Cosmetics/Personal Care']
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target
@@ -45,14 +40,6 @@ export default function SignUpPage() {
     }
   }
 
-  const handleCategoryChange = (category: string) => {
-    setFormData(prev => ({
-      ...prev,
-      productCategories: prev.productCategories.includes(category)
-        ? prev.productCategories.filter(c => c !== category)
-        : [...prev.productCategories, category]
-    }))
-  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -89,7 +76,7 @@ export default function SignUpPage() {
       })
 
       if (response.ok) {
-        toast.success('Account created successfully! Welcome to LabelCompliance!')
+        toast.success('Account created successfully! Welcome to Label!')
         
         // Automatically sign in the user after successful registration
         const signInResult = await signIn('credentials', {
@@ -130,16 +117,29 @@ export default function SignUpPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      {/* Back to Home Link */}
+      <div className="absolute top-4 left-4">
+        <Link 
+          href="/" 
+          className="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 bg-white/80 backdrop-blur-sm rounded-lg border border-gray-200 hover:bg-white transition-all duration-200"
+        >
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          Back to Home
+        </Link>
+      </div>
+
       <div className="max-w-md w-full space-y-8">
         {/* Header */}
         <div className="text-center">
-          <div className="flex justify-center">
-            <div className="p-3 bg-gradient-to-br from-purple-600 to-blue-600 rounded-2xl">
-              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
+          <Link href="/" className="inline-block">
+            <div className="flex justify-center">
+              <div className="p-3 bg-gradient-to-br from-orange-600 to-blue-600 rounded-2xl hover:from-orange-700 hover:to-blue-700 transition-all duration-200 cursor-pointer">
+                <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
             </div>
-          </div>
+          </Link>
           <h2 className="mt-6 text-3xl font-bold text-gray-900">
             Create your account
           </h2>
@@ -147,7 +147,7 @@ export default function SignUpPage() {
             Start your compliance journey today
           </p>
           {selectedPlan && (
-            <div className="mt-4 inline-flex items-center px-4 py-2 bg-gradient-to-r from-purple-100 to-blue-100 text-purple-800 rounded-full text-sm font-semibold">
+            <div className="mt-4 inline-flex items-center px-4 py-2 bg-gradient-to-r from-orange-100 to-blue-100 text-orange-800 rounded-full text-sm font-semibold">
               <CheckCircle className="w-4 h-4 mr-2" />
               {selectedPlan === 'free' ? 'Free Plan Selected' : 
                selectedPlan === 'deluxe' ? 'Deluxe Plan Selected' : 
@@ -176,7 +176,7 @@ export default function SignUpPage() {
                   required
                   value={formData.name}
                   onChange={handleInputChange}
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors"
+                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-colors"
                   placeholder="Enter your full name"
                 />
               </div>
@@ -199,73 +199,12 @@ export default function SignUpPage() {
                   required
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors"
+                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-colors"
                   placeholder="Enter your email"
                 />
               </div>
             </div>
 
-            {/* Business Name */}
-            <div>
-              <label htmlFor="businessName" className="block text-sm font-medium text-gray-700 mb-2">
-                Business Name (Optional)
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Building className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  id="businessName"
-                  name="businessName"
-                  type="text"
-                  value={formData.businessName}
-                  onChange={handleInputChange}
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors"
-                  placeholder="Enter your business name"
-                />
-              </div>
-            </div>
-
-            {/* Primary Marketplace */}
-            <div>
-              <label htmlFor="primaryMarketplace" className="block text-sm font-medium text-gray-700 mb-2">
-                Primary Marketplace
-              </label>
-              <select
-                id="primaryMarketplace"
-                name="primaryMarketplace"
-                value={formData.primaryMarketplace}
-                onChange={handleInputChange}
-                className="block w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors"
-              >
-                <option value="">Select marketplace</option>
-                {marketplaces.map((marketplace) => (
-                  <option key={marketplace} value={marketplace}>
-                    {marketplace}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Product Categories */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Product Categories (Select all that apply)
-              </label>
-              <div className="space-y-2">
-                {categories.map((category) => (
-                  <label key={category} className="flex items-center">
-                    <input
-                      type="checkbox"
-                      checked={formData.productCategories.includes(category)}
-                      onChange={() => handleCategoryChange(category)}
-                      className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
-                    />
-                    <span className="ml-2 text-sm text-gray-700">{category}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
 
             {/* Password */}
             <div>
@@ -284,7 +223,7 @@ export default function SignUpPage() {
                   required
                   value={formData.password}
                   onChange={handleInputChange}
-                  className="block w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors"
+                  className="block w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-colors"
                   placeholder="Create a password"
                 />
                 <button
@@ -318,7 +257,7 @@ export default function SignUpPage() {
                   required
                   value={formData.confirmPassword}
                   onChange={handleInputChange}
-                  className="block w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors"
+                  className="block w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-colors"
                   placeholder="Confirm your password"
                 />
                 <button
@@ -345,17 +284,17 @@ export default function SignUpPage() {
                 type="checkbox"
                 checked={formData.agreeToTerms}
                 onChange={handleInputChange}
-                className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
+                className="h-4 w-4 text-orange-600 focus:ring-orange-500 border-gray-300 rounded"
               />
             </div>
             <div className="ml-3 text-sm">
               <label htmlFor="agreeToTerms" className="text-gray-700">
                 I agree to the{' '}
-                <Link href="/terms" className="text-purple-600 hover:text-purple-500">
+                <Link href="/terms" className="text-orange-600 hover:text-orange-500">
                   Terms of Service
                 </Link>{' '}
                 and{' '}
-                <Link href="/privacy" className="text-purple-600 hover:text-purple-500">
+                <Link href="/privacy" className="text-orange-600 hover:text-orange-500">
                   Privacy Policy
                 </Link>
               </label>
@@ -366,7 +305,7 @@ export default function SignUpPage() {
           <button
             type="submit"
             disabled={isLoading}
-            className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+            className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-orange-600 to-blue-600 hover:from-orange-700 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
           >
             {isLoading ? (
               <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white" />
@@ -393,7 +332,7 @@ export default function SignUpPage() {
             type="button"
             onClick={handleGoogleSignUp}
             disabled={isLoading}
-            className="w-full flex justify-center py-3 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="w-full flex justify-center py-3 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
               <path
@@ -420,7 +359,7 @@ export default function SignUpPage() {
           <div className="text-center">
             <span className="text-sm text-gray-600">
               Already have an account?{' '}
-              <Link href="/auth/signin" className="font-medium text-purple-600 hover:text-purple-500">
+              <Link href="/auth/signin" className="font-medium text-orange-600 hover:text-orange-500">
                 Sign in
               </Link>
             </span>
@@ -428,5 +367,13 @@ export default function SignUpPage() {
         </form>
       </div>
     </div>
+  )
+}
+
+export default function SignUpPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <SignUpForm />
+    </Suspense>
   )
 }

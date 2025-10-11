@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
         },
       ],
       mode: recurring ? 'subscription' : 'payment',
-      success_url: `${process.env.NEXTAUTH_URL}/dashboard?success=true&plan=${planId}`,
+      success_url: `${process.env.NEXTAUTH_URL}/auth/post-payment?success=true&plan=${planId}`,
       cancel_url: `${process.env.NEXTAUTH_URL}/pricing?canceled=true`,
       metadata: {
         planId,

@@ -9,7 +9,7 @@ const testimonials = [
     content: 'This tool saved our product from being delisted on Amazon. It caught compliance issues we completely overlooked in our toy packaging. Worth every penny!',
     rating: 5,
     image: 'https://images.unsplash.com/photo-1654723011673-86b0eae447a8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3MzkyNDZ8MHwxfHNlYXJjaHwxfHx0ZXN0aW1vbmlhbHxlbnwwfHx8fDE3NTk1MzA3NzB8MA&ixlib=rb-4.1.0&q=80&w=1080',
-    ringColor: 'ring-purple-100 group-hover:ring-purple-200',
+    ringColor: 'ring-orange-100 group-hover:ring-orange-200',
   },
   {
     name: 'Michael Chen',
@@ -39,7 +39,7 @@ export function TestimonialsSection() {
             <Star className="w-4 h-4 mr-2" />
             Testimonials
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-gray-900 via-blue-900 to-purple-900 bg-clip-text text-transparent">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-gray-900 via-blue-900 to-orange-900 bg-clip-text text-transparent">
             What Our Clients Say
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
@@ -96,3 +96,6 @@ export function TestimonialsSection() {
     </section>
   )
 }
+
+
+

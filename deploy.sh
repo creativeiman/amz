@@ -91,3 +91,6 @@ echo "📖 For detailed instructions, see DEPLOYMENT.md"
 echo ""
 echo "🌐 To run locally: npm run dev"
 echo "🌐 To run in production: npm run start"
+
+
+

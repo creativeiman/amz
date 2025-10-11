@@ -11,14 +11,15 @@ const plans = [
     price: 'Free',
     period: '',
     features: [
-      'Preliminary scan',
-      'Marketplace check',
-      'Quick validation',
+      '1 scan per account lifetime',
       'Basic compliance report',
+      'View-only results',
+      'Marketplace check',
     ],
     limitations: [
-      'Limited to 3 scans per month',
-      'Basic support only',
+      'No PDF export',
+      'No visual annotations',
+      'No risk profiling',
     ],
     buttonText: 'Get Started Free',
     buttonStyle: 'outline',
@@ -28,15 +29,16 @@ const plans = [
   {
     name: 'Deluxe',
     description: 'For regular sellers',
-    price: '$8',
+    price: '$29.99',
     period: 'per month',
     features: [
       'Unlimited scans',
-      'Detailed analysis',
-      'Priority updates',
-      'Team collaboration',
-      'Ongoing monitoring',
-      'Advanced reports',
+      'Full visual annotations with AI',
+      'Unlimited PDF exports',
+      'Risk profiling & insights',
+      'Team collaboration (up to 2 users)',
+      'Priority email support',
+      'Unlimited scan history',
     ],
     limitations: [],
     buttonText: 'Choose Deluxe',
@@ -47,19 +49,17 @@ const plans = [
   {
     name: 'One-Time Use',
     description: 'Perfect for geo-expansion',
-    price: '$39.99',
+    price: '$59.99',
     period: 'one-time',
     features: [
-      'In-depth review',
-      'Single product analysis',
-      'Geo-expansion support',
-      'High-stakes launch support',
-      'Detailed recommendations',
+      '1 comprehensive in-depth scan',
+      'All Deluxe features for single product',
+      '30-day access to results',
+      'Dedicated compliance review summary',
+      'No recurring charges',
+      'Geo-expansion validation',
     ],
-    limitations: [
-      'Single use only',
-      'No recurring access',
-    ],
+    limitations: [],
     buttonText: 'Choose One-Time',
     buttonStyle: 'outline',
     popular: false,
@@ -87,7 +87,7 @@ export function PricingSection() {
           },
           body: JSON.stringify({
             planId: 'deluxe',
-            price: 800, // $8.00 in cents
+            price: 2999, // $29.99 in cents
             recurring: true,
           }),
         })
@@ -105,7 +105,7 @@ export function PricingSection() {
           },
           body: JSON.stringify({
             planId: 'one-time',
-            price: 3999, // $39.99 in cents
+            price: 5999, // $59.99 in cents
             recurring: false,
           }),
         })
@@ -146,12 +146,12 @@ export function PricingSection() {
               key={index}
               className={`relative flex flex-col rounded-3xl shadow-xl overflow-hidden transition-all duration-300 hover:scale-[1.02] ${
                 plan.popular
-                  ? 'bg-gradient-to-br from-purple-700 to-blue-700 text-white ring-4 ring-purple-500'
+                  ? 'bg-gradient-to-br from-orange-700 to-blue-700 text-white ring-4 ring-orange-500'
                   : 'bg-white/80 backdrop-blur-sm border border-gray-200'
               }`}
             >
               {plan.popular && (
-                <div className="absolute top-0 right-0 bg-purple-500 text-white text-xs font-bold px-4 py-2 rounded-bl-lg">
+                <div className="absolute top-0 right-0 bg-orange-500 text-white text-xs font-bold px-4 py-2 rounded-bl-lg">
                   Popular
                 </div>
               )}
@@ -165,7 +165,7 @@ export function PricingSection() {
                 </h3>
                 <p
                   className={`text-sm ${
-                    plan.popular ? 'text-purple-200' : 'text-gray-500'
+                    plan.popular ? 'text-orange-200' : 'text-gray-500'
                   }`}
                 >
                   {plan.description}
@@ -181,7 +181,7 @@ export function PricingSection() {
                   {plan.period && (
                     <span
                       className={`text-xl font-medium ${
-                        plan.popular ? 'text-purple-200' : 'text-gray-600'
+                        plan.popular ? 'text-orange-200' : 'text-gray-600'
                       }`}
                     >
                       /{plan.period}
@@ -225,10 +225,10 @@ export function PricingSection() {
                   disabled={loading === plan.planId}
                   className={`group w-full py-4 rounded-full font-bold transition-all duration-300 hover:scale-105 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed ${
                     plan.popular
-                      ? 'bg-white text-purple-600 hover:bg-gray-100 shadow-xl'
+                      ? 'bg-white text-orange-600 hover:bg-gray-100 shadow-xl'
                       : plan.buttonStyle === 'primary'
-                      ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-700 hover:to-blue-700 shadow-xl'
-                      : 'bg-white border-2 border-purple-500 text-purple-600 hover:bg-purple-50'
+                      ? 'bg-gradient-to-r from-orange-600 to-blue-600 text-white hover:from-orange-700 hover:to-blue-700 shadow-xl'
+                      : 'bg-white border-2 border-orange-500 text-orange-600 hover:bg-orange-50'
                   }`}
                 >
                   {loading === plan.planId ? (

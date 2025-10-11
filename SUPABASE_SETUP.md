@@ -1,115 +1,191 @@
-# Supabase Setup Guide
+# 🚀 Supabase Setup Guide for ProductLabelChecker
 
-This guide will help you set up Supabase for the Amazon Label Compliance Checker application.
+This guide will help you set up Supabase for your production-ready ProductLabelChecker application.
 
-## Step 1: Create a Supabase Project
+## 📋 Prerequisites
 
-1. Go to [https://supabase.com](https://supabase.com)
-2. Click "Start your project"
-3. Sign in with GitHub, Google, or email
-4. Click "New Project"
-5. Choose your organization
-6. Enter project details:
-   - **Name**: `label-compliance-checker`
-   - **Database Password**: Create a strong password (save this!)
-   - **Region**: Choose closest to your users
-7. Click "Create new project"
-8. Wait for the project to be created (2-3 minutes)
+- A Supabase account (free at [supabase.com](https://supabase.com))
+- Your project deployed on Vercel
 
-## Step 2: Get Your Supabase Credentials
+## 🔧 Step 1: Create Supabase Project
 
-1. In your Supabase project dashboard, go to **Settings** → **API**
-2. Copy the following values:
-   - **Project URL** (looks like: `https://your-project.supabase.co`)
-   - **anon public** key (starts with `eyJ...`)
-   - **service_role** key (starts with `eyJ...`)
+1. **Go to Supabase Dashboard**
+   - Visit [supabase.com](https://supabase.com)
+   - Sign up or log in to your account
+   - Click "New Project"
 
-## Step 3: Set Up the Database
+2. **Configure Your Project**
+   - **Name**: `productlabelchecker` (or your preferred name)
+   - **Database Password**: Generate a strong password and save it securely
+   - **Region**: Choose the closest region to your users
+   - **Pricing Plan**: Start with the free plan
 
-1. In your Supabase project, go to **SQL Editor**
-2. Click "New Query"
-3. Copy and paste the contents of `supabase-setup.sql` from this project
-4. Click "Run" to execute the SQL
-5. This will create the `users` table with proper security policies
+3. **Wait for Setup**
+   - Supabase will take 1-2 minutes to set up your project
+   - You'll be redirected to the project dashboard when ready
 
-## Step 4: Configure Environment Variables
+## 🗄️ Step 2: Set Up Database Schema
 
-1. Copy `env.example` to `.env.local`:
+1. **Go to SQL Editor**
+   - In your Supabase dashboard, click "SQL Editor" in the left sidebar
+   - Click "New Query"
+
+2. **Run the Schema Script**
+   - Copy the entire content from `supabase-schema.sql` file
+   - Paste it into the SQL editor
+   - Click "Run" to execute the script
+
+3. **Verify Tables Created**
+   - Go to "Table Editor" in the left sidebar
+   - You should see these tables:
+     - `users`
+     - `accounts`
+     - `sessions`
+     - `verification_tokens`
+     - `scans`
+     - `payments`
+     - `regulatory_rules`
+
+## 🔐 Step 3: Configure Authentication
+
+1. **Go to Authentication Settings**
+   - Click "Authentication" in the left sidebar
+   - Click "Settings" tab
+
+2. **Configure Site URL**
+   - **Site URL**: `https://www.productlabelchecker.com`
+   - **Redirect URLs**: Add these URLs:
+     - `https://www.productlabelchecker.com/api/auth/callback/google`
+     - `https://www.productlabelchecker.com/api/auth/callback/credentials`
+     - `https://www.productlabelchecker.com/dashboard`
+
+3. **Enable Email Authentication**
+   - In "Auth Providers" section
+   - Make sure "Email" is enabled
+   - Configure email templates if needed
+
+4. **Configure Google OAuth** (if using Google sign-in)
+   - Enable "Google" provider
+   - Add your Google OAuth credentials:
+     - **Client ID**: Your Google OAuth Client ID
+     - **Client Secret**: Your Google OAuth Client Secret
+
+## 🔑 Step 4: Get API Keys
+
+1. **Go to Settings**
+   - Click "Settings" in the left sidebar
+   - Click "API" tab
+
+2. **Copy Required Keys**
+   - **Project URL**: Copy this (you'll need it for `NEXT_PUBLIC_SUPABASE_URL`)
+   - **anon public key**: Copy this (you'll need it for `NEXT_PUBLIC_SUPABASE_ANON_KEY`)
+   - **service_role secret key**: Copy this (you'll need it for `SUPABASE_SERVICE_ROLE_KEY`)
+
+## ⚙️ Step 5: Configure Environment Variables
+
+1. **Go to Vercel Dashboard**
+   - Visit [vercel.com](https://vercel.com)
+   - Go to your project dashboard
+   - Click "Settings" tab
+   - Click "Environment Variables"
+
+2. **Add Supabase Environment Variables**
+   ```
+   NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+   SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+   ```
+
+3. **Verify Other Environment Variables**
+   Make sure these are also set:
+   ```
+   NEXTAUTH_URL=https://www.productlabelchecker.com
+   NEXTAUTH_SECRET=your-nextauth-secret
+   GOOGLE_CLIENT_ID=your-google-client-id
+   GOOGLE_CLIENT_SECRET=your-google-client-secret
+   STRIPE_PUBLISHABLE_KEY=your-stripe-publishable-key
+   STRIPE_SECRET_KEY=your-stripe-secret-key
+   STRIPE_WEBHOOK_SECRET=your-stripe-webhook-secret
+   ```
+
+## 🚀 Step 6: Deploy and Test
+
+1. **Redeploy Your Application**
    ```bash
-   cp env.example .env.local
+   npx vercel --prod --yes
    ```
 
-2. Update `.env.local` with your Supabase credentials:
-   ```env
-   # Supabase
-   NEXT_PUBLIC_SUPABASE_URL="https://your-project.supabase.co"
-   NEXT_PUBLIC_SUPABASE_ANON_KEY="your-anon-key-here"
-   SUPABASE_SERVICE_ROLE_KEY="your-service-role-key-here"
-   
-   # NextAuth.js
-   NEXTAUTH_URL="http://localhost:3000"
-   NEXTAUTH_SECRET="your-secret-key-here"
-   
-   # Google OAuth (optional)
-   GOOGLE_CLIENT_ID="your-google-client-id"
-   GOOGLE_CLIENT_SECRET="your-google-client-secret"
-   ```
+2. **Test User Registration**
+   - Go to `https://www.productlabelchecker.com/auth/signup`
+   - Create a new account
+   - Verify you're redirected to the dashboard
 
-## Step 5: Deploy to Vercel
+3. **Test User Sign-in**
+   - Go to `https://www.productlabelchecker.com/auth/signin`
+   - Sign in with your created account
+   - Verify you're redirected to the dashboard
 
-1. Push your code to GitHub
-2. In Vercel, go to your project settings
-3. Go to **Environment Variables**
-4. Add the same environment variables from Step 4
-5. Redeploy your application
+4. **Test Google OAuth** (if configured)
+   - Try signing in with Google
+   - Verify the account is created and you're redirected to dashboard
 
-## Step 6: Test the Integration
+## 🔍 Step 7: Verify Database
 
-1. Go to your deployed application
-2. Try to sign up with a new account
-3. Check your Supabase dashboard → **Table Editor** → **users**
-4. You should see the new user record
+1. **Check User Creation**
+   - Go to Supabase Dashboard → Table Editor → users
+   - Verify your test user appears in the table
 
-## Database Schema
+2. **Check Authentication**
+   - Go to Supabase Dashboard → Authentication → Users
+   - Verify your user appears in the auth users table
 
-The `users` table includes:
-- `id`: UUID primary key
-- `name`: User's full name
-- `email`: Unique email address
-- `password`: Hashed password
-- `plan`: User's subscription plan (free, deluxe, one-time)
-- `is_email_verified`: Email verification status
-- `created_at`: Account creation timestamp
-- `updated_at`: Last update timestamp
-
-## Security Features
-
-- **Row Level Security (RLS)** enabled
-- Users can only read/update their own data
-- Public registration allowed for signup
-- Automatic timestamp updates
-- Indexed email field for fast lookups
-
-## Troubleshooting
+## 🛠️ Troubleshooting
 
 ### Common Issues:
 
-1. **"Invalid API key"**: Check that your environment variables are correct
-2. **"Table doesn't exist"**: Make sure you ran the SQL setup script
-3. **"Permission denied"**: Check your RLS policies in Supabase
-4. **"Connection failed"**: Verify your Supabase URL is correct
+1. **"Invalid login credentials"**
+   - Check that your environment variables are correctly set
+   - Verify the Supabase URL and keys are correct
+
+2. **"User already exists"**
+   - This is normal behavior - the user already exists in the database
+   - Try signing in instead of creating a new account
+
+3. **Google OAuth not working**
+   - Verify Google OAuth credentials are correct
+   - Check that redirect URIs are properly configured in Google Console
+
+4. **Database connection errors**
+   - Verify all Supabase environment variables are set
+   - Check that the database schema was created successfully
 
 ### Getting Help:
 
-- Check the [Supabase Documentation](https://supabase.com/docs)
-- Visit the [Supabase Discord](https://discord.supabase.com)
-- Check the application logs in Vercel
+- **Supabase Docs**: [supabase.com/docs](https://supabase.com/docs)
+- **Vercel Docs**: [vercel.com/docs](https://vercel.com/docs)
+- **NextAuth Docs**: [next-auth.js.org](https://next-auth.js.org)
 
-## Next Steps
+## ✅ Success Checklist
 
-Once Supabase is set up, you can:
-1. Add more user fields (phone, address, etc.)
-2. Implement email verification
-3. Add user roles and permissions
-4. Set up real-time subscriptions
-5. Add file storage for user uploads
+- [ ] Supabase project created
+- [ ] Database schema deployed
+- [ ] Authentication configured
+- [ ] Environment variables set
+- [ ] Application redeployed
+- [ ] User registration working
+- [ ] User sign-in working
+- [ ] Google OAuth working (if configured)
+- [ ] Users visible in Supabase dashboard
+
+## 🎉 You're Ready!
+
+Once all steps are completed, your ProductLabelChecker application will be fully production-ready with:
+
+- ✅ Real user registration and authentication
+- ✅ Secure password hashing
+- ✅ Google OAuth integration
+- ✅ User data persistence
+- ✅ Row-level security
+- ✅ Scalable database architecture
+
+Your application is now ready for real users! 🚀

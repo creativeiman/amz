@@ -10,7 +10,7 @@ export class EmailService {
     try {
       const emailData: EmailData = {
         to: userEmail,
-        subject: 'Welcome to LabelCompliance! 🎉',
+        subject: 'Welcome to Label! 🎉',
         html: this.getWelcomeEmailHTML(userName),
         text: this.getWelcomeEmailText(userName)
       }
@@ -42,18 +42,18 @@ export class EmailService {
         <head>
           <meta charset="utf-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Welcome to LabelCompliance</title>
+          <title>Welcome to Label</title>
         </head>
         <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
           <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
-            <h1 style="color: white; margin: 0; font-size: 28px;">Welcome to LabelCompliance!</h1>
+            <h1 style="color: white; margin: 0; font-size: 28px;">Welcome to Label!</h1>
             <p style="color: white; margin: 10px 0 0 0; font-size: 16px;">Your compliance journey starts here</p>
           </div>
           
           <div style="background: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px;">
             <h2 style="color: #333; margin-top: 0;">Hi ${userName}! 👋</h2>
             
-            <p>Thank you for joining LabelCompliance! We're excited to help you navigate Amazon's complex regulatory requirements and avoid costly compliance mistakes.</p>
+            <p>Thank you for joining Label! We're excited to help you navigate Amazon's complex regulatory requirements and avoid costly compliance mistakes.</p>
             
             <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #667eea;">
               <h3 style="margin-top: 0; color: #667eea;">What's Next?</h3>
@@ -83,11 +83,11 @@ export class EmailService {
 
   private static getWelcomeEmailText(userName: string): string {
     return `
-Welcome to LabelCompliance!
+Welcome to Label!
 
 Hi ${userName}!
 
-Thank you for joining LabelCompliance! We're excited to help you navigate Amazon's complex regulatory requirements and avoid costly compliance mistakes.
+Thank you for joining Label! We're excited to help you navigate Amazon's complex regulatory requirements and avoid costly compliance mistakes.
 
 What's Next?
 • Upload your product labels for compliance checking
@@ -100,7 +100,7 @@ Get started: https://vercel-deploy-1t440oiiu-joyeneghalu-gmailcoms-projects.verc
 Need help? Reply to this email or visit our support center.
 
 Best regards,
-The LabelCompliance Team
+The Label Team
     `.trim()
   }
 }

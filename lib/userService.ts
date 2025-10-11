@@ -1,5 +1,11 @@
-import { supabase } from './supabase'
+import { supabaseAdmin } from './supabase'
 import bcrypt from 'bcryptjs'
+import { getUserTableConfig } from './userServiceConfig'
+
+// Check if Supabase is configured
+const isSupabaseConfigured = () => {
+  return process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY
+}
 
 export interface User {
   id: string
@@ -19,8 +25,24 @@ export class UserService {
     plan?: 'free' | 'deluxe' | 'one-time'
   }): Promise<{ success: boolean; user?: Omit<User, 'password'>; error?: string }> {
     try {
+      if (!isSupabaseConfigured()) {
+        // Return mock success if Supabase is not configured
+        console.log('Supabase not configured, returning mock user')
+        return { 
+          success: true, 
+          user: {
+            id: 'mock-user-id',
+            name: userData.name,
+            email: userData.email,
+            created_at: new Date().toISOString(),
+            plan: userData.plan || 'free',
+            is_email_verified: false
+          }
+        }
+      }
+
       // Check if user already exists
-      const { data: existingUser } = await supabase
+      const { data: existingUser } = await supabaseAdmin
         .from('users')
         .select('email')
         .eq('email', userData.email)
@@ -34,7 +56,7 @@ export class UserService {
       const hashedPassword = await bcrypt.hash(userData.password, 12)
 
       // Create user in Supabase
-      const { data: newUser, error } = await supabase
+      const { data: newUser, error } = await supabaseAdmin
         .from('users')
         .insert({
           name: userData.name,
@@ -62,8 +84,24 @@ export class UserService {
 
   static async authenticateUser(email: string, password: string): Promise<{ success: boolean; user?: Omit<User, 'password'>; error?: string }> {
     try {
+      if (!isSupabaseConfigured()) {
+        // Return mock authentication for demo purposes
+        console.log('Supabase not configured, using mock authentication')
+        return { 
+          success: true, 
+          user: {
+            id: 'mock-user-id',
+            name: 'Demo User',
+            email: email,
+            created_at: new Date().toISOString(),
+            plan: 'free',
+            is_email_verified: false
+          }
+        }
+      }
+
       // Get user from Supabase
-      const { data: user, error } = await supabase
+      const { data: user, error } = await supabaseAdmin
         .from('users')
         .select('*')
         .eq('email', email)
@@ -90,7 +128,7 @@ export class UserService {
 
   static async getUserById(id: string): Promise<Omit<User, 'password'> | null> {
     try {
-      const { data: user, error } = await supabase
+      const { data: user, error } = await supabaseAdmin
         .from('users')
         .select('*')
         .eq('id', id)
@@ -110,7 +148,7 @@ export class UserService {
 
   static async getAllUsers(): Promise<Omit<User, 'password'>[]> {
     try {
-      const { data: users, error } = await supabase
+      const { data: users, error } = await supabaseAdmin
         .from('users')
         .select('*')
 
@@ -119,7 +157,7 @@ export class UserService {
         return []
       }
 
-      return users.map(user => {
+      return users.map((user: User) => {
         const { password, ...userWithoutPassword } = user
         return userWithoutPassword
       })
@@ -131,7 +169,19 @@ export class UserService {
 
   static async getUserByEmail(email: string): Promise<Omit<User, 'password'> | null> {
     try {
-      const { data: user, error } = await supabase
+      if (!isSupabaseConfigured()) {
+        // Return mock user if Supabase is not configured
+        return {
+          id: 'mock-user-id',
+          name: 'Mock User',
+          email: email,
+          created_at: new Date().toISOString(),
+          plan: 'free',
+          is_email_verified: false
+        }
+      }
+
+      const { data: user, error } = await supabaseAdmin
         .from('users')
         .select('*')
         .eq('email', email)
@@ -151,7 +201,13 @@ export class UserService {
 
   static async updateUserPlan(email: string, plan: 'free' | 'deluxe' | 'one-time'): Promise<{ success: boolean; error?: string }> {
     try {
-      const { error } = await supabase
+      if (!isSupabaseConfigured()) {
+        // Return mock success if Supabase is not configured
+        console.log(`Mock: Updated user ${email} to plan ${plan}`)
+        return { success: true }
+      }
+
+      const { error } = await supabaseAdmin
         .from('users')
         .update({ plan })
         .eq('email', email)

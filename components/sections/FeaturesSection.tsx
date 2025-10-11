@@ -7,8 +7,8 @@ const features = [
     icon: Gavel,
     title: 'Regulatory Compliance',
     description: 'Check against FDA/CPSC (USA), UK Responsible Person, and EU/UKCA standards for complete regulatory coverage.',
-    gradient: 'from-purple-100 to-blue-100',
-    iconColor: 'text-purple-600',
+    gradient: 'from-orange-100 to-blue-100',
+    iconColor: 'text-orange-600',
   },
   {
     icon: ShoppingCart,
@@ -35,7 +35,7 @@ const features = [
     icon: Search,
     title: 'Detailed Reports',
     description: 'Receive comprehensive reports with clear explanations of compliance issues and suggestions for correction.',
-    gradient: 'from-indigo-100 to-purple-100',
+    gradient: 'from-indigo-100 to-orange-100',
     iconColor: 'text-indigo-600',
   },
   {
@@ -53,11 +53,11 @@ export function FeaturesSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-20">
-          <div className="inline-flex items-center px-4 py-2 bg-purple-100 text-purple-700 rounded-full text-sm font-semibold mb-6">
+          <div className="inline-flex items-center px-4 py-2 bg-orange-100 text-orange-700 rounded-full text-sm font-semibold mb-6">
             <Star className="w-4 h-4 mr-2" />
             Features
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-gray-900 via-blue-900 to-purple-900 bg-clip-text text-transparent">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-gray-900 via-blue-900 to-orange-900 bg-clip-text text-transparent">
             Comprehensive Compliance Analysis
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
@@ -88,3 +88,6 @@ export function FeaturesSection() {
     </section>
   )
 }
+
+
+

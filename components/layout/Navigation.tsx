@@ -23,14 +23,14 @@ export function Navigation() {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex items-center space-x-3">
-            <div className="p-2 bg-gradient-to-br from-purple-600 to-blue-600 rounded-xl">
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
+            <div className="flex items-center space-x-2">
+              <span className="text-2xl font-bold text-orange-600">Label</span>
+              <div className="w-8 h-8 bg-orange-600 rounded-lg flex items-center justify-center">
+                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
             </div>
-            <Link href="/" className="text-2xl font-bold text-gray-900">
-              LabelCompliance
-            </Link>
           </div>
 
           {/* Desktop Navigation */}
@@ -56,7 +56,7 @@ export function Navigation() {
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                   className="flex items-center space-x-2 text-gray-700 hover:text-gray-900 transition-colors"
                 >
-                  <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center">
+                  <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-blue-500 rounded-full flex items-center justify-center">
                     <User className="w-4 h-4 text-white" />
                   </div>
                   <span className="font-medium">{session.user?.name || session.user?.email}</span>
@@ -98,7 +98,7 @@ export function Navigation() {
                 </Link>
                 <a
                   href="#pricing"
-                  className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-2 rounded-full font-semibold hover:from-purple-700 hover:to-blue-700 transition-all duration-200 transform hover:scale-105 shadow-lg"
+                  className="bg-gradient-to-r from-orange-600 to-blue-600 text-white px-6 py-2 rounded-full font-semibold hover:from-orange-700 hover:to-blue-700 transition-all duration-200 transform hover:scale-105 shadow-lg"
                 >
                   Get Started
                 </a>
@@ -166,7 +166,7 @@ export function Navigation() {
                     </Link>
                     <a
                       href="#pricing"
-                      className="block w-full text-center bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-2 rounded-full font-semibold hover:from-purple-700 hover:to-blue-700 transition-all duration-200"
+                      className="block w-full text-center bg-gradient-to-r from-orange-600 to-blue-600 text-white px-6 py-2 rounded-full font-semibold hover:from-orange-700 hover:to-blue-700 transition-all duration-200"
                       onClick={() => setIsMenuOpen(false)}
                     >
                       Get Started

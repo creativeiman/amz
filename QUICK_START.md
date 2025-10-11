@@ -1,165 +1,72 @@
-# 🚀 Quick Start - Deploy in 30 Minutes
+# 🚀 Quick Start Guide - ProductLabelChecker
 
-This guide will get your Amazon Label Compliance Checker live in under 30 minutes!
+Get your ProductLabelChecker application up and running with real user authentication in 5 minutes!
 
-## ⚡ Super Quick Deploy (5 minutes)
+## ⚡ Quick Setup (5 minutes)
 
-### 1. Run the Deploy Script
-```bash
-cd /Users/joyeneghalu/Downloads/project
-./deploy.sh
+### 1. Set Up Supabase (2 minutes)
+1. Go to [supabase.com](https://supabase.com) and create a free account
+2. Create a new project called "productlabelchecker"
+3. Copy your project URL and API keys from Settings → API
+
+### 2. Configure Environment Variables (1 minute)
+In your Vercel dashboard, add these environment variables:
+
+```
+NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 ```
 
-### 2. Deploy to Vercel (Free)
-1. Go to [vercel.com](https://vercel.com)
-2. Sign up with GitHub
-3. Click "New Project"
-4. Import your repository
-5. Deploy! 🎉
+### 3. Set Up Database (1 minute)
+1. In Supabase, go to SQL Editor
+2. Copy and paste the entire content from `supabase-schema.sql`
+3. Click "Run" to create all tables
 
-**That's it!** Your app will be live at `https://your-project.vercel.app`
+### 4. Deploy (1 minute)
+```bash
+npx vercel --prod --yes
+```
 
-## 🔧 Complete Setup (25 minutes)
+## ✅ That's It!
 
-### Step 1: Set Up Database (5 minutes)
+Your application is now ready for real users with:
+- ✅ User registration and authentication
+- ✅ Secure password hashing
+- ✅ Google OAuth (if configured)
+- ✅ User data persistence
+- ✅ Production-ready database
 
-**Option A: Vercel Postgres (Easiest)**
-1. In Vercel dashboard → Storage → Create Postgres
-2. Copy connection string
-3. Add to environment variables
+## 🔧 Optional: Google OAuth Setup
 
-**Option B: Supabase (Free)**
-1. Go to [supabase.com](https://supabase.com)
-2. Create new project
-3. Copy connection string from Settings → Database
+If you want Google sign-in:
 
-### Step 2: Configure Authentication (5 minutes)
-
-**Google OAuth:**
 1. Go to [Google Cloud Console](https://console.cloud.google.com)
-2. Create new project
-3. Enable Google+ API
-4. Create OAuth 2.0 credentials
-5. Add redirect URI: `https://your-domain.com/api/auth/callback/google`
-
-### Step 3: Set Up Payments (5 minutes)
-
-**Stripe:**
-1. Go to [stripe.com](https://stripe.com)
-2. Create account
-3. Get API keys from Dashboard
-4. Create products for your pricing plans
-
-### Step 4: Add AI Services (5 minutes)
-
-**OpenAI:**
-1. Go to [platform.openai.com](https://platform.openai.com)
-2. Create API key
-3. Add to environment variables
-
-**Google Cloud Vision:**
-1. Go to [Google Cloud Console](https://console.cloud.google.com)
-2. Enable Vision API
-3. Create service account
-4. Download JSON key file
-
-### Step 5: Deploy! (5 minutes)
-
-1. Push to GitHub:
-   ```bash
-   git init
-   git add .
-   git commit -m "Initial commit"
-   git remote add origin https://github.com/yourusername/amazon-compliance-checker.git
-   git push -u origin main
+2. Create OAuth 2.0 credentials
+3. Add authorized redirect URI: `https://www.productlabelchecker.com/api/auth/callback/google`
+4. Add these environment variables to Vercel:
+   ```
+   GOOGLE_CLIENT_ID=your-google-client-id
+   GOOGLE_CLIENT_SECRET=your-google-client-secret
    ```
 
-2. Connect to Vercel and deploy
+## 🧪 Test Your Setup
 
-## 🎯 Minimum Viable Product (MVP)
-
-To go live with basic functionality, you need:
-
-### Required Services:
-- ✅ **Database**: PostgreSQL (Vercel Postgres or Supabase)
-- ✅ **Authentication**: NextAuth.js (already configured)
-- ✅ **Hosting**: Vercel (free tier)
-
-### Optional for MVP:
-- 🔄 **Payments**: Stripe (can add later)
-- 🔄 **OCR**: Google Cloud Vision (can add later)
-- 🔄 **AI**: OpenAI (can add later)
-
-## 🚀 Launch Strategy
-
-### Phase 1: Soft Launch (Week 1)
-- Deploy with basic features
-- Test with 10-20 beta users
-- Gather feedback
-- Fix critical issues
-
-### Phase 2: Public Launch (Week 2)
-- Add payment processing
-- Implement OCR and AI features
-- Launch on Product Hunt
-- Social media announcement
-
-### Phase 3: Growth (Week 3+)
-- SEO optimization
-- Content marketing
-- Paid advertising
-- Feature improvements
-
-## 📊 Success Metrics
-
-### Week 1 Goals:
-- 50+ sign-ups
-- 10+ scans completed
-- 0 critical bugs
-
-### Month 1 Goals:
-- 200+ sign-ups
-- 50+ paid conversions
-- $1,000+ revenue
-
-## 🆘 Need Help?
-
-### Common Issues:
-
-**1. Build Fails**
+Run this command to verify everything is working:
 ```bash
-# Clear cache and reinstall
-rm -rf node_modules package-lock.json
-npm install
-npm run build
+npm run test:supabase
 ```
 
-**2. Database Connection Error**
-- Check DATABASE_URL format
-- Ensure database is accessible
-- Run `npx prisma db push`
+## 📚 Need More Help?
 
-**3. Authentication Not Working**
-- Check NEXTAUTH_URL matches your domain
-- Verify Google OAuth credentials
-- Check redirect URIs
-
-**4. Environment Variables Not Loading**
-- Restart development server
-- Check .env.local file exists
-- Verify variable names match exactly
-
-### Support Resources:
-- 📖 [Full Deployment Guide](DEPLOYMENT.md)
-- 🐛 [GitHub Issues](https://github.com/yourusername/amazon-compliance-checker/issues)
-- 💬 [Discord Community](https://discord.gg/labelcompliance)
+- **Detailed Setup**: See `SUPABASE_SETUP.md`
+- **Google OAuth**: See `GOOGLE_OAUTH_SETUP.md`
+- **Stripe Setup**: See `STRIPE_SETUP.md`
 
 ## 🎉 You're Ready!
 
-Your Amazon Label Compliance Checker is ready to help sellers worldwide avoid costly compliance mistakes. 
-
-**Go make it happen! 🚀**
+Visit [https://www.productlabelchecker.com](https://www.productlabelchecker.com) to see your live application!
 
 ---
 
-*Need more help? Check out the full [DEPLOYMENT.md](DEPLOYMENT.md) guide for detailed instructions.*
+**Need help?** Check the troubleshooting section in `SUPABASE_SETUP.md` or create an issue in your repository.

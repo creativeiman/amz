@@ -2,7 +2,6 @@ import { HeroSection } from '@/components/sections/HeroSection'
 import { FeaturesSection } from '@/components/sections/FeaturesSection'
 import { MarketplacesSection } from '@/components/sections/MarketplacesSection'
 import { ProcessSection } from '@/components/sections/ProcessSection'
-import { UploadDemoSection } from '@/components/sections/UploadDemoSection'
 import { PricingSection } from '@/components/sections/PricingSection'
 import { TestimonialsSection } from '@/components/sections/TestimonialsSection'
 import { Navigation } from '@/components/layout/Navigation'
@@ -18,7 +17,6 @@ export default function HomePage() {
         <FeaturesSection />
         <MarketplacesSection />
         <ProcessSection />
-        <UploadDemoSection />
         <PricingSection />
         <TestimonialsSection />
       </main>

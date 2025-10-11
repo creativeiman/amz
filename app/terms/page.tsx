@@ -12,20 +12,20 @@ export default function TermsPage() {
             
             <h2 className="text-xl font-semibold text-gray-900 mt-6 mb-4">Acceptance of Terms</h2>
             <p className="text-gray-600 mb-4">
-              By accessing and using LabelCompliance, you accept and agree to be bound by the 
+              By accessing and using Label, you accept and agree to be bound by the 
               terms and provision of this agreement.
             </p>
             
             <h2 className="text-xl font-semibold text-gray-900 mt-6 mb-4">Use License</h2>
             <p className="text-gray-600 mb-4">
-              Permission is granted to temporarily use LabelCompliance for personal, 
+              Permission is granted to temporarily use Label for personal, 
               non-commercial transitory viewing only. This is the grant of a license, 
               not a transfer of title.
             </p>
             
             <h2 className="text-xl font-semibold text-gray-900 mt-6 mb-4">Service Description</h2>
             <p className="text-gray-600 mb-4">
-              LabelCompliance provides AI-powered compliance validation for Amazon sellers. 
+              Label provides AI-powered compliance validation for Amazon sellers. 
               We help check FDA, CPSC, and EU/UKCA regulations for various product categories.
             </p>
             
@@ -37,7 +37,7 @@ export default function TermsPage() {
             
             <h2 className="text-xl font-semibold text-gray-900 mt-6 mb-4">Limitation of Liability</h2>
             <p className="text-gray-600 mb-4">
-              In no event shall LabelCompliance or its suppliers be liable for any damages 
+              In no event shall Label or its suppliers be liable for any damages 
               arising out of the use or inability to use the service.
             </p>
             

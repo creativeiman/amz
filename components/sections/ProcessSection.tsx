@@ -8,9 +8,9 @@ const steps = [
     icon: Upload,
     title: 'Upload Label',
     description: 'Upload your product label as an image, PDF, or text document for analysis.',
-    gradient: 'from-purple-600 to-blue-600',
-    iconGradient: 'from-purple-100 to-blue-100',
-    iconColor: 'text-purple-600',
+    gradient: 'from-orange-600 to-blue-600',
+    iconGradient: 'from-orange-100 to-blue-100',
+    iconColor: 'text-orange-600',
   },
   {
     number: 2,
@@ -51,7 +51,7 @@ export function ProcessSection() {
             <Clock className="w-4 h-4 mr-2" />
             Simple Process
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-gray-900 via-blue-900 to-purple-900 bg-clip-text text-transparent">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-gray-900 via-blue-900 to-orange-900 bg-clip-text text-transparent">
             How It Works
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
@@ -89,10 +89,13 @@ export function ProcessSection() {
 
         {/* CTA Button */}
         <div className="mt-20 text-center">
-          <button className="group bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-bold py-4 px-12 rounded-full shadow-2xl transform transition-all duration-300 hover:scale-105 hover:shadow-purple-500/25 flex items-center justify-center mx-auto">
+          <a 
+            href="#pricing"
+            className="group bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-bold py-4 px-12 rounded-full shadow-2xl transform transition-all duration-300 hover:scale-105 hover:shadow-purple-500/25 flex items-center justify-center mx-auto inline-block"
+          >
             <Rocket className="w-5 h-5 mr-2 group-hover:rotate-12 transition-transform duration-300" />
             Try It Now
-          </button>
+          </a>
         </div>
       </div>
     </section>

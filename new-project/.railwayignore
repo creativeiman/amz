@@ -1,0 +1,35 @@
+# Railway Ignore File
+# Prevents Railway from using Docker/Docker Compose
+
+# Docker files - Railway should NOT use these
+Dockerfile
+Dockerfile.*
+docker-compose.yml
+docker-compose.*.yml
+.dockerignore
+
+# Development files
+.git
+.gitignore
+node_modules
+.next
+.env.local
+.env*.local
+
+# Documentation
+docs/
+README.md
+*.md
+
+# Test files
+__tests__/
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+
+# Other
+.DS_Store
+.vscode/
+.idea/
+

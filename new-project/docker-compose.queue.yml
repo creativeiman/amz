@@ -1,0 +1,79 @@
+# Docker Compose for Background Job Queue System
+# Run: docker-compose -f docker-compose.queue.yml up -d
+
+version: '3.8'
+
+services:
+  # Redis - For BullMQ job queue
+  redis:
+    image: redis:7-alpine
+    container_name: amz-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes --maxmemory-policy noeviction
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # Redis Commander - Web UI for Redis (optional)
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: amz-redis-ui
+    ports:
+      - "8081:8081"
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+  # Bull Board - Web UI for BullMQ (optional, we'll create this)
+  # Uncomment after creating the bull-board service
+  # bull-board:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.worker
+  #   container_name: amz-bull-board
+  #   ports:
+  #     - "3001:3001"
+  #   environment:
+  #     - REDIS_URL=redis://redis:6379
+  #   depends_on:
+  #     - redis
+  #   restart: unless-stopped
+
+  # MinIO - S3-compatible object storage for file uploads
+  minio:
+    image: minio/minio:latest
+    container_name: amz-minio
+    ports:
+      - "9000:9000"      # API
+      - "9001:9001"      # Console UI
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin123
+    volumes:
+      - minio-data:/data
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    restart: unless-stopped
+
+volumes:
+  redis-data:
+    driver: local
+  minio-data:
+    driver: local
+
+networks:
+  default:
+    name: amz-network
+

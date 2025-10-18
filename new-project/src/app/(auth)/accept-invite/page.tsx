@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { Suspense } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -41,7 +42,7 @@ type InvitationDetails = {
   expiresAt: string
 }
 
-export default function AcceptInvitePage() {
+function AcceptInviteContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const token = searchParams.get("token")
@@ -291,6 +292,25 @@ export default function AcceptInvitePage() {
         </CardFooter>
       </Card>
     </div>
+  )
+}
+
+export default function AcceptInvitePage() {
+  return (
+    <Suspense fallback={
+      <div className="container flex items-center justify-center min-h-screen py-8">
+        <Card className="w-full max-w-md">
+          <CardHeader>
+            <CardTitle className="text-center">Loading...</CardTitle>
+          </CardHeader>
+          <CardContent className="flex justify-center py-6">
+            <LoadingSpinner size="lg" />
+          </CardContent>
+        </Card>
+      </div>
+    }>
+      <AcceptInviteContent />
+    </Suspense>
   )
 }
 

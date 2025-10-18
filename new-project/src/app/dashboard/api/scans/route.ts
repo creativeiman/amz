@@ -3,7 +3,7 @@ import { auth } from "@/lib/auth"
 import { prisma } from "@/db/client"
 import { uploadFile, validateFile } from "@/lib/file-upload"
 import { addScanJob } from "@/lib/queue/scan-queue"
-import { Category, Marketplace } from "@prisma/client"
+import { Category } from "@prisma/client"
 
 // GET /dashboard/api/scans - Get all scans for current user's account
 export async function GET(request: NextRequest) {
@@ -234,7 +234,7 @@ export async function POST(request: NextRequest) {
       userId: session.user.id,
       imageUrl: labelUrl,
       category: category as Category,
-      marketplaces: marketplaces as Marketplace[],
+      marketplaces: marketplaces,
       productName,
     })
 

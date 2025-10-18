@@ -48,7 +48,6 @@ export async function POST(
       where: { id },
       data: {
         expiresAt: newExpiresAt,
-        status: 'PENDING', // Reset status if expired
       },
     })
 

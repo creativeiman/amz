@@ -1,10 +1,10 @@
 import { prisma } from '../client'
 import { Prisma } from '@prisma/client'
 
-// Get user's scans
-export async function getUserScans(userId: string) {
+// Get scans by account
+export async function getUserScans(accountId: string) {
   return await prisma.scan.findMany({
-    where: { userId },
+    where: { accountId },
     include: {
       issues: true,
     },
@@ -19,11 +19,10 @@ export async function getScanById(id: string) {
   return await prisma.scan.findUnique({
     where: { id },
     include: {
-      user: {
+      account: {
         select: {
           id: true,
           name: true,
-          email: true,
         },
       },
       issues: true,
@@ -50,11 +49,10 @@ export async function updateScan(id: string, data: Prisma.ScanUpdateInput) {
 export async function getAllScans() {
   return await prisma.scan.findMany({
     include: {
-      user: {
+      account: {
         select: {
           id: true,
           name: true,
-          email: true,
         },
       },
       issues: true,

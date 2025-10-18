@@ -21,7 +21,7 @@ config({ path: resolve(__dirname, '../.env.local') })
 
 import { analyzeLabelWithAI } from '../src/lib/ai-service'
 import { readFileSync, existsSync } from 'fs'
-import { Category, Marketplace } from '@prisma/client'
+import { Category } from '@prisma/client'
 
 // Colors for terminal output
 const colors = {
@@ -63,7 +63,7 @@ async function testAIAnalysis() {
   const imagePath = args[0] || defaultImagePath
   const category = (args[1] || 'COSMETICS_PERSONAL_CARE') as Category
   const marketplacesStr = args[2] || 'US,DE'
-  const marketplaces = marketplacesStr.split(',').map(m => m.trim() as Marketplace)
+  const marketplaces = marketplacesStr.split(',').map(m => m.trim())
 
   // Validate image exists
   if (!existsSync(imagePath)) {
@@ -132,7 +132,6 @@ async function testAIAnalysis() {
     if (result.extractedInfo) {
       log('cyan', '\n📝 Extracted Information:')
       console.log(`   Product Name: ${result.extractedInfo.productName || 'N/A'}`)
-      console.log(`   Brand: ${result.extractedInfo.brand || 'N/A'}`)
       console.log(`   Manufacturer: ${result.extractedInfo.manufacturer || 'N/A'}`)
       console.log(`   Country of Origin: ${result.extractedInfo.countryOfOrigin || 'N/A'}`)
       
@@ -148,12 +147,8 @@ async function testAIAnalysis() {
         console.log(`   Certifications: ${result.extractedInfo.certifications.join(', ')}`)
       }
       
-      if (result.extractedInfo.batchNumber) {
-        console.log(`   Batch Number: ${result.extractedInfo.batchNumber}`)
-      }
-      
-      if (result.extractedInfo.expirationDate) {
-        console.log(`   Expiration Date: ${result.extractedInfo.expirationDate}`)
+      if (result.extractedInfo.weight) {
+        console.log(`   Weight: ${result.extractedInfo.weight}`)
       }
     }
 
@@ -163,10 +158,13 @@ async function testAIAnalysis() {
       
       result.issues.forEach((issue, idx) => {
         const icon = issue.severity === 'CRITICAL' ? '🔴' : issue.severity === 'WARNING' ? '🟡' : '🔵'
-        console.log(`\n   ${icon} Issue ${idx + 1}: ${issue.title}`)
+        console.log(`\n   ${icon} Issue ${idx + 1}: ${issue.category}`)
         console.log(`      Severity: ${issue.severity}`)
         console.log(`      Description: ${issue.description}`)
-        console.log(`      Regulation: ${issue.regulation}`)
+        console.log(`      Recommendation: ${issue.recommendation}`)
+        if (issue.regulation) {
+          console.log(`      Regulation: ${issue.regulation}`)
+        }
         console.log(`      Recommendation: ${issue.recommendation}`)
       })
     } else {

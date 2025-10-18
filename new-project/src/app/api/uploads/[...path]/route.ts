@@ -7,10 +7,11 @@ import { getFile } from "@/lib/minio-client"
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { path: string[] } }
+  { params }: { params: Promise<{ path: string[] }> }
 ) {
   try {
-    const path = params.path.join('/')
+    const resolvedParams = await params
+    const path = resolvedParams.path.join('/')
     const fullPath = `/uploads/${path}`
     
     console.log(`📸 Serving image from MinIO: ${fullPath}`)
@@ -31,7 +32,7 @@ export async function GET(
     const contentType = contentTypes[ext || ''] || 'application/octet-stream'
 
     // Return image with proper headers
-    return new NextResponse(buffer, {
+    return new NextResponse(buffer as unknown as BodyInit, {
       status: 200,
       headers: {
         'Content-Type': contentType,

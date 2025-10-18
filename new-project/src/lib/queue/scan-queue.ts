@@ -10,7 +10,6 @@ import { Redis } from 'ioredis'
 import { analyzeLabelWithAI } from '@/lib/ai-service'
 import { prisma } from '@/db/client'
 import { Category, ScanStatus } from '@prisma/client'
-import { sendSocketUpdate } from '@/lib/realtime/socket-server'
 import { env } from '@/config/env'
 import { getFile } from '@/lib/minio-client'
 
@@ -75,8 +74,7 @@ export function startWorker() {
         // Update progress: Starting analysis
         const updateProgress = async (progress: ScanJobProgress) => {
           await job.updateProgress(progress)
-          // Send real-time update via Socket.io
-          sendSocketUpdate(scanId, 'progress', progress)
+          // Note: Using polling for real-time updates, not Socket.io
         }
 
         await updateProgress({
@@ -125,7 +123,9 @@ export function startWorker() {
           data: {
             status: ScanStatus.COMPLETED, // AI successfully analyzed, regardless of compliance pass/fail
             score: result.compliance.score,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             riskLevel: result.compliance.riskLevel as any, // Type will match after Prisma regeneration
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             results: result as any, // Store full analysis result as JSON
           },
         })
@@ -138,14 +138,6 @@ export function startWorker() {
           stage: 'completed',
           percentage: 100,
           message: 'Analysis completed!',
-        })
-
-        // Send completion notification
-        sendSocketUpdate(scanId, 'completed', {
-          status: 'COMPLETED',
-          complianceScore: result.compliance.score,
-          compliancePassed: result.compliance.passed,
-          summary: result.summary,
         })
 
         return { 
@@ -165,13 +157,9 @@ export function startWorker() {
             results: {
               error: error instanceof Error ? error.message : 'Unknown error',
               timestamp: new Date().toISOString(),
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             } as any,
           },
-        })
-
-        // Send error notification
-        sendSocketUpdate(scanId, 'error', {
-          message: error instanceof Error ? error.message : 'Unknown error',
         })
 
         throw error
@@ -238,13 +226,6 @@ export async function addScanJob(data: ScanJobData) {
 
   console.log(`📝 Added scan job ${job.id} to queue`)
   
-  // Send initial queued notification
-  sendSocketUpdate(data.scanId, 'progress', {
-    stage: 'queued',
-    percentage: 0,
-    message: 'Scan queued for processing...',
-  })
-
   return job
 }
 

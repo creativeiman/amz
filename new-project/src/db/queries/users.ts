@@ -6,7 +6,12 @@ export async function getUserByEmail(email: string) {
   return await prisma.user.findUnique({
     where: { email },
     include: {
-      accounts: true,
+      ownedAccounts: true,
+      accountMemberships: {
+        include: {
+          account: true,
+        },
+      },
     },
   })
 }
@@ -16,16 +21,10 @@ export async function getUserById(id: string) {
   return await prisma.user.findUnique({
     where: { id },
     include: {
-      accounts: true,
-      ownedTeamMembers: {
+      ownedAccounts: true,
+      accountMemberships: {
         include: {
-          user: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
-            },
-          },
+          account: true,
         },
       },
     },
@@ -54,13 +53,12 @@ export async function getAllUsers() {
       id: true,
       name: true,
       email: true,
-      plan: true,
       role: true,
       createdAt: true,
       _count: {
         select: {
-          scans: true,
-          payments: true,
+          ownedAccounts: true,
+          accountMemberships: true,
         },
       },
     },

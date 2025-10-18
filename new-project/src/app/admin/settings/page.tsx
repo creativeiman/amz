@@ -125,7 +125,7 @@ export default function AdminSettingsPage() {
                 <Label htmlFor="masterPrompt">AI Analysis Prompt</Label>
                 <MarkdownEditor
                   value={settings.masterPrompt}
-                  onChange={(value) => setSettings({ ...settings, masterPrompt: value })}
+                  onChange={(value) => setSettings({ ...settings, masterPrompt: value || '' })}
                   placeholder="Enter the master prompt for AI label analysis..."
                   minHeight="500px"
                 />
@@ -152,7 +152,7 @@ export default function AdminSettingsPage() {
                 <Label htmlFor="commonRules">Common Rules (Markdown)</Label>
                 <MarkdownEditor
                   value={settings.commonRules}
-                  onChange={(value) => setSettings({ ...settings, commonRules: value })}
+                  onChange={(value) => setSettings({ ...settings, commonRules: value || '' })}
                   placeholder="# General Product Safety
 
 ## Labeling Requirements
@@ -186,7 +186,7 @@ export default function AdminSettingsPage() {
                 <Label htmlFor="usRules">US Rules (Markdown)</Label>
                 <MarkdownEditor
                   value={settings.usRules}
-                  onChange={(value) => setSettings({ ...settings, usRules: value })}
+                  onChange={(value) => setSettings({ ...settings, usRules: value || '' })}
                   placeholder="# United States Regulations
 
 ## FDA Requirements (Cosmetics)
@@ -218,7 +218,7 @@ export default function AdminSettingsPage() {
                 <Label htmlFor="ukRules">UK Rules (Markdown)</Label>
                 <MarkdownEditor
                   value={settings.ukRules}
-                  onChange={(value) => setSettings({ ...settings, ukRules: value })}
+                  onChange={(value) => setSettings({ ...settings, ukRules: value || '' })}
                   placeholder="# United Kingdom Regulations
 
 ## UKCA Marking
@@ -251,7 +251,7 @@ export default function AdminSettingsPage() {
                 <Label htmlFor="euRules">EU/Germany Rules (Markdown)</Label>
                 <MarkdownEditor
                   value={settings.euRules}
-                  onChange={(value) => setSettings({ ...settings, euRules: value })}
+                  onChange={(value) => setSettings({ ...settings, euRules: value || '' })}
                   placeholder="# European Union Regulations
 
 ## CE Marking

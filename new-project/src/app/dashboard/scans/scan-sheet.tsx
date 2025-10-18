@@ -50,6 +50,7 @@ const categoryLabels = {
 }
 
 const statusColors = {
+  QUEUED: "bg-gray-500/10 text-gray-500",
   PROCESSING: "bg-blue-500/10 text-blue-500",
   COMPLETED: "bg-green-500/10 text-green-500",
   FAILED: "bg-red-500/10 text-red-500",
@@ -59,6 +60,7 @@ const riskColors = {
   LOW: "bg-green-500/10 text-green-500",
   MEDIUM: "bg-yellow-500/10 text-yellow-500",
   HIGH: "bg-red-500/10 text-red-500",
+  CRITICAL: "bg-red-700/10 text-red-700",
 }
 
 const marketplaceOptions = [
@@ -333,8 +335,8 @@ export function ScanSheet({ scan, isOpen, onClose, onSave }: ScanSheetProps) {
                     </div>
                   )}
                 </div>
-                {errors.labelFile && (
-                  <p className="text-sm text-red-600">{errors.labelFile.message}</p>
+                {errors.labelFile?.message && (
+                  <p className="text-sm text-red-600">{String(errors.labelFile.message)}</p>
                 )}
               </div>
             )}

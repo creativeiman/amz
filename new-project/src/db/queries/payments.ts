@@ -1,10 +1,10 @@
 import { prisma } from '../client'
 import { Prisma } from '@prisma/client'
 
-// Get user's payment history
-export async function getUserPayments(userId: string) {
+// Get account's payment history
+export async function getUserPayments(accountId: string) {
   return await prisma.payment.findMany({
-    where: { userId },
+    where: { accountId },
     orderBy: {
       createdAt: 'desc',
     },
@@ -34,7 +34,7 @@ export async function getPaymentByStripeId(stripePaymentId: string) {
   return await prisma.payment.findUnique({
     where: { stripePaymentId },
     include: {
-      user: true,
+      account: true,
     },
   })
 }

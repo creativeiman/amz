@@ -25,7 +25,6 @@ export async function getAdminMetrics() {
         id: true,
         name: true,
         email: true,
-        plan: true,
         createdAt: true,
       },
     }),
@@ -42,7 +41,7 @@ export async function getAdminMetrics() {
 
 // Get plan distribution
 export async function getPlanDistribution() {
-  const distribution = await prisma.user.groupBy({
+  const distribution = await prisma.account.groupBy({
     by: ['plan'],
     _count: {
       plan: true,
@@ -63,11 +62,10 @@ export async function getRecentScans(limit: number = 20) {
       createdAt: 'desc',
     },
     include: {
-      user: {
+      account: {
         select: {
           id: true,
           name: true,
-          email: true,
         },
       },
       _count: {

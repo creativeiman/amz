@@ -229,12 +229,6 @@ ${rulesSection}`
         },
       ],
       temperature: 0.3, // Lower temperature for more consistent, factual responses
-      maxTokens: 4096, // Limit response size for efficiency
-      providerOptions: {
-        anthropic: {
-          thinking: { type: 'disabled' }, // Explicitly disable extended thinking for speed
-        },
-      },
     })
 
     return object as LabelAnalysisResult

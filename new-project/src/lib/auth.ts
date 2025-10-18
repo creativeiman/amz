@@ -44,16 +44,20 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
-          return null
-        }
+        try {
+          if (!credentials?.email || !credentials?.password) {
+            console.error('[Auth] Missing credentials')
+            return null
+          }
 
-        // Import dynamically to avoid edge runtime issues
-        const { prisma } = await import('@/db/client')
-        const bcrypt = await import('bcryptjs')
+          // Import dynamically to avoid edge runtime issues
+          const { prisma } = await import('@/db/client')
+          const bcrypt = await import('bcryptjs')
 
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email as string },
+          console.log('[Auth] Attempting login for:', credentials.email)
+
+          const user = await prisma.user.findUnique({
+            where: { email: credentials.email as string },
           include: {
             ownedAccounts: {
               select: {
@@ -134,6 +138,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             throw new Error('No account found. Please contact support.')
           }
 
+          console.log('[Auth] User login successful:', user.email, '| Plan:', plan, '| isOwner:', isOwner)
           return {
             id: user.id,
             email: user.email,
@@ -146,13 +151,19 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
 
         // For admin users, no account check needed
+        console.log('[Auth] Admin login successful:', user.email)
         return {
           id: user.id,
           email: user.email,
           name: user.name,
           role: user.role,
           plan: 'FREE' as const,
+          isOwner: false, // Admins don't have accounts
           image: user.image,
+        }
+        } catch (error) {
+          console.error('[Auth] Authorization error:', error)
+          return null
         }
       },
     }),
@@ -226,7 +237,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return true
     },
 
-    async jwt({ token, user, trigger, session }) {
+    async jwt({ token, user, trigger, session: _session }) {
       // Initial sign in
       if (user) {
         token.id = user.id

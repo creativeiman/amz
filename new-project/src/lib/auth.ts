@@ -25,12 +25,15 @@ declare module 'next-auth' {
 const baseConfig = {
   session: {
     strategy: 'jwt' as const,
+    maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   pages: {
     signIn: '/login',
     error: '/login',
   },
   secret: env.NEXTAUTH_SECRET,
+  useSecureCookies: true, // Force secure cookies for HTTPS (Railway production)
+  trustHost: true, // Trust the host header from Railway's proxy
 }
 
 export const { handlers, signIn, signOut, auth } = NextAuth({

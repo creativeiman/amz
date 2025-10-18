@@ -296,7 +296,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             }
           }
         } catch (error) {
-          console.error('Error updating token:', error)
+          // If running in Edge runtime, Prisma won't work - skip the update
+          if (error instanceof Error && error.message.includes('edge runtime')) {
+            console.log('[Auth] Skipping Prisma update in Edge runtime')
+          } else {
+            console.error('Error updating token:', error)
+          }
         }
       }
 
@@ -362,7 +367,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
           token.lastChecked = now
         } catch (error) {
-          console.error('Error checking user/account status:', error)
+          // If running in Edge runtime (middleware), Prisma won't work - skip the check
+          // This is expected and not a critical error
+          if (error instanceof Error && error.message.includes('edge runtime')) {
+            console.log('[Auth] Skipping Prisma check in Edge runtime (middleware)')
+          } else {
+            console.error('Error checking user/account status:', error)
+          }
           // On error, don't invalidate immediately, just skip the check
         }
       }

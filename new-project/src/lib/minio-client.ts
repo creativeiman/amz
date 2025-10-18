@@ -7,13 +7,22 @@ import { Client } from 'minio'
 import { env } from '@/config/env'
 
 // Initialize MinIO client
-export const minioClient = new Client({
+// For HTTPS connections (port 443), don't specify port to avoid "S3 API Requests must be made to API port" error
+const clientConfig: any = {
   endPoint: env.MINIO_ENDPOINT,
-  port: env.MINIO_PORT,
   useSSL: env.MINIO_USE_SSL,
   accessKey: env.MINIO_ACCESS_KEY,
   secretKey: env.MINIO_SECRET_KEY,
-})
+}
+
+// Only add port if not using standard HTTPS port (443) or HTTP port (80)
+if (env.MINIO_USE_SSL && env.MINIO_PORT !== 443) {
+  clientConfig.port = env.MINIO_PORT
+} else if (!env.MINIO_USE_SSL && env.MINIO_PORT !== 80) {
+  clientConfig.port = env.MINIO_PORT
+}
+
+export const minioClient = new Client(clientConfig)
 
 const BUCKET_NAME = env.MINIO_BUCKET_NAME
 

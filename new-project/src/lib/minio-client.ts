@@ -98,11 +98,18 @@ export async function getPresignedUrl(objectName: string): Promise<string> {
     // Remove leading /uploads/ if present
     const cleanObjectName = objectName.replace(/^\/uploads\//, '')
     
-    const url = await minioClient.presignedGetObject(
+    let url = await minioClient.presignedGetObject(
       BUCKET_NAME,
       cleanObjectName,
       7 * 24 * 60 * 60 // 7 days in seconds
     )
+    
+    // Force HTTPS for presigned URLs (required for browser security on HTTPS sites)
+    // Railway TCP proxy supports HTTPS, but MinIO client generates HTTP URLs
+    if (url.startsWith('http://')) {
+      url = url.replace('http://', 'https://')
+      console.log(`🔒 Converted presigned URL to HTTPS for browser compatibility`)
+    }
     
     return url
   } catch (error) {

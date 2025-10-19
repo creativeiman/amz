@@ -95,23 +95,13 @@ export async function uploadFile(
  */
 export async function getPresignedUrl(objectName: string): Promise<string> {
   try {
-    // Remove leading /uploads/ if present
+    // For production HTTPS sites, return the API proxy URL instead of direct MinIO URL
+    // This avoids mixed content issues and keeps MinIO credentials private
+    // The /api/uploads/[...path] route proxies requests to MinIO
     const cleanObjectName = objectName.replace(/^\/uploads\//, '')
     
-    let url = await minioClient.presignedGetObject(
-      BUCKET_NAME,
-      cleanObjectName,
-      7 * 24 * 60 * 60 // 7 days in seconds
-    )
-    
-    // Force HTTPS for presigned URLs (required for browser security on HTTPS sites)
-    // Railway TCP proxy supports HTTPS, but MinIO client generates HTTP URLs
-    if (url.startsWith('http://')) {
-      url = url.replace('http://', 'https://')
-      console.log(`🔒 Converted presigned URL to HTTPS for browser compatibility`)
-    }
-    
-    return url
+    // Return API proxy URL (works with HTTPS)
+    return `/api/uploads/${cleanObjectName}`
   } catch (error) {
     console.error('❌ MinIO presigned URL generation failed:', error)
     throw new Error('Failed to generate presigned URL')

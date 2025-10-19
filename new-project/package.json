@@ -19,9 +19,6 @@
     "redis:logs": "docker logs -f amz-redis",
     "minio:init": "dotenv -e .env.local -- tsx scripts/init-minio.ts"
   },
-  "prisma": {
-    "seed": "tsx prisma/seed.ts"
-  },
   "dependencies": {
     "@ai-sdk/anthropic": "^2.0.30",
     "@auth/prisma-adapter": "^2.11.0",

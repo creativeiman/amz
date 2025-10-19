@@ -1,10 +1,10 @@
 {
   "$schema": "https://railway.com/railway.schema.json",
   "build": {
-    "buildCommand": "pnpm install --frozen-lockfile && pnpm prisma generate && pnpm build"
+    "buildCommand": "pnpm install --frozen-lockfile && pnpm prisma generate"
   },
   "deploy": {
-    "startCommand": "pnpm prisma migrate deploy && pnpm start",
+    "startCommand": "pnpm prisma migrate deploy && pnpm worker",
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 10
   }

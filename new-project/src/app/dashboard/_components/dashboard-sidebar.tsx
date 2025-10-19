@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { useSession, signOut } from "next-auth/react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { ThemeToggle } from "@/components/theme-toggle"
 import Link from "next/link"
 
 interface MenuItem {
@@ -215,6 +216,8 @@ export function DashboardSidebar() {
                     {planBadge.label}
                   </span>
                 </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <ThemeToggle />
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-950"

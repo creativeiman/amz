@@ -105,6 +105,12 @@ export async function POST(request: NextRequest) {
       })
     }
 
+    // Calculate next month's first day for scan limit reset
+    const nextMonthReset = new Date()
+    nextMonthReset.setMonth(nextMonthReset.getMonth() + 1)
+    nextMonthReset.setDate(1)
+    nextMonthReset.setHours(0, 0, 0, 0)
+
     // Create the account
     const newAccount = await prisma.account.create({
       data: {
@@ -116,6 +122,7 @@ export async function POST(request: NextRequest) {
         isActive: isActive !== undefined ? isActive : true,
         scanLimitPerMonth: plan === 'FREE' ? 3 : plan === 'ONE_TIME' ? 1 : null,
         scansUsedThisMonth: 0,
+        scanLimitResetAt: nextMonthReset,
       },
       include: {
         owner: true,

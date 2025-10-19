@@ -1,7 +1,8 @@
 "use client"
 
 import * as React from "react"
-import { Plus, Calendar, Zap } from "lucide-react"
+import Link from "next/link"
+import { Plus, Calendar, Zap, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { DataTable } from "./data-table"
 import { createColumns, Scan } from "./columns"
@@ -64,7 +65,6 @@ export default function ScansPage() {
       console.log('⏸️  Auto-polling disabled')
       clearInterval(interval)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scans, fetchScans])
 
   // Handle save scan (create only - scans are view-only after creation)
@@ -115,15 +115,15 @@ export default function ScansPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-4 sm:space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Label Scans</h1>
-          <p className="text-muted-foreground mt-2">
+          <h1 className="text-2xl sm:text-3xl font-bold">Label Scans</h1>
+          <p className="text-sm sm:text-base text-muted-foreground mt-1 sm:mt-2">
             Scan product labels for compliance analysis
           </p>
         </div>
-        <Button onClick={handleCreateNew} disabled={isLimitReached}>
+        <Button onClick={handleCreateNew} disabled={isLimitReached} className="w-full sm:w-auto">
           <Plus className="mr-2 h-4 w-4" />
           New Scan
         </Button>
@@ -131,9 +131,9 @@ export default function ScansPage() {
 
       {/* Usage Card */}
       {accountUsage && (
-        <Card className="p-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-6">
+        <Card className="p-4 sm:p-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
               <div className="flex items-center gap-3">
                 <div className="p-2 rounded-full bg-primary/10">
                   <Zap className="h-5 w-5 text-primary" />
@@ -156,7 +156,7 @@ export default function ScansPage() {
 
               {accountUsage.resetDate && (
                 <>
-                  <div className="h-12 w-px bg-border" />
+                  <div className="hidden sm:block h-12 w-px bg-border" />
                   <div className="flex items-center gap-3">
                     <div className="p-2 rounded-full bg-blue-500/10">
                       <Calendar className="h-5 w-5 text-blue-500" />
@@ -173,8 +173,17 @@ export default function ScansPage() {
             </div>
 
             {isLimitReached && (
-              <div className="text-sm text-red-600 font-medium">
-                Scan limit reached. Upgrade your plan to continue.
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg p-4">
+                <span className="text-sm text-red-600 dark:text-red-400 font-medium">
+                  Scan limit reached. Upgrade your plan to continue.
+                </span>
+                <Link 
+                  href="/dashboard/billing"
+                  className="inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-orange-600 to-blue-600 text-white text-sm font-semibold rounded-lg hover:from-orange-700 hover:to-blue-700 transition-all duration-200 shadow-md hover:shadow-lg whitespace-nowrap"
+                >
+                  Upgrade Plan
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Link>
               </div>
             )}
           </div>

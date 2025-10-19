@@ -1,11 +1,21 @@
+import { HeroSection } from '@/components/sections/HeroSection'
+import { FeaturesSection } from '@/components/sections/FeaturesSection'
+import { MarketplacesSection } from '@/components/sections/MarketplacesSection'
+import { ProcessSection } from '@/components/sections/ProcessSection'
+import { PricingSection } from '@/components/sections/PricingSection'
+import { TestimonialsSection } from '@/components/sections/TestimonialsSection'
+
 export default function HomePage() {
   return (
-    <div className="container mx-auto px-4 py-12">
-      <h1 className="text-4xl font-bold">Welcome to Product Label Checker</h1>
-      <p className="mt-4 text-lg text-gray-600">
-        AI-powered compliance validation for Amazon sellers
-      </p>
+    <div className="min-h-screen">
+      <main>
+        <HeroSection />
+        <FeaturesSection />
+        <MarketplacesSection />
+        <ProcessSection />
+        <PricingSection />
+        <TestimonialsSection />
+      </main>
     </div>
   )
 }
-

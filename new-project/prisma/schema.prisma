@@ -63,11 +63,12 @@ model User {
   updatedAt     DateTime  @updatedAt @map("updated_at")
 
   // Relations
-  oauthAccounts      OAuthAccount[]
-  sessions           Session[]
-  ownedAccounts      Account[]        @relation("AccountOwner")
-  accountMemberships AccountMember[]
-  sentInvites        AccountInvite[]  @relation("InvitedByUser")
+  oauthAccounts       OAuthAccount[]
+  sessions            Session[]
+  ownedAccounts       Account[]            @relation("AccountOwner")
+  accountMemberships  AccountMember[]
+  sentInvites         AccountInvite[]      @relation("InvitedByUser")
+  passwordResetTokens PasswordResetToken[]
 
   @@index([email])
   @@map("users")
@@ -81,6 +82,20 @@ model VerificationToken {
 
   @@unique([identifier, token])
   @@map("verification_tokens")
+}
+
+model PasswordResetToken {
+  id         String   @id @default(uuid())
+  userId     String   @map("user_id")
+  token      String   @unique
+  expires    DateTime
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
+  @@map("password_reset_tokens")
 }
 
 // ============================================

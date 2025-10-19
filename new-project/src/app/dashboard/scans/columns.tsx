@@ -37,10 +37,10 @@ const categoryLabels = {
 }
 
 const statusColors = {
-  QUEUED: "bg-gray-500/10 text-gray-500 hover:bg-gray-500/20 border-gray-500/20",
-  PROCESSING: "bg-blue-500/10 text-blue-500 hover:bg-blue-500/20 border-blue-500/20 animate-pulse",
-  COMPLETED: "bg-green-500/10 text-green-500 hover:bg-green-500/20 border-green-500/20",
-  FAILED: "bg-red-500/10 text-red-500 hover:bg-red-500/20 border-red-500/20",
+  QUEUED: "bg-gray-500/10 text-gray-500 hover:bg-gray-500/20 border-gray-500/20 dark:bg-gray-500/20 dark:text-gray-400",
+  PROCESSING: "bg-blue-500/10 text-blue-500 hover:bg-blue-500/20 border-blue-500/20 dark:bg-blue-500/20 dark:text-blue-400 animate-pulse",
+  COMPLETED: "bg-green-500/10 text-green-500 hover:bg-green-500/20 border-green-500/20 dark:bg-green-500/20 dark:text-green-400",
+  FAILED: "bg-red-500/10 text-red-500 hover:bg-red-500/20 border-red-500/20 dark:bg-red-500/20 dark:text-red-400",
 }
 
 const riskColors = {

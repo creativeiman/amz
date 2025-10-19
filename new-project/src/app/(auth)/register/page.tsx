@@ -1,10 +1,11 @@
 "use client"
 
-import { useState } from "react"
+import { useState, Suspense } from "react"
 import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
+import { signIn } from "next-auth/react"
 import Link from "next/link"
 import { Loader2 } from "lucide-react"
 
@@ -26,10 +27,7 @@ const registerSchema = z.object({
   password: z
     .string()
     .min(1, "Password is required")
-    .min(8, "Password must be at least 8 characters")
-    .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
-    .regex(/[a-z]/, "Password must contain at least one lowercase letter")
-    .regex(/[0-9]/, "Password must contain at least one number"),
+    .min(8, "Password must be at least 8 characters"),
   confirmPassword: z.string().min(1, "Please confirm your password"),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
@@ -38,8 +36,10 @@ const registerSchema = z.object({
 
 type RegisterFormData = z.infer<typeof registerSchema>
 
-export default function RegisterPage() {
+function RegisterForm() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const selectedPlan = searchParams.get("plan") // Get plan from URL query
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -58,6 +58,7 @@ export default function RegisterPage() {
     setError(null)
 
     try {
+      // Step 1: Register the user
       const response = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -75,31 +76,64 @@ export default function RegisterPage() {
         return
       }
 
-      // Successful registration - redirect to login
-      router.push("/login?registered=true")
-    } catch (err) {
+      // Step 2: Automatically log the user in
+      const signInResult = await signIn("credentials", {
+        email: data.email,
+        password: data.password,
+        redirect: false,
+      })
+
+      if (signInResult?.error) {
+        // If auto-login fails, redirect to login page
+        router.push("/login?message=Account created! Please login with your credentials.")
+      } else if (signInResult?.ok) {
+        // Successfully logged in
+        if (selectedPlan && selectedPlan !== 'free') {
+          // If user selected a paid plan, redirect to billing with plan parameter
+          router.push(`/dashboard/billing?plan=${selectedPlan}`)
+        } else {
+          // Otherwise, redirect to dashboard
+          router.push("/dashboard")
+        }
+        router.refresh()
+      }
+    } catch {
       setError("Something went wrong. Please try again.")
       setIsLoading(false)
     }
   }
 
   return (
-    <div className="container flex items-center justify-center min-h-screen py-8">
+    <div className="container flex items-center justify-center min-h-screen py-4 sm:py-8 px-4">
       <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">
+        <CardHeader className="space-y-1 px-4 sm:px-6 py-4 sm:py-6">
+          <CardTitle className="text-xl sm:text-2xl font-bold text-center">
             Create an account
           </CardTitle>
-          <CardDescription className="text-center">
+          <CardDescription className="text-center text-sm sm:text-base">
             Enter your information to get started
           </CardDescription>
+          
+          {/* Plan Selection Indicator */}
+          {selectedPlan && (
+            <div className="mt-3 sm:mt-4 p-2.5 sm:p-3 bg-gradient-to-r from-orange-50 to-blue-50 dark:from-orange-950/30 dark:to-blue-950/30 border border-orange-200 dark:border-orange-800 rounded-lg">
+              <p className="text-xs sm:text-sm text-center text-gray-700 dark:text-gray-300">
+                Selected Plan: <span className="font-semibold capitalize">{selectedPlan === 'one-time' ? 'One-Time Use' : selectedPlan}</span>
+                {selectedPlan !== 'free' && (
+                  <span className="block text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    You&apos;ll be redirected to complete your subscription after registration
+                  </span>
+                )}
+              </p>
+            </div>
+          )}
         </CardHeader>
 
         <form onSubmit={form.handleSubmit(onSubmit)}>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-3 sm:space-y-4 px-4 sm:px-6">
             {/* Error Message */}
             {error && (
-              <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg">
+              <div className="p-2.5 sm:p-3 text-xs sm:text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg">
                 {error}
               </div>
             )}
@@ -109,8 +143,8 @@ export default function RegisterPage() {
               name="name"
               control={form.control}
               render={({ field, fieldState }) => (
-                <div className="space-y-2">
-                  <Label htmlFor={field.name}>Full Name</Label>
+                <div className="space-y-1.5 sm:space-y-2">
+                  <Label htmlFor={field.name} className="text-sm sm:text-base">Full Name</Label>
                   <Input
                     {...field}
                     id={field.name}
@@ -119,10 +153,10 @@ export default function RegisterPage() {
                     autoComplete="name"
                     disabled={isLoading}
                     aria-invalid={fieldState.invalid}
-                    className={fieldState.invalid ? "border-red-500" : ""}
+                    className={`text-sm sm:text-base h-10 sm:h-11 ${fieldState.invalid ? "border-red-500 dark:border-red-700" : ""}`}
                   />
                   {fieldState.error && (
-                    <p className="text-sm text-red-600">
+                    <p className="text-xs sm:text-sm text-red-600 dark:text-red-400">
                       {fieldState.error.message}
                     </p>
                   )}
@@ -135,8 +169,8 @@ export default function RegisterPage() {
               name="email"
               control={form.control}
               render={({ field, fieldState }) => (
-                <div className="space-y-2">
-                  <Label htmlFor={field.name}>Email</Label>
+                <div className="space-y-1.5 sm:space-y-2">
+                  <Label htmlFor={field.name} className="text-sm sm:text-base">Email</Label>
                   <Input
                     {...field}
                     id={field.name}
@@ -145,10 +179,10 @@ export default function RegisterPage() {
                     autoComplete="email"
                     disabled={isLoading}
                     aria-invalid={fieldState.invalid}
-                    className={fieldState.invalid ? "border-red-500" : ""}
+                    className={`text-sm sm:text-base h-10 sm:h-11 ${fieldState.invalid ? "border-red-500 dark:border-red-700" : ""}`}
                   />
                   {fieldState.error && (
-                    <p className="text-sm text-red-600">
+                    <p className="text-xs sm:text-sm text-red-600 dark:text-red-400">
                       {fieldState.error.message}
                     </p>
                   )}
@@ -161,8 +195,8 @@ export default function RegisterPage() {
               name="password"
               control={form.control}
               render={({ field, fieldState }) => (
-                <div className="space-y-2">
-                  <Label htmlFor={field.name}>Password</Label>
+                <div className="space-y-1.5 sm:space-y-2">
+                  <Label htmlFor={field.name} className="text-sm sm:text-base">Password</Label>
                   <Input
                     {...field}
                     id={field.name}
@@ -171,10 +205,10 @@ export default function RegisterPage() {
                     autoComplete="new-password"
                     disabled={isLoading}
                     aria-invalid={fieldState.invalid}
-                    className={fieldState.invalid ? "border-red-500" : ""}
+                    className={`text-sm sm:text-base h-10 sm:h-11 ${fieldState.invalid ? "border-red-500 dark:border-red-700" : ""}`}
                   />
                   {fieldState.error && (
-                    <p className="text-sm text-red-600">
+                    <p className="text-xs sm:text-sm text-red-600 dark:text-red-400">
                       {fieldState.error.message}
                     </p>
                   )}
@@ -187,8 +221,8 @@ export default function RegisterPage() {
               name="confirmPassword"
               control={form.control}
               render={({ field, fieldState }) => (
-                <div className="space-y-2">
-                  <Label htmlFor={field.name}>Confirm Password</Label>
+                <div className="space-y-1.5 sm:space-y-2">
+                  <Label htmlFor={field.name} className="text-sm sm:text-base">Confirm Password</Label>
                   <Input
                     {...field}
                     id={field.name}
@@ -197,10 +231,10 @@ export default function RegisterPage() {
                     autoComplete="new-password"
                     disabled={isLoading}
                     aria-invalid={fieldState.invalid}
-                    className={fieldState.invalid ? "border-red-500" : ""}
+                    className={`text-sm sm:text-base h-10 sm:h-11 ${fieldState.invalid ? "border-red-500 dark:border-red-700" : ""}`}
                   />
                   {fieldState.error && (
-                    <p className="text-sm text-red-600">
+                    <p className="text-xs sm:text-sm text-red-600 dark:text-red-400">
                       {fieldState.error.message}
                     </p>
                   )}
@@ -209,17 +243,17 @@ export default function RegisterPage() {
             />
           </CardContent>
 
-          <CardFooter className="flex flex-col space-y-4">
+          <CardFooter className="flex flex-col space-y-3 sm:space-y-4 pt-4 sm:pt-6 px-4 sm:px-6 pb-4 sm:pb-6">
             <Button
               type="submit"
-              className="w-full"
+              className="w-full h-10 sm:h-11 text-sm sm:text-base"
               disabled={isLoading}
             >
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {isLoading ? "Creating account..." : "Create account"}
             </Button>
 
-            <p className="text-sm text-center text-muted-foreground">
+            <p className="text-xs sm:text-sm text-center text-muted-foreground">
               Already have an account?{" "}
               <Link href="/login" className="text-primary hover:underline font-medium">
                 Sign in
@@ -229,5 +263,23 @@ export default function RegisterPage() {
         </form>
       </Card>
     </div>
+  )
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={
+      <div className="container flex items-center justify-center min-h-screen py-4 sm:py-8 px-4">
+        <Card className="w-full max-w-md">
+          <CardHeader className="space-y-1 px-4 sm:px-6 py-4 sm:py-6">
+            <CardTitle className="text-xl sm:text-2xl font-bold text-center">
+              Loading...
+            </CardTitle>
+          </CardHeader>
+        </Card>
+      </div>
+    }>
+      <RegisterForm />
+    </Suspense>
   )
 }

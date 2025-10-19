@@ -50,10 +50,10 @@ const categoryLabels = {
 }
 
 const statusColors = {
-  QUEUED: "bg-gray-500/10 text-gray-500",
-  PROCESSING: "bg-blue-500/10 text-blue-500",
-  COMPLETED: "bg-green-500/10 text-green-500",
-  FAILED: "bg-red-500/10 text-red-500",
+  QUEUED: "bg-gray-500/10 text-gray-500 dark:bg-gray-500/20 dark:text-gray-400",
+  PROCESSING: "bg-blue-500/10 text-blue-500 dark:bg-blue-500/20 dark:text-blue-400",
+  COMPLETED: "bg-green-500/10 text-green-500 dark:bg-green-500/20 dark:text-green-400",
+  FAILED: "bg-red-500/10 text-red-500 dark:bg-red-500/20 dark:text-red-400",
 }
 
 const riskColors = {

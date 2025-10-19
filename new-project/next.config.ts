@@ -11,6 +11,16 @@ const nextConfig: NextConfig = {
     // your project has type errors (optional - only if needed)
     // ignoreBuildErrors: true,
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+        port: '',
+        pathname: '/**',
+      },
+    ],
+  },
 };
 
 export default nextConfig;

@@ -32,7 +32,7 @@ const baseConfig = {
     error: '/login',
   },
   secret: env.NEXTAUTH_SECRET,
-  useSecureCookies: true, // Force secure cookies for HTTPS (Railway production)
+  useSecureCookies: process.env.NODE_ENV === 'production', // Only use secure cookies in production (HTTPS)
   trustHost: true, // Trust the host header from Railway's proxy
 }
 

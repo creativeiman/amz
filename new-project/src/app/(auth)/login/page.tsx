@@ -13,7 +13,6 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
-import { siteConfig } from "@/config/site"
 
 // Form validation schema
 const loginSchema = z.object({
@@ -101,29 +100,29 @@ function LoginForm() {
         }
         router.refresh()
       }
-    } catch (err) {
+    } catch {
       setError("Something went wrong. Please try again.")
       setIsLoading(false)
     }
   }
 
   return (
-    <div className="container flex items-center justify-center min-h-screen py-8">
+    <div className="container flex items-center justify-center min-h-screen py-4 sm:py-8 px-4">
       <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">
+        <CardHeader className="space-y-1 px-4 sm:px-6 py-4 sm:py-6">
+          <CardTitle className="text-xl sm:text-2xl font-bold text-center">
             Welcome back
           </CardTitle>
-          <CardDescription className="text-center">
+          <CardDescription className="text-center text-sm sm:text-base">
             Enter your credentials to access your account
           </CardDescription>
         </CardHeader>
 
         <form onSubmit={form.handleSubmit(onSubmit)}>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-3 sm:space-y-4 px-4 sm:px-6">
             {/* Error Message */}
             {error && (
-              <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg">
+              <div className="p-2.5 sm:p-3 text-xs sm:text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg">
                 {error}
               </div>
             )}
@@ -133,8 +132,8 @@ function LoginForm() {
               name="email"
               control={form.control}
               render={({ field, fieldState }) => (
-                <div className="space-y-2">
-                  <Label htmlFor={field.name}>Email</Label>
+                <div className="space-y-1.5 sm:space-y-2">
+                  <Label htmlFor={field.name} className="text-sm sm:text-base">Email</Label>
                   <Input
                     {...field}
                     id={field.name}
@@ -143,10 +142,10 @@ function LoginForm() {
                     autoComplete="email"
                     disabled={isLoading}
                     aria-invalid={fieldState.invalid}
-                    className={fieldState.invalid ? "border-red-500" : ""}
+                    className={`text-sm sm:text-base h-10 sm:h-11 ${fieldState.invalid ? "border-red-500 dark:border-red-700" : ""}`}
                   />
                   {fieldState.error && (
-                    <p className="text-sm text-red-600">
+                    <p className="text-xs sm:text-sm text-red-600 dark:text-red-400">
                       {fieldState.error.message}
                     </p>
                   )}
@@ -159,12 +158,12 @@ function LoginForm() {
               name="password"
               control={form.control}
               render={({ field, fieldState }) => (
-                <div className="space-y-2">
+                <div className="space-y-1.5 sm:space-y-2">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor={field.name}>Password</Label>
+                    <Label htmlFor={field.name} className="text-sm sm:text-base">Password</Label>
                     <Link
                       href="/forgot-password"
-                      className="text-sm text-primary hover:underline"
+                      className="text-xs sm:text-sm text-primary hover:underline"
                     >
                       Forgot password?
                     </Link>
@@ -177,10 +176,10 @@ function LoginForm() {
                     autoComplete="current-password"
                     disabled={isLoading}
                     aria-invalid={fieldState.invalid}
-                    className={fieldState.invalid ? "border-red-500" : ""}
+                    className={`text-sm sm:text-base h-10 sm:h-11 ${fieldState.invalid ? "border-red-500 dark:border-red-700" : ""}`}
                   />
                   {fieldState.error && (
-                    <p className="text-sm text-red-600">
+                    <p className="text-xs sm:text-sm text-red-600 dark:text-red-400">
                       {fieldState.error.message}
                     </p>
                   )}
@@ -189,24 +188,24 @@ function LoginForm() {
             />
 
             {/* Test Credentials Helper */}
-            <div className="p-3 text-sm bg-blue-50 border border-blue-200 rounded-lg">
-              <p className="font-semibold text-blue-900 mb-1">Test Credentials:</p>
-              <p className="text-blue-700">Admin: admin@productlabelchecker.com / admin123</p>
-              <p className="text-blue-700">User: deluxe@test.com / test123</p>
+            <div className="p-2.5 sm:p-3 text-xs sm:text-sm bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg">
+              <p className="font-semibold text-blue-900 dark:text-blue-400 mb-1">Test Credentials:</p>
+              <p className="text-blue-700 dark:text-blue-300 text-xs sm:text-sm">Admin: admin@productlabelchecker.com / admin123</p>
+              <p className="text-blue-700 dark:text-blue-300 text-xs sm:text-sm">User: deluxe@test.com / test123</p>
             </div>
           </CardContent>
 
-          <CardFooter className="flex flex-col space-y-4">
+          <CardFooter className="flex flex-col space-y-3 sm:space-y-4 pt-4 sm:pt-6 px-4 sm:px-6 pb-4 sm:pb-6">
             <Button
               type="submit"
-              className="w-full"
+              className="w-full h-10 sm:h-11 text-sm sm:text-base"
               disabled={isLoading}
             >
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {isLoading ? "Signing in..." : "Sign in"}
             </Button>
 
-            <p className="text-sm text-center text-muted-foreground">
+            <p className="text-xs sm:text-sm text-center text-muted-foreground">
               Don&apos;t have an account?{" "}
               <Link href="/register" className="text-primary hover:underline font-medium">
                 Sign up
@@ -222,10 +221,10 @@ function LoginForm() {
 export default function LoginPage() {
   return (
     <Suspense fallback={
-      <div className="container flex items-center justify-center min-h-screen py-8">
+      <div className="container flex items-center justify-center min-h-screen py-4 sm:py-8 px-4">
         <Card className="w-full max-w-md">
-          <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-bold text-center">
+          <CardHeader className="space-y-1 px-4 sm:px-6 py-4 sm:py-6">
+            <CardTitle className="text-xl sm:text-2xl font-bold text-center">
               Loading...
             </CardTitle>
           </CardHeader>

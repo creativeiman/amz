@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
+import Link from 'next/link'
 import { 
   ArrowLeft, 
   Download,
@@ -17,7 +18,9 @@ import {
   Weight,
   Building,
   Loader2,
-  AlertCircle
+  AlertCircle,
+  Sparkles,
+  ArrowRight
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { MarkdownEditor } from '@/components/markdown-editor'
@@ -125,46 +128,46 @@ export default function ScanDetailPage() {
   }
 
   const getScoreColor = (score: number) => {
-    if (score >= 80) return 'text-green-600'
-    if (score >= 60) return 'text-yellow-600'
-    return 'text-red-600'
+    if (score >= 80) return 'text-green-600 dark:text-green-400'
+    if (score >= 60) return 'text-yellow-600 dark:text-yellow-400'
+    return 'text-red-600 dark:text-red-400'
   }
 
   const getScoreBgColor = (score: number) => {
-    if (score >= 80) return 'bg-green-50 border-green-200'
-    if (score >= 60) return 'bg-yellow-50 border-yellow-200'
-    return 'bg-red-50 border-red-200'
+    if (score >= 80) return 'bg-green-50 border-green-200 dark:bg-green-950/30 dark:border-green-800'
+    if (score >= 60) return 'bg-yellow-50 border-yellow-200 dark:bg-yellow-950/30 dark:border-yellow-800'
+    return 'bg-red-50 border-red-200 dark:bg-red-950/30 dark:border-red-800'
   }
 
   const getRiskColor = (riskLevel: string | null) => {
     switch (riskLevel) {
       case 'LOW':
-        return 'bg-green-100 text-green-800'
+        return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300'
       case 'MEDIUM':
-        return 'bg-yellow-100 text-yellow-800'
+        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300'
       case 'HIGH':
-        return 'bg-orange-100 text-orange-800'
+        return 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300'
       case 'CRITICAL':
-        return 'bg-red-100 text-red-800'
+        return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
       default:
-        return 'bg-gray-100 text-gray-800'
+        return 'bg-muted text-muted-foreground'
     }
   }
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
       case 'CRITICAL':
-        return 'bg-red-50 border-red-200 text-red-800'
+        return 'bg-red-50 border-red-200 text-red-800 dark:bg-red-950/30 dark:border-red-800 dark:text-red-300'
       case 'WARNING':
-        return 'bg-yellow-50 border-yellow-200 text-yellow-800'
+        return 'bg-yellow-50 border-yellow-200 text-yellow-800 dark:bg-yellow-950/30 dark:border-yellow-800 dark:text-yellow-300'
       case 'MEDIUM':
-        return 'bg-orange-50 border-orange-200 text-orange-800'
+        return 'bg-orange-50 border-orange-200 text-orange-800 dark:bg-orange-950/30 dark:border-orange-800 dark:text-orange-300'
       case 'LOW':
-        return 'bg-blue-50 border-blue-200 text-blue-800'
+        return 'bg-blue-50 border-blue-200 text-blue-800 dark:bg-blue-950/30 dark:border-blue-800 dark:text-blue-300'
       case 'INFO':
-        return 'bg-gray-50 border-gray-200 text-gray-800'
+        return 'bg-muted border-border text-muted-foreground'
       default:
-        return 'bg-gray-50 border-gray-200 text-gray-800'
+        return 'bg-muted border-border text-muted-foreground'
     }
   }
 
@@ -180,12 +183,27 @@ export default function ScanDetailPage() {
     }
   }
 
+  // Check if user can view full report based on their plan
+  const canViewFullReport = () => {
+    if (!scan) return false
+    const userPlan = scan.plan
+    
+    // DELUXE users can view everything
+    if (userPlan === 'DELUXE') return true
+    
+    // ONE_TIME users can view their one-time scan
+    if (userPlan === 'ONE_TIME') return true
+    
+    // FREE users cannot view detailed reports
+    return false
+  }
+
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="w-12 h-12 animate-spin text-orange-600 mx-auto mb-4" />
-          <p className="text-gray-600">Loading scan details...</p>
+          <Loader2 className="w-12 h-12 animate-spin text-orange-600 dark:text-orange-400 mx-auto mb-4" />
+          <p className="text-muted-foreground">Loading scan details...</p>
         </div>
       </div>
     )
@@ -193,14 +211,14 @@ export default function ScanDetailPage() {
 
   if (!scan) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <XCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Scan Not Found</h2>
-          <p className="text-gray-600 mb-6">The scan you&apos;re looking for doesn&apos;t exist.</p>
+          <XCircle className="w-16 h-16 text-red-500 dark:text-red-400 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-foreground mb-2">Scan Not Found</h2>
+          <p className="text-muted-foreground mb-6">The scan you&apos;re looking for doesn&apos;t exist.</p>
           <button
             onClick={() => router.push('/dashboard/scans')}
-            className="px-6 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700"
+            className="px-6 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 dark:bg-orange-700 dark:hover:bg-orange-600"
           >
             Back to Scans
           </button>
@@ -212,29 +230,29 @@ export default function ScanDetailPage() {
   // Check if scan is still processing
   if (scan.status === 'QUEUED' || scan.status === 'PROCESSING') {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center max-w-md mx-auto p-8">
           <div className="relative">
-            <Loader2 className="w-16 h-16 animate-spin text-orange-600 mx-auto mb-4" />
+            <Loader2 className="w-16 h-16 animate-spin text-orange-600 dark:text-orange-400 mx-auto mb-4" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+          <h2 className="text-2xl font-bold text-foreground mb-2">
             {scan.status === 'QUEUED' ? 'Scan Queued' : 'Processing...'}
           </h2>
-          <p className="text-gray-600 mb-6">
+          <p className="text-muted-foreground mb-6">
             {scan.status === 'QUEUED' 
               ? 'Your scan is waiting in the queue. It will be processed shortly.'
               : 'Your scan is being analyzed by AI. This usually takes 30-90 seconds.'}
           </p>
           <button
             onClick={fetchScanDetails}
-            className="px-6 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 flex items-center gap-2 mx-auto"
+            className="px-6 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 dark:bg-orange-700 dark:hover:bg-orange-600 flex items-center gap-2 mx-auto"
           >
             <RefreshCw className="w-4 h-4" />
             Refresh Status
           </button>
           <button
             onClick={() => router.push('/dashboard/scans')}
-            className="mt-4 text-gray-600 hover:text-gray-900"
+            className="mt-4 text-muted-foreground hover:text-foreground"
           >
             Back to Scans
           </button>
@@ -246,24 +264,24 @@ export default function ScanDetailPage() {
   // Check if scan failed
   if (scan.status === 'FAILED' && scan.results?.error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center max-w-md mx-auto p-8">
-          <XCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Analysis Failed</h2>
-          <p className="text-gray-600 mb-4">
+          <XCircle className="w-16 h-16 text-red-500 dark:text-red-400 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-foreground mb-2">Analysis Failed</h2>
+          <p className="text-muted-foreground mb-4">
             The AI analysis failed for this scan.
           </p>
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6 text-left">
-            <p className="text-sm text-red-800 font-mono">{scan.results.error}</p>
+          <div className="bg-red-50 border border-red-200 dark:bg-red-950/30 dark:border-red-800 rounded-lg p-4 mb-6 text-left">
+            <p className="text-sm text-red-800 dark:text-red-300 font-mono">{scan.results.error}</p>
             {scan.results.timestamp && (
-              <p className="text-xs text-red-600 mt-2">
+              <p className="text-xs text-red-600 dark:text-red-400 mt-2">
                 {new Date(scan.results.timestamp).toLocaleString()}
               </p>
             )}
           </div>
           <button
             onClick={() => router.push('/dashboard/scans')}
-            className="px-6 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700"
+            className="px-6 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 dark:bg-orange-700 dark:hover:bg-orange-600"
           >
             Back to Scans
           </button>
@@ -275,45 +293,43 @@ export default function ScanDetailPage() {
   const results = scan.results
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 sticky top-0 z-10">
-        <div className="px-4 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <button
-                onClick={() => router.push('/dashboard/scans')}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <ArrowLeft className="w-5 h-5" />
-              </button>
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">Scan Results</h1>
-                <p className="text-sm text-gray-500">
-                  {scan.productName} • {scan.category}
-                </p>
-              </div>
+      <div className="bg-card border-b sticky top-0 z-10">
+        <div className="px-4 lg:px-8 py-3 sm:py-4">
+          <div className="flex items-center gap-3 sm:gap-4">
+            <button
+              onClick={() => router.push('/dashboard/scans')}
+              className="p-2 hover:bg-accent rounded-lg transition-colors flex-shrink-0"
+            >
+              <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+            </button>
+            <div className="min-w-0 flex-1">
+              <h1 className="text-lg sm:text-2xl font-bold text-foreground truncate">Scan Results</h1>
+              <p className="text-xs sm:text-sm text-muted-foreground truncate">
+                {scan.productName} • {scan.category}
+              </p>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="px-4 lg:px-8 py-6">
+      <div className="px-4 lg:px-8 py-4 sm:py-6">
         {/* Score Card */}
-        <div className="bg-white rounded-2xl shadow-lg border border-white/50 p-6 mb-6">
-          <div className="flex items-center justify-between mb-6">
+        <div className="bg-card rounded-xl sm:rounded-2xl shadow-lg border p-4 sm:p-6 mb-4 sm:mb-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4 sm:mb-6">
             <div>
-              <h2 className="text-2xl font-bold text-gray-900">Compliance Score</h2>
-              <p className="text-gray-600">Overall compliance assessment</p>
+              <h2 className="text-xl sm:text-2xl font-bold text-foreground">Compliance Score</h2>
+              <p className="text-sm text-muted-foreground">Overall compliance assessment</p>
             </div>
-            <div className={`px-6 py-4 rounded-xl border-2 ${getScoreBgColor(scan.score)}`}>
+            <div className={`px-4 sm:px-6 py-3 sm:py-4 rounded-xl border-2 ${getScoreBgColor(scan.score)} self-start sm:self-auto`}>
               <div className="text-center">
-                <div className={`text-4xl font-bold ${getScoreColor(scan.score)}`}>
+                <div className={`text-3xl sm:text-4xl font-bold ${getScoreColor(scan.score)}`}>
                   {scan.score}%
                 </div>
-                <div className="text-sm text-gray-600 mt-1">Compliance Score</div>
+                <div className="text-xs sm:text-sm text-muted-foreground mt-1">Compliance Score</div>
                 {scan.riskLevel && (
-                  <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold mt-2 ${getRiskColor(scan.riskLevel)}`}>
+                  <span className={`inline-block px-2 sm:px-3 py-1 rounded-full text-xs font-semibold mt-2 ${getRiskColor(scan.riskLevel)}`}>
                     {scan.riskLevel} RISK
                   </span>
                 )}
@@ -323,39 +339,39 @@ export default function ScanDetailPage() {
 
           {/* Quick Stats */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="p-4 bg-gray-50 rounded-lg">
+            <div className="p-4 bg-muted/50 rounded-lg">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-gray-600">Issues Found</span>
-                <AlertTriangle className="w-4 h-4 text-yellow-500" />
+                <span className="text-sm text-muted-foreground">Issues Found</span>
+                <AlertTriangle className="w-4 h-4 text-yellow-500 dark:text-yellow-400" />
               </div>
-              <div className="text-2xl font-bold text-gray-900">
+              <div className="text-2xl font-bold text-foreground">
                 {results?.issues?.length || 0}
               </div>
             </div>
-            <div className="p-4 bg-gray-50 rounded-lg">
+            <div className="p-4 bg-muted/50 rounded-lg">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-gray-600">Status</span>
-                <Shield className="w-4 h-4 text-blue-500" />
+                <span className="text-sm text-muted-foreground">Status</span>
+                <Shield className="w-4 h-4 text-blue-500 dark:text-blue-400" />
               </div>
-              <div className="text-lg font-bold text-gray-900">
+              <div className="text-lg font-bold text-foreground">
                 {results?.compliance?.passed ? '✅ PASSED' : '❌ FAILED'}
               </div>
             </div>
-            <div className="p-4 bg-gray-50 rounded-lg">
+            <div className="p-4 bg-muted/50 rounded-lg">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-gray-600">Category</span>
-                <Package className="w-4 h-4 text-green-500" />
+                <span className="text-sm text-muted-foreground">Category</span>
+                <Package className="w-4 h-4 text-green-500 dark:text-green-400" />
               </div>
-              <div className="text-sm font-bold text-gray-900">
+              <div className="text-sm font-bold text-foreground">
                 {scan.category}
               </div>
             </div>
-            <div className="p-4 bg-gray-50 rounded-lg">
+            <div className="p-4 bg-muted/50 rounded-lg">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-gray-600">Marketplaces</span>
-                <Shield className="w-4 h-4 text-orange-500" />
+                <span className="text-sm text-muted-foreground">Marketplaces</span>
+                <Shield className="w-4 h-4 text-orange-500 dark:text-orange-400" />
               </div>
-              <div className="text-2xl font-bold text-gray-900">
+              <div className="text-2xl font-bold text-foreground">
                 {scan.marketplaces.length}
               </div>
             </div>
@@ -364,9 +380,9 @@ export default function ScanDetailPage() {
 
         {/* Label Image */}
         {scan.labelUrl && (
-          <div className="bg-white rounded-2xl shadow-lg border border-white/50 p-6 mb-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Product Label</h3>
+          <div className="bg-card rounded-xl sm:rounded-2xl shadow-lg border p-4 sm:p-6 mb-4 sm:mb-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+              <h3 className="text-base sm:text-lg font-semibold text-foreground">Product Label</h3>
               <button
                 onClick={async () => {
                   try {
@@ -402,18 +418,18 @@ export default function ScanDetailPage() {
                     console.error('Download error:', error)
                   }
                 }}
-                className="flex items-center gap-2 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
+                className="flex items-center justify-center gap-2 px-4 py-2 bg-orange-600 text-white text-sm rounded-lg hover:bg-orange-700 dark:bg-orange-700 dark:hover:bg-orange-600 transition-colors w-full sm:w-auto"
               >
                 <Download className="w-4 h-4" />
                 Download Label
               </button>
             </div>
-            <div className="relative w-full bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center" style={{ minHeight: '400px' }}>
+            <div className="relative w-full bg-muted rounded-lg overflow-hidden flex items-center justify-center" style={{ minHeight: '300px' }}>
               {scan.labelUrl.toLowerCase().endsWith('.pdf') ? (
                 // PDF Viewer
                 <iframe
                   src={`/api${scan.labelUrl}`}
-                  className="w-full h-[600px]"
+                  className="w-full h-[400px] sm:h-[600px]"
                   title="Product Label PDF"
                 />
               ) : (
@@ -421,7 +437,7 @@ export default function ScanDetailPage() {
                 <img 
                   src={`/api${scan.labelUrl}`}
                   alt="Product Label"
-                  className="max-w-full max-h-[600px] object-contain"
+                  className="max-w-full max-h-[400px] sm:max-h-[600px] object-contain"
                   onError={(e) => {
                     console.error('Image load error:', scan.labelUrl)
                     e.currentTarget.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"><text x="50%" y="50%" text-anchor="middle" dy=".3em" fill="%23999">Image not found</text></svg>'
@@ -433,9 +449,9 @@ export default function ScanDetailPage() {
         )}
 
         {/* Navigation Tabs */}
-        <div className="bg-white rounded-2xl shadow-lg border border-white/50 mb-6">
-          <div className="border-b border-gray-200">
-            <nav className="flex space-x-8 px-6">
+        <div className="bg-card rounded-xl sm:rounded-2xl shadow-lg border mb-4 sm:mb-6">
+          <div className="border-b overflow-x-auto scrollbar-hide">
+            <nav className="flex space-x-4 sm:space-x-8 px-4 sm:px-6 min-w-max">
               {[
                 { id: 'overview', label: 'Overview', icon: Eye },
                 { id: 'issues', label: 'Issues', icon: AlertTriangle },
@@ -445,10 +461,10 @@ export default function ScanDetailPage() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as 'overview' | 'issues' | 'text' | 'recommendations')}
-                  className={`flex items-center px-4 py-4 text-sm font-medium border-b-2 transition-colors ${
+                  className={`flex items-center px-2 sm:px-4 py-3 sm:py-4 text-xs sm:text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
                     activeTab === tab.id
-                      ? 'border-orange-500 text-orange-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700'
+                      ? 'border-orange-500 text-orange-600 dark:text-orange-400'
+                      : 'border-transparent text-muted-foreground hover:text-foreground'
                   }`}
                 >
                   <tab.icon className="w-4 h-4 mr-2" />
@@ -458,48 +474,48 @@ export default function ScanDetailPage() {
             </nav>
           </div>
 
-          <div className="p-6">
+          <div className="p-4 sm:p-6">
             {/* Overview Tab */}
             {activeTab === 'overview' && (
-              <div className="space-y-6">
+              <div className="space-y-4 sm:space-y-6">
                 {/* Extracted Information from AI */}
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Extracted Information</h3>
+                  <h3 className="text-lg font-semibold text-foreground mb-4">Extracted Information</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-3">
                       {results?.extractedInfo?.productName && (
                         <div className="flex items-center space-x-3">
-                          <Package className="w-5 h-5 text-gray-400" />
+                          <Package className="w-5 h-5 text-muted-foreground" />
                           <div>
-                            <div className="text-sm text-gray-600">Product Name</div>
-                            <div className="font-medium">{results.extractedInfo.productName}</div>
+                            <div className="text-sm text-muted-foreground">Product Name</div>
+                            <div className="font-medium text-foreground">{results.extractedInfo.productName}</div>
                           </div>
                         </div>
                       )}
                       {results?.extractedInfo?.manufacturer && (
                         <div className="flex items-center space-x-3">
-                          <Building className="w-5 h-5 text-gray-400" />
+                          <Building className="w-5 h-5 text-muted-foreground" />
                           <div>
-                            <div className="text-sm text-gray-600">Manufacturer</div>
-                            <div className="font-medium">{results.extractedInfo.manufacturer}</div>
+                            <div className="text-sm text-muted-foreground">Manufacturer</div>
+                            <div className="font-medium text-foreground">{results.extractedInfo.manufacturer}</div>
                           </div>
                         </div>
                       )}
                       {results?.extractedInfo?.weight && (
                         <div className="flex items-center space-x-3">
-                          <Weight className="w-5 h-5 text-gray-400" />
+                          <Weight className="w-5 h-5 text-muted-foreground" />
                           <div>
-                            <div className="text-sm text-gray-600">Weight</div>
-                            <div className="font-medium">{results.extractedInfo.weight}</div>
+                            <div className="text-sm text-muted-foreground">Weight</div>
+                            <div className="font-medium text-foreground">{results.extractedInfo.weight}</div>
                           </div>
                         </div>
                       )}
                       {results?.extractedInfo?.countryOfOrigin && (
                         <div className="flex items-center space-x-3">
-                          <Shield className="w-5 h-5 text-gray-400" />
+                          <Shield className="w-5 h-5 text-muted-foreground" />
                           <div>
-                            <div className="text-sm text-gray-600">Country of Origin</div>
-                            <div className="font-medium">{results.extractedInfo.countryOfOrigin}</div>
+                            <div className="text-sm text-muted-foreground">Country of Origin</div>
+                            <div className="font-medium text-foreground">{results.extractedInfo.countryOfOrigin}</div>
                           </div>
                         </div>
                       )}
@@ -510,10 +526,10 @@ export default function ScanDetailPage() {
                       {/* Certifications */}
                       {results?.extractedInfo?.certifications && results.extractedInfo.certifications.length > 0 && (
                         <div>
-                          <div className="text-sm text-gray-600 mb-2">Certifications Found</div>
+                          <div className="text-sm text-muted-foreground mb-2">Certifications Found</div>
                           <div className="flex flex-wrap gap-2">
                             {results.extractedInfo.certifications.map((cert: string, index: number) => (
-                              <span key={index} className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
+                              <span key={index} className="px-2 py-1 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300 text-xs rounded-full">
                                 {cert}
                               </span>
                             ))}
@@ -524,10 +540,10 @@ export default function ScanDetailPage() {
                       {/* Warnings */}
                       {results?.extractedInfo?.warnings && results.extractedInfo.warnings.length > 0 && (
                         <div>
-                          <div className="text-sm text-gray-600 mb-2">Warnings Found</div>
+                          <div className="text-sm text-muted-foreground mb-2">Warnings Found</div>
                           <div className="flex flex-wrap gap-2">
                             {results.extractedInfo.warnings.map((warning: string, index: number) => (
-                              <span key={index} className="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded-full">
+                              <span key={index} className="px-2 py-1 bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300 text-xs rounded-full">
                                 {warning}
                               </span>
                             ))}
@@ -543,36 +559,81 @@ export default function ScanDetailPage() {
             {/* Issues Tab */}
             {activeTab === 'issues' && (
               <div className="space-y-4">
-                {results?.issues && results.issues.length > 0 ? (
-                  results.issues.map((issue, index: number) => (
-                    <div key={index} className={`p-4 rounded-lg border ${getSeverityColor(issue.severity)}`}>
-                      <div className="flex items-start space-x-3">
-                        {getSeverityIcon(issue.severity)}
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-2">
-                            <span className="px-2 py-1 bg-white/50 rounded text-xs font-semibold">
-                              {issue.severity}
-                            </span>
-                            <span className="text-xs text-gray-600">{issue.category}</span>
+                {canViewFullReport() ? (
+                  <>
+                    {results?.issues && results.issues.length > 0 ? (
+                      results.issues.map((issue, index: number) => (
+                        <div key={index} className={`p-4 rounded-lg border ${getSeverityColor(issue.severity)}`}>
+                          <div className="flex items-start space-x-3">
+                            {getSeverityIcon(issue.severity)}
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-2">
+                                <span className="px-2 py-1 bg-background/50 rounded text-xs font-semibold">
+                                  {issue.severity}
+                                </span>
+                                <span className="text-xs text-muted-foreground">{issue.category}</span>
+                              </div>
+                              <h4 className="font-medium mb-2">{issue.description}</h4>
+                              <p className="text-sm font-medium mb-1">
+                                <strong>Recommendation:</strong> {issue.recommendation}
+                              </p>
+                              {issue.regulation && (
+                                <p className="text-xs text-muted-foreground">
+                                  <strong>Regulation:</strong> {issue.regulation}
+                                </p>
+                              )}
+                            </div>
                           </div>
-                          <h4 className="font-medium mb-2">{issue.description}</h4>
-                          <p className="text-sm font-medium mb-1">
-                            <strong>Recommendation:</strong> {issue.recommendation}
-                          </p>
-                          {issue.regulation && (
-                            <p className="text-xs text-gray-600">
-                              <strong>Regulation:</strong> {issue.regulation}
-                            </p>
-                          )}
                         </div>
+                      ))
+                    ) : (
+                      <div className="text-center py-8">
+                        <CheckCircle className="w-16 h-16 text-green-500 dark:text-green-400 mx-auto mb-4" />
+                        <h3 className="text-lg font-semibold text-foreground mb-2">No Issues Found</h3>
+                        <p className="text-muted-foreground">Your label appears to be compliant!</p>
                       </div>
-                    </div>
-                  ))
+                    )}
+                  </>
                 ) : (
-                  <div className="text-center py-8">
-                    <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">No Issues Found</h3>
-                    <p className="text-gray-600">Your label appears to be compliant!</p>
+                  <div className="text-center py-12 px-4">
+                    <div className="max-w-md mx-auto">
+                      <div className="p-4 rounded-full bg-gradient-to-br from-orange-500 to-blue-600 w-20 h-20 flex items-center justify-center mx-auto mb-6">
+                        <Sparkles className="w-10 h-10 text-white" />
+                      </div>
+                      <h3 className="text-2xl font-bold text-foreground mb-3">Premium Feature</h3>
+                      <p className="text-muted-foreground mb-6">
+                        Detailed issue analysis and recommendations are available with our Deluxe or One-Time plans.
+                      </p>
+                      <div className="bg-muted/50 border rounded-lg p-4 mb-6 text-left">
+                        <p className="text-sm font-semibold text-foreground mb-2">Upgrade to unlock:</p>
+                        <ul className="space-y-2 text-sm text-muted-foreground">
+                          <li className="flex items-center gap-2">
+                            <CheckCircle className="w-4 h-4 text-green-500" />
+                            Detailed compliance issues breakdown
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <CheckCircle className="w-4 h-4 text-green-500" />
+                            Actionable recommendations
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <CheckCircle className="w-4 h-4 text-green-500" />
+                            Regulatory references & citations
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <CheckCircle className="w-4 h-4 text-green-500" />
+                            Priority levels for each issue
+                          </li>
+                        </ul>
+                      </div>
+                      <Link
+                        href="/dashboard/billing"
+                        className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-orange-600 to-blue-600 text-white font-semibold rounded-lg hover:from-orange-700 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl"
+                      >
+                        <Star className="w-4 h-4 mr-2" />
+                        Upgrade Your Plan
+                        <ArrowRight className="w-4 h-4 ml-2" />
+                      </Link>
+                    </div>
                   </div>
                 )}
               </div>
@@ -581,28 +642,73 @@ export default function ScanDetailPage() {
             {/* Summary/Text Tab */}
             {activeTab === 'text' && (
               <div className="space-y-4">
-                {results?.summary ? (
-                  <div>
-                    <h3 className="font-medium text-gray-900 mb-4">Analysis Summary</h3>
-                    <MarkdownEditor
-                      value={results.summary}
-                      readOnly={true}
-                      minHeight="500px"
-                    />
-                  </div>
-                ) : (
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <div className="text-sm text-gray-500 italic">
-                      No summary available.
-                    </div>
-                  </div>
-                )}
+                {canViewFullReport() ? (
+                  <>
+                    {results?.summary ? (
+                      <div>
+                        <h3 className="font-medium text-foreground mb-4">Analysis Summary</h3>
+                        <MarkdownEditor
+                          value={results.summary}
+                          readOnly={true}
+                          minHeight="500px"
+                        />
+                      </div>
+                    ) : (
+                      <div className="bg-muted rounded-lg p-4">
+                        <div className="text-sm text-muted-foreground italic">
+                          No summary available.
+                        </div>
+                      </div>
+                    )}
 
-                {scan.extractedText && (
-                  <div className="bg-gray-50 rounded-lg p-4 mt-4">
-                    <h3 className="font-medium text-gray-900 mb-2">Extracted Text (OCR)</h3>
-                    <div className="text-sm text-gray-700 whitespace-pre-wrap">
-                      {scan.extractedText}
+                    {scan.extractedText && (
+                      <div className="bg-muted rounded-lg p-4 mt-4">
+                        <h3 className="font-medium text-foreground mb-2">Extracted Text (OCR)</h3>
+                        <div className="text-sm text-foreground whitespace-pre-wrap">
+                          {scan.extractedText}
+                        </div>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div className="text-center py-12 px-4">
+                    <div className="max-w-md mx-auto">
+                      <div className="p-4 rounded-full bg-gradient-to-br from-orange-500 to-blue-600 w-20 h-20 flex items-center justify-center mx-auto mb-6">
+                        <FileText className="w-10 h-10 text-white" />
+                      </div>
+                      <h3 className="text-2xl font-bold text-foreground mb-3">Premium Feature</h3>
+                      <p className="text-muted-foreground mb-6">
+                        The detailed AI-generated analysis summary is available with our Deluxe or One-Time plans.
+                      </p>
+                      <div className="bg-muted/50 border rounded-lg p-4 mb-6 text-left">
+                        <p className="text-sm font-semibold text-foreground mb-2">Upgrade to unlock:</p>
+                        <ul className="space-y-2 text-sm text-muted-foreground">
+                          <li className="flex items-center gap-2">
+                            <CheckCircle className="w-4 h-4 text-green-500" />
+                            Comprehensive AI-written summary
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <CheckCircle className="w-4 h-4 text-green-500" />
+                            Complete OCR extracted text
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <CheckCircle className="w-4 h-4 text-green-500" />
+                            In-depth compliance analysis
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <CheckCircle className="w-4 h-4 text-green-500" />
+                            Market-specific recommendations
+                          </li>
+                        </ul>
+                      </div>
+                      <Link
+                        href="/dashboard/billing"
+                        className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-orange-600 to-blue-600 text-white font-semibold rounded-lg hover:from-orange-700 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl"
+                      >
+                        <Star className="w-4 h-4 mr-2" />
+                        Upgrade Your Plan
+                        <ArrowRight className="w-4 h-4 ml-2" />
+                      </Link>
                     </div>
                   </div>
                 )}
@@ -612,45 +718,90 @@ export default function ScanDetailPage() {
             {/* Extracted Info Tab */}
             {activeTab === 'recommendations' && (
               <div className="space-y-4">
-                {results?.extractedInfo && (
-                  <div className="space-y-4">
-                    {/* Ingredients */}
-                    {results.extractedInfo.ingredients && results.extractedInfo.ingredients.length > 0 && (
-                      <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
-                        <h4 className="font-medium text-blue-900 mb-2">Ingredients</h4>
-                        <ul className="list-disc list-inside text-sm text-blue-800 space-y-1">
-                          {results.extractedInfo.ingredients.map((ingredient: string, index: number) => (
-                            <li key={index}>{ingredient}</li>
-                          ))}
+                {canViewFullReport() ? (
+                  <>
+                    {results?.extractedInfo && (
+                      <div className="space-y-4">
+                        {/* Ingredients */}
+                        {results.extractedInfo.ingredients && results.extractedInfo.ingredients.length > 0 && (
+                          <div className="bg-blue-50 rounded-lg p-4 border border-blue-200 dark:bg-blue-950/30 dark:border-blue-800">
+                            <h4 className="font-medium text-blue-900 dark:text-blue-300 mb-2">Ingredients</h4>
+                            <ul className="list-disc list-inside text-sm text-blue-800 dark:text-blue-300 space-y-1">
+                              {results.extractedInfo.ingredients.map((ingredient: string, index: number) => (
+                                <li key={index}>{ingredient}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+
+                        {/* Product Name */}
+                        {results.extractedInfo.productName && (
+                          <div className="bg-muted rounded-lg p-4">
+                            <h4 className="font-medium text-foreground mb-2">Product Name (AI)</h4>
+                            <p className="text-sm text-muted-foreground">{results.extractedInfo.productName}</p>
+                          </div>
+                        )}
+
+                        {/* All Extracted Info as JSON */}
+                        <details className="bg-muted rounded-lg p-4">
+                          <summary className="font-medium text-foreground cursor-pointer">
+                            View Raw Extracted Information
+                          </summary>
+                          <pre className="mt-4 text-xs text-muted-foreground overflow-auto">
+                            {JSON.stringify(results.extractedInfo, null, 2)}
+                          </pre>
+                        </details>
+                      </div>
+                    )}
+
+                    {!results?.extractedInfo && (
+                      <div className="text-center py-8">
+                        <FileText className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+                        <h3 className="text-lg font-semibold text-foreground mb-2">No Extracted Information</h3>
+                        <p className="text-muted-foreground">No additional information was extracted.</p>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div className="text-center py-12 px-4">
+                    <div className="max-w-md mx-auto">
+                      <div className="p-4 rounded-full bg-gradient-to-br from-orange-500 to-blue-600 w-20 h-20 flex items-center justify-center mx-auto mb-6">
+                        <Star className="w-10 h-10 text-white" />
+                      </div>
+                      <h3 className="text-2xl font-bold text-foreground mb-3">Premium Feature</h3>
+                      <p className="text-muted-foreground mb-6">
+                        AI-extracted label information and detailed data extraction are available with our Deluxe or One-Time plans.
+                      </p>
+                      <div className="bg-muted/50 border rounded-lg p-4 mb-6 text-left">
+                        <p className="text-sm font-semibold text-foreground mb-2">Upgrade to unlock:</p>
+                        <ul className="space-y-2 text-sm text-muted-foreground">
+                          <li className="flex items-center gap-2">
+                            <CheckCircle className="w-4 h-4 text-green-500" />
+                            AI-extracted ingredients list
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <CheckCircle className="w-4 h-4 text-green-500" />
+                            Product details & certifications
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <CheckCircle className="w-4 h-4 text-green-500" />
+                            Warnings & safety information
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <CheckCircle className="w-4 h-4 text-green-500" />
+                            Manufacturer & origin data
+                          </li>
                         </ul>
                       </div>
-                    )}
-
-                    {/* Product Name */}
-                    {results.extractedInfo.productName && (
-                      <div className="bg-gray-50 rounded-lg p-4">
-                        <h4 className="font-medium text-gray-900 mb-2">Product Name (AI)</h4>
-                        <p className="text-sm text-gray-700">{results.extractedInfo.productName}</p>
-                      </div>
-                    )}
-
-                    {/* All Extracted Info as JSON */}
-                    <details className="bg-gray-50 rounded-lg p-4">
-                      <summary className="font-medium text-gray-900 cursor-pointer">
-                        View Raw Extracted Information
-                      </summary>
-                      <pre className="mt-4 text-xs text-gray-700 overflow-auto">
-                        {JSON.stringify(results.extractedInfo, null, 2)}
-                      </pre>
-                    </details>
-                  </div>
-                )}
-
-                {!results?.extractedInfo && (
-                  <div className="text-center py-8">
-                    <FileText className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">No Extracted Information</h3>
-                    <p className="text-gray-600">No additional information was extracted.</p>
+                      <Link
+                        href="/dashboard/billing"
+                        className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-orange-600 to-blue-600 text-white font-semibold rounded-lg hover:from-orange-700 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl"
+                      >
+                        <Star className="w-4 h-4 mr-2" />
+                        Upgrade Your Plan
+                        <ArrowRight className="w-4 h-4 ml-2" />
+                      </Link>
+                    </div>
                   </div>
                 )}
               </div>
@@ -659,11 +810,11 @@ export default function ScanDetailPage() {
         </div>
 
         {/* Raw AI Response (Debug) */}
-        <details className="bg-white rounded-2xl shadow-lg border border-white/50 p-6">
-          <summary className="font-semibold text-gray-900 cursor-pointer">
+        <details className="bg-card rounded-2xl shadow-lg border p-6">
+          <summary className="font-semibold text-foreground cursor-pointer">
             View Raw AI Response (Debug)
           </summary>
-          <pre className="mt-4 text-xs text-gray-700 overflow-auto bg-gray-50 p-4 rounded-lg">
+          <pre className="mt-4 text-xs text-muted-foreground overflow-auto bg-muted p-4 rounded-lg">
             {JSON.stringify(results, null, 2)}
           </pre>
         </details>

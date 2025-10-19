@@ -68,6 +68,12 @@ async function main() {
   console.log('✅ Created one-time user:', oneTimeUser.email)
 
   // Create accounts (workspaces) for users
+  // Calculate next month's first day for scan limit reset
+  const nextMonthReset = new Date()
+  nextMonthReset.setMonth(nextMonthReset.getMonth() + 1)
+  nextMonthReset.setDate(1)
+  nextMonthReset.setHours(0, 0, 0, 0)
+
   const freeAccount = await prisma.account.upsert({
     where: { slug: 'free-user-workspace' },
     update: {},
@@ -82,7 +88,7 @@ async function main() {
       primaryMarketplace: 'USA',
       scanLimitPerMonth: 1, // 1 scan per account lifetime (FREE plan)
       scansUsedThisMonth: 0,
-      scanLimitResetAt: new Date(new Date().setDate(1)), // First day of current month
+      scanLimitResetAt: nextMonthReset, // First day of NEXT month
     },
   })
   console.log('✅ Created free account:', freeAccount.name)

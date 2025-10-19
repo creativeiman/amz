@@ -1,12 +1,8 @@
 /**
  * Prisma Configuration
- * Migrated from package.json to prisma.config.ts (Prisma 7 requirement)
+ * Note: Seed scripts are now automatically detected from prisma/seed.ts
+ * No need to configure them in prisma.config.ts
  */
 
 import 'dotenv/config'
-import { defineConfig } from 'prisma/config'
-
-export default defineConfig({
-  seed: 'tsx prisma/seed.ts',
-})
 

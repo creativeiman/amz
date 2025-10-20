@@ -149,9 +149,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Upload file
-    let labelUrl: string
+    let uploadResult: { url: string; originalFilename: string }
     try {
-      labelUrl = await uploadFile(labelFile, "labels")
+      uploadResult = await uploadFile(labelFile, "labels")
     } catch (error) {
       console.error("File upload error:", error)
       return ApiHandler.error(
@@ -167,7 +167,8 @@ export async function POST(request: NextRequest) {
         productName,
         category: category as Category,
         marketplaces,
-        labelUrl,
+        labelUrl: uploadResult.url,
+        originalFilename: uploadResult.originalFilename,
         status: "QUEUED",
         accountId: context.accountId!,
         createdBy: context.userId,
@@ -188,7 +189,7 @@ export async function POST(request: NextRequest) {
     await addScanJob({
       scanId: scan.id,
       userId: context.userId,
-      imageUrl: labelUrl,
+      imageUrl: uploadResult.url,
       category: category as Category,
       marketplaces,
       productName,

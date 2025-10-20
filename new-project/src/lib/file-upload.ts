@@ -21,9 +21,9 @@ import { uploadFile as minioUpload, deleteFile as minioDelete } from './minio-cl
  * Upload file to MinIO storage
  * @param file - The file to upload
  * @param folder - Folder/prefix for the file (not used with MinIO, kept for API compatibility)
- * @returns URL of the uploaded file
+ * @returns Object with URL and original filename
  */
-export async function uploadFile(file: File, folder: string = "labels"): Promise<string> {
+export async function uploadFile(file: File, folder: string = "labels"): Promise<{ url: string; originalFilename: string }> {
   try {
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
@@ -32,7 +32,7 @@ export async function uploadFile(file: File, folder: string = "labels"): Promise
     const url = await minioUpload(buffer, file.name, file.type)
 
     console.log(`✅ File uploaded successfully: ${url}`)
-    return url
+    return { url, originalFilename: file.name }
   } catch (error) {
     console.error("❌ Error uploading file to MinIO:", error)
     throw new Error("Failed to upload file to MinIO")

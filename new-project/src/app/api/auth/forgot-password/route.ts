@@ -39,6 +39,18 @@ export async function POST(request: NextRequest) {
       })
     }
 
+    // Check if user has a password (OAuth users don't have passwords)
+    if (!user.password) {
+      // User signed in with OAuth (e.g., Google) - they don't have a password to reset
+      return NextResponse.json(
+        { 
+          error: 'OAUTH_ACCOUNT',
+          message: 'This account uses Google Sign-In. You don\'t need a password - just sign in with Google.',
+        },
+        { status: 400 }
+      )
+    }
+
     // Generate secure random token
     const token = crypto.randomBytes(32).toString('hex')
 

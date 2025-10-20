@@ -5,7 +5,7 @@ import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import Link from "next/link"
-import { Loader2, ArrowLeft, Mail, CheckCircle } from "lucide-react"
+import { Loader2, ArrowLeft, Mail, CheckCircle, Info } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -25,6 +25,7 @@ type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>
 export default function ForgotPasswordPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [isOAuthAccount, setIsOAuthAccount] = useState(false)
   const [success, setSuccess] = useState(false)
 
   const form = useForm<ForgotPasswordFormData>({
@@ -37,6 +38,7 @@ export default function ForgotPasswordPage() {
   async function onSubmit(data: ForgotPasswordFormData) {
     setIsLoading(true)
     setError(null)
+    setIsOAuthAccount(false)
     setSuccess(false)
 
     try {
@@ -49,7 +51,13 @@ export default function ForgotPasswordPage() {
       const result = await response.json()
 
       if (!response.ok) {
-        setError(result.error || "Failed to send reset email")
+        // Check if this is an OAuth account
+        if (result.error === 'OAUTH_ACCOUNT') {
+          setIsOAuthAccount(true)
+          setError(result.message)
+        } else {
+          setError(result.error || "Failed to send reset email")
+        }
         setIsLoading(false)
         return
       }
@@ -78,8 +86,35 @@ export default function ForgotPasswordPage() {
 
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <CardContent className="space-y-3 sm:space-y-4 px-4 sm:px-6">
+            {/* OAuth Account Info Message */}
+            {isOAuthAccount && error && (
+              <div className="p-3 sm:p-4 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg">
+                <div className="flex items-start space-x-3">
+                  <Info className="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
+                  <div className="flex-1">
+                    <p className="text-sm sm:text-base font-semibold text-blue-900 dark:text-blue-400 mb-1">
+                      Google Sign-In Account
+                    </p>
+                    <p className="text-xs sm:text-sm text-blue-700 dark:text-blue-300 mb-3">
+                      {error}
+                    </p>
+                    <Link href="/login">
+                      <Button 
+                        type="button" 
+                        variant="outline" 
+                        size="sm"
+                        className="w-full sm:w-auto border-blue-300 dark:border-blue-700 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/50"
+                      >
+                        Go to Sign In
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Error Message */}
-            {error && (
+            {error && !isOAuthAccount && (
               <div className="p-2.5 sm:p-3 text-xs sm:text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg">
                 {error}
               </div>

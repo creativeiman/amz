@@ -28,40 +28,40 @@ export function UsageCard({ scansUsed, scanLimit, plan, onUpgrade }: UsageCardPr
 
   return (
     <Card>
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <div>
-            <CardTitle>Scan Usage</CardTitle>
-            <CardDescription>
+      <CardHeader className="pb-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex-1 min-w-0">
+            <CardTitle className="text-lg">Scan Usage</CardTitle>
+            <CardDescription className="text-sm">
               Current plan: <span className={`font-semibold ${getPlanBadgeColor(plan)}`}>{plan}</span>
             </CardDescription>
           </div>
           {plan === 'FREE' && (
-            <Button onClick={onUpgrade} size="sm" variant="outline">
+            <Button onClick={onUpgrade} size="sm" variant="outline" className="flex-shrink-0">
               <ArrowUpRight className="mr-2 h-4 w-4" />
               Upgrade
             </Button>
           )}
         </div>
       </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
+      <CardContent className="pt-0">
+        <div className="space-y-3 sm:space-y-4">
           <div className="flex items-center justify-between">
             <span className="text-sm text-muted-foreground">Scans used</span>
-            <span className="text-2xl font-bold">
+            <span className="text-xl sm:text-2xl font-bold">
               {scansUsed} {!isUnlimited && `/ ${scanLimit}`}
             </span>
           </div>
           {!isUnlimited && (
             <>
               <Progress value={percentage} className="h-2" />
-              <p className="text-sm text-muted-foreground">
+              <p className="text-xs sm:text-sm text-muted-foreground">
                 {remaining} scan{remaining !== 1 && 's'} remaining this month
               </p>
             </>
           )}
           {isUnlimited && (
-            <p className="text-sm text-green-600 font-medium">
+            <p className="text-xs sm:text-sm text-green-600 font-medium">
               ✨ Unlimited scans available
             </p>
           )}

@@ -12,14 +12,14 @@ interface StatsCardProps {
 export function StatsCard({ title, value, icon: Icon, iconColor, iconBgColor }: StatsCardProps) {
   return (
     <Card>
-      <CardContent className="p-6">
+      <CardContent className="p-4 sm:p-6">
         <div className="flex items-center justify-between">
-          <div>
+          <div className="flex-1 min-w-0">
             <p className="text-sm font-medium text-muted-foreground">{title}</p>
-            <p className="text-3xl font-bold mt-2">{value}</p>
+            <p className="text-2xl sm:text-3xl font-bold mt-1 sm:mt-2 truncate">{value}</p>
           </div>
-          <div className={`p-3 ${iconBgColor} rounded-xl`}>
-            <Icon className={`h-6 w-6 ${iconColor}`} />
+          <div className={`p-2 sm:p-3 ${iconBgColor} rounded-xl flex-shrink-0 ml-3`}>
+            <Icon className={`h-5 w-5 sm:h-6 sm:w-6 ${iconColor}`} />
           </div>
         </div>
       </CardContent>

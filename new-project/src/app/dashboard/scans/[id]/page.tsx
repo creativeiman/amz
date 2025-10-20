@@ -292,28 +292,24 @@ export default function ScanDetailPage() {
   const results = scan.results
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="bg-card border-b sticky top-0 z-10">
-        <div className="px-4 lg:px-8 py-3 sm:py-4">
-          <div className="flex items-center gap-3 sm:gap-4">
-            <button
-              onClick={() => router.push('/dashboard/scans')}
-              className="p-2 hover:bg-accent rounded-lg transition-colors flex-shrink-0"
-            >
-              <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
-            </button>
-            <div className="min-w-0 flex-1">
-              <h1 className="text-lg sm:text-2xl font-bold text-foreground truncate">Scan Results</h1>
-              <p className="text-xs sm:text-sm text-muted-foreground truncate">
-                {scan.productName} • {scan.category}
-              </p>
-            </div>
-          </div>
+      <div className="flex items-center gap-3 sm:gap-4">
+        <button
+          onClick={() => router.push('/dashboard/scans')}
+          className="p-2 hover:bg-accent rounded-lg transition-colors flex-shrink-0"
+        >
+          <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+        </button>
+        <div className="min-w-0 flex-1">
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground truncate">Scan Results</h1>
+          <p className="text-sm text-muted-foreground truncate">
+            {scan.productName} • {scan.category}
+          </p>
         </div>
       </div>
 
-      <div className="px-4 lg:px-8 py-4 sm:py-6">
+      <div className="space-y-4 sm:space-y-6">
         {/* Score Card */}
         <div className="bg-card rounded-xl sm:rounded-2xl shadow-lg border p-4 sm:p-6 mb-4 sm:mb-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4 sm:mb-6">

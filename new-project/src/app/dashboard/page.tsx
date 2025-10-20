@@ -98,25 +98,25 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Welcome Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
+        <div className="flex-1 min-w-0">
+          <h1 className="text-2xl sm:text-3xl font-bold">
             Welcome back, {session?.user?.name?.split(" ")[0]}!
           </h1>
-          <p className="text-muted-foreground mt-1">
+          <p className="text-muted-foreground mt-1 text-sm sm:text-base">
             Manage your product compliance and scan history
           </p>
         </div>
-        <Button onClick={handleNewScan} size="lg">
+        <Button onClick={handleNewScan} size="lg" className="w-full sm:w-auto">
           <Plus className="mr-2 h-4 w-4" />
           New Scan
         </Button>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
         <StatsCard
           title="Total Scans"
           value={data.stats.totalScans}
@@ -148,7 +148,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Usage and Recent Scans */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         <div className="lg:col-span-1">
           <UsageCard
             scansUsed={data.usage.scansUsed}

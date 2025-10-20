@@ -11,6 +11,7 @@ declare module 'next-auth' {
       role: 'USER' | 'ADMIN'
       plan: 'FREE' | 'DELUXE' | 'ONE_TIME'
       isOwner?: boolean // True if user owns an account, false if just a team member
+      authProvider?: 'credentials' | 'google' // Track how user authenticated
     } & DefaultSession['user']
   }
 
@@ -18,6 +19,7 @@ declare module 'next-auth' {
     role: 'USER' | 'ADMIN'
     plan: 'FREE' | 'DELUXE' | 'ONE_TIME'
     isOwner?: boolean
+    authProvider?: 'credentials' | 'google'
   }
 }
 
@@ -185,6 +187,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async signIn({ user, account }) {
       // For OAuth providers, create or update user
       if (account?.provider === 'google') {
+        console.log('[SignIn Callback] Google OAuth sign-in for:', user.email)
         const { prisma } = await import('@/db/client')
         
         const existingUser = await prisma.user.findUnique({
@@ -201,8 +204,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         })
 
         if (!existingUser) {
+          console.log('[SignIn Callback] Creating new user for:', user.email)
+          // Calculate next month's first day for scan limit reset
+          const nextMonthReset = new Date()
+          nextMonthReset.setMonth(nextMonthReset.getMonth() + 1)
+          nextMonthReset.setDate(1)
+          nextMonthReset.setHours(0, 0, 0, 0)
+
           // Create new user and account for OAuth
-          await prisma.user.create({
+          const newUser = await prisma.user.create({
             data: {
               name: user.name,
               email: user.email!,
@@ -213,44 +223,143 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
               ownedAccounts: {
                 create: {
                   name: `${user.name}'s Workspace`,
-                  slug: `${user.email!.split('@')[0]}-workspace-${Date.now()}`,
+                  slug: `${user.email!.split('@')[0].toLowerCase().replace(/[^a-z0-9]/g, '-')}-workspace-${Date.now()}`,
                   plan: 'FREE',
                   subscriptionStatus: 'ACTIVE',
                   isActive: true,
-                  scanLimitPerMonth: 3,
+                  scanLimitPerMonth: 1, // 1 scan per account lifetime for FREE plan
                   scansUsedThisMonth: 0,
+                  scanLimitResetAt: nextMonthReset, // First day of NEXT month
                 },
               },
             },
           })
+          console.log('[SignIn Callback] New user created:', newUser.id)
           return true
         }
 
+        console.log('[SignIn Callback] Existing user found:', existingUser.id)
+
         // Check if existing user is active
         if (!existingUser.isActive) {
+          console.log('[SignIn Callback] User is inactive:', existingUser.id)
           return '/login?error=Your account has been deactivated. Please contact support.'
         }
 
         // Check if user's account is active
         const primaryAccount = existingUser.ownedAccounts[0]
         if (primaryAccount && !primaryAccount.isActive) {
+          console.log('[SignIn Callback] User account is inactive:', primaryAccount.id)
           return '/login?error=Your account workspace has been deactivated. Please contact support.'
         }
+
+        console.log('[SignIn Callback] User is active, allowing sign-in')
       }
       return true
     },
 
-    async jwt({ token, user, trigger, session: _session }) {
-      // Initial sign in
+    async jwt({ token, user, trigger, account }) {
+      console.log('[JWT Callback] Called with:', { 
+        hasUser: !!user, 
+        hasAccount: !!account, 
+        provider: account?.provider,
+        trigger,
+        userId: user?.id || token.id
+      })
+
+      // Initial sign in - fetch user data from database for OAuth users
       if (user) {
         token.id = user.id
         token.name = user.name
         token.email = user.email
         token.picture = user.image
-        token.role = user.role
-        token.plan = user.plan
-        token.isOwner = user.isOwner
+
+        // Set authProvider based on account provider
+        if (account?.provider === 'google') {
+          token.authProvider = 'google'
+          console.log('[JWT Callback] Set authProvider to google for user:', user.email)
+        } else {
+          token.authProvider = 'credentials'
+          console.log('[JWT Callback] Set authProvider to credentials for user:', user.email)
+        }
+
+        // For OAuth providers, fetch additional data from database
+        if (account?.provider === 'google') {
+          console.log('[JWT Callback] Processing Google OAuth user:', user.email)
+          // Set defaults first
+          token.role = 'USER'
+          token.plan = 'FREE'
+          token.isOwner = true
+
+          try {
+            const { prisma } = await import('@/db/client')
+            // For OAuth, find user by email instead of ID (Google ID != our DB ID)
+            const dbUser = await prisma.user.findUnique({
+              where: { email: user.email! },
+              include: {
+                ownedAccounts: {
+                  select: {
+                    id: true,
+                    plan: true,
+                    isActive: true,
+                  },
+                  take: 1,
+                },
+                accountMemberships: {
+                  select: {
+                    id: true,
+                    isActive: true,
+                    account: {
+                      select: {
+                        id: true,
+                        plan: true,
+                        isActive: true,
+                      },
+                    },
+                  },
+                  take: 1,
+                },
+              },
+            })
+
+            if (dbUser) {
+              // Update token with database user ID, not Google's ID
+              token.id = dbUser.id
+              token.role = dbUser.role
+              const primaryAccount = dbUser.ownedAccounts[0]
+              const memberAccount = dbUser.accountMemberships[0]?.account
+
+              if (primaryAccount) {
+                token.plan = primaryAccount.plan
+                token.isOwner = true
+                console.log('[JWT Callback] Set token from owned account:', { plan: token.plan, isOwner: token.isOwner, dbUserId: dbUser.id })
+              } else if (memberAccount) {
+                token.plan = memberAccount.plan
+                token.isOwner = false
+                console.log('[JWT Callback] Set token from member account:', { plan: token.plan, isOwner: token.isOwner, dbUserId: dbUser.id })
+              } else {
+                // User exists but has no account (shouldn't happen with our signIn callback)
+                token.plan = 'FREE'
+                token.isOwner = true
+                console.log('[JWT Callback] User has no account, using defaults, dbUserId:', dbUser.id)
+              }
+            } else {
+              console.log('[JWT Callback] User not found in database by email:', user.email)
+            }
+          } catch (error) {
+            console.error('[JWT Callback] Error fetching OAuth user data:', error)
+            // Defaults are already set above, so just log and continue
+          }
+        } else {
+          // For credentials provider, use data from user object
+          token.role = user.role
+          token.plan = user.plan
+          token.isOwner = user.isOwner
+          console.log('[JWT Callback] Credentials login, set token from user object')
+        }
       }
+
+      console.log('[JWT Callback] Returning token with role:', token.role, 'plan:', token.plan, 'isOwner:', token.isOwner)
 
       // Update session - refetch user data from DB
       if (trigger === 'update') {
@@ -294,6 +403,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             } else if (dbUser.accountMemberships && dbUser.accountMemberships[0]) {
               token.plan = dbUser.accountMemberships[0].account.plan
             }
+            
+            // Preserve authProvider - don't overwrite it during updates
+            // authProvider should only be set during initial sign-in
+            console.log('[JWT Callback] Preserving authProvider during update:', token.authProvider)
           }
         } catch (error) {
           // If running in Edge runtime, Prisma won't work - skip the update
@@ -383,6 +496,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
     async session({ session, token }) {
       if (token) {
+        console.log('[Session Callback] Token authProvider:', token.authProvider)
         session.user.id = token.id as string
         session.user.name = token.name as string
         session.user.email = token.email as string
@@ -390,6 +504,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.role = token.role as 'USER' | 'ADMIN'
         session.user.plan = token.plan as 'FREE' | 'DELUXE' | 'ONE_TIME'
         session.user.isOwner = token.isOwner as boolean | undefined
+        session.user.authProvider = token.authProvider as 'credentials' | 'google' | undefined
+        console.log('[Session Callback] Session authProvider:', session.user.authProvider)
       }
       return session
     },

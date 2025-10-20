@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
+import { GoogleSignInButton } from "@/components/auth/google-signin-button"
 
 // Form validation schema
 const registerSchema = z.object({
@@ -131,6 +132,24 @@ function RegisterForm() {
 
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <CardContent className="space-y-3 sm:space-y-4 px-4 sm:px-6">
+            {/* Google Sign-In */}
+            <GoogleSignInButton 
+              callbackUrl={selectedPlan && selectedPlan !== 'free' 
+                ? `/dashboard/billing?plan=${selectedPlan}` 
+                : "/dashboard"
+              }
+            />
+
+            {/* Divider */}
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-card px-2 text-muted-foreground">Or continue with email</span>
+              </div>
+            </div>
+
             {/* Error Message */}
             {error && (
               <div className="p-2.5 sm:p-3 text-xs sm:text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg">

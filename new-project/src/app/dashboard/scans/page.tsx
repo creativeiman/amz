@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { Suspense } from "react"
 import Link from "next/link"
 import { useSearchParams, useRouter } from "next/navigation"
 import { Plus, Calendar, Zap, ArrowRight } from "lucide-react"
@@ -21,7 +22,7 @@ type AccountUsage = {
   resetDate: string | null
 }
 
-export default function ScansPage() {
+function ScansPageContent() {
   const { data: session } = useSession()
   const searchParams = useSearchParams()
   const router = useRouter()
@@ -224,5 +225,13 @@ export default function ScansPage() {
         onSave={handleSave}
       />
     </div>
+  )
+}
+
+export default function ScansPage() {
+  return (
+    <Suspense fallback={<LoadingPage text="Loading scans..." />}>
+      <ScansPageContent />
+    </Suspense>
   )
 }

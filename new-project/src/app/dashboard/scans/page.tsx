@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import Link from "next/link"
+import { useSearchParams, useRouter } from "next/navigation"
 import { Plus, Calendar, Zap, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { DataTable } from "./data-table"
@@ -22,6 +23,8 @@ type AccountUsage = {
 
 export default function ScansPage() {
   const { data: session } = useSession()
+  const searchParams = useSearchParams()
+  const router = useRouter()
   const [scans, setScans] = React.useState<Scan[]>([])
   const [isLoading, setIsLoading] = React.useState(true)
   const [selectedScan, setSelectedScan] = React.useState<Scan | null>(null)
@@ -35,6 +38,15 @@ export default function ScansPage() {
     const hasPermission = userPermissions.includes('SCAN_CREATE')
     return isOwner || hasPermission
   }, [session?.user?.isOwner, userPermissions])
+
+  // Open sheet if 'new' query parameter is present
+  React.useEffect(() => {
+    if (searchParams.get('new') === 'true' && canCreateScan) {
+      setIsSheetOpen(true)
+      // Remove the query parameter from URL without reloading
+      router.replace('/dashboard/scans', { scroll: false })
+    }
+  }, [searchParams, canCreateScan, router])
 
   // Fetch scans
   const fetchScans = React.useCallback(async () => {

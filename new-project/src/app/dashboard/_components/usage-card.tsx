@@ -18,11 +18,11 @@ export function UsageCard({ scansUsed, scanLimit, plan, onUpgrade }: UsageCardPr
   const getPlanBadgeColor = (planType: string) => {
     switch (planType) {
       case 'DELUXE':
-        return 'bg-gradient-to-r from-blue-500 to-purple-500'
+        return 'text-blue-600 dark:text-blue-400'
       case 'ONE_TIME':
-        return 'bg-gradient-to-r from-green-500 to-emerald-500'
+        return 'text-green-600 dark:text-green-400'
       default:
-        return 'bg-gradient-to-r from-gray-500 to-slate-500'
+        return 'text-gray-700 dark:text-gray-300'
     }
   }
 

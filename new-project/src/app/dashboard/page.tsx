@@ -65,7 +65,7 @@ export default function DashboardPage() {
   }
 
   const handleNewScan = () => {
-    router.push("/dashboard/scans/new")
+    router.push("/dashboard/scans?new=true")
   }
 
   const handleUpgrade = () => {

@@ -6,8 +6,9 @@ import { useSearchParams, useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
-import { signIn } from "next-auth/react"
+import { signIn, useSession } from "next-auth/react"
 import { CheckCircle2, AlertCircle, Loader2 } from "lucide-react"
+import { GoogleSignInButton } from "@/components/auth/google-signin-button"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -22,6 +23,7 @@ import {
 } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { LoadingSpinner } from "@/components/loading"
+import { Separator } from "@/components/ui/separator"
 
 const acceptInviteSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -45,6 +47,7 @@ type InvitationDetails = {
 function AcceptInviteContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
+  const { data: session } = useSession()
   const token = searchParams.get("token")
 
   const [isLoading, setIsLoading] = React.useState(true)
@@ -52,6 +55,18 @@ function AcceptInviteContent() {
   const [error, setError] = React.useState<string | null>(null)
   const [success, setSuccess] = React.useState(false)
   const [invitationDetails, setInvitationDetails] = React.useState<InvitationDetails | null>(null)
+  const [isAcceptingOAuth, setIsAcceptingOAuth] = React.useState(false)
+
+  // Check if user is already signed in and invitation was auto-accepted
+  React.useEffect(() => {
+    // If user is signed in and invitation doesn't exist, it was likely auto-accepted
+    if (session?.user && error && error.includes('already been used')) {
+      console.log('[AcceptInvite] Invitation already accepted, redirecting to dashboard')
+      setTimeout(() => {
+        router.push('/dashboard')
+      }, 2000)
+    }
+  }, [session, error, router])
 
   const {
     register,
@@ -82,7 +97,7 @@ function AcceptInviteContent() {
 
         setInvitationDetails(data.invitation)
         setIsLoading(false)
-      } catch (err) {
+      } catch {
         setError("Failed to verify invitation. Please try again.")
         setIsLoading(false)
       }
@@ -138,9 +153,40 @@ function AcceptInviteContent() {
           router.refresh()
         }, 1500)
       }
-    } catch (err) {
+    } catch {
       setError("Something went wrong. Please try again.")
       setIsSubmitting(false)
+    }
+  }
+
+  const handleOAuthAccept = async () => {
+    if (!session?.user || !token) return
+
+    setIsAcceptingOAuth(true)
+    setError(null)
+
+    try {
+      const response = await fetch("/api/invitations/accept-oauth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token }),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || "Failed to accept invitation")
+      }
+
+      const result = await response.json()
+      setSuccess(true)
+      setTimeout(() => {
+        router.push(result.redirectUrl || "/dashboard")
+      }, 2000)
+    } catch (error) {
+      console.error("Error accepting OAuth invitation:", error)
+      setError(error instanceof Error ? error.message : "Failed to accept invitation")
+    } finally {
+      setIsAcceptingOAuth(false)
     }
   }
 
@@ -153,18 +199,30 @@ function AcceptInviteContent() {
   }
 
   if (error && !invitationDetails) {
+    // Check if user is signed in - invitation might have been auto-accepted
+    const isAutoAccepted = session?.user && error.includes('already been used')
+    
     return (
       <div className="flex min-h-screen items-center justify-center p-4">
         <Card className="w-full max-w-md">
           <CardHeader>
             <div className="flex items-center gap-2">
-              <AlertCircle className="h-5 w-5 text-red-600" />
-              <CardTitle>Invalid Invitation</CardTitle>
+              {isAutoAccepted ? (
+                <CheckCircle2 className="h-5 w-5 text-green-600" />
+              ) : (
+                <AlertCircle className="h-5 w-5 text-red-600" />
+              )}
+              <CardTitle>{isAutoAccepted ? 'Invitation Accepted!' : 'Invalid Invitation'}</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
-            <Alert variant="destructive">
-              <AlertDescription>{error}</AlertDescription>
+            <Alert variant={isAutoAccepted ? "default" : "destructive"}>
+              <AlertDescription>
+                {isAutoAccepted 
+                  ? "Your invitation has been accepted! You've been added to the team. Redirecting to dashboard..."
+                  : error
+                }
+              </AlertDescription>
             </Alert>
           </CardContent>
           <CardFooter>
@@ -233,7 +291,34 @@ function AcceptInviteContent() {
             </Alert>
           )}
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          {/* Show different UI based on authentication status */}
+          {session?.user && session.user.authProvider === 'google' && session.user.email === invitationDetails?.email ? (
+            // User is signed in with Google and email matches - show OAuth acceptance
+            <div className="space-y-4">
+              <div className="text-center">
+                <p className="text-sm text-muted-foreground mb-4">
+                  You&apos;re signed in as <strong>{session.user.email}</strong>
+                </p>
+                <Button 
+                  onClick={handleOAuthAccept}
+                  disabled={isAcceptingOAuth}
+                  className="w-full"
+                >
+                  {isAcceptingOAuth ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Accepting...
+                    </>
+                  ) : (
+                    "Accept Invitation"
+                  )}
+                </Button>
+              </div>
+            </div>
+          ) : (
+            // Show credential form or Google sign-in option
+            <>
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="name">Full Name</Label>
               <Input
@@ -283,6 +368,28 @@ function AcceptInviteContent() {
               )}
             </Button>
           </form>
+
+          <div className="mt-6">
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <Separator className="w-full" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-2 text-muted-foreground">
+                  Or continue with
+                </span>
+              </div>
+            </div>
+
+            <div className="mt-4">
+              <GoogleSignInButton 
+                callbackUrl={`/accept-invite?token=${token}`}
+                className="w-full"
+              />
+            </div>
+          </div>
+            </>
+          )}
         </CardContent>
         <CardFooter className="text-center text-sm text-muted-foreground">
           Already have an account?{" "}

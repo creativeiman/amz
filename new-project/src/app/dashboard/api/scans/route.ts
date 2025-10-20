@@ -6,7 +6,7 @@ import { addScanJob } from "@/lib/queue/scan-queue"
 import { Category } from "@prisma/client"
 
 // GET /dashboard/api/scans - Get all scans for current user's account
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const session = await auth()
     if (!session?.user?.id) {
@@ -30,12 +30,18 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "User not found" }, { status: 404 })
     }
 
-    // Determine which account to use
+    // Determine which account to use and get permissions
     let accountId: string
+    let userPermissions: string[] = []
+    
     if (user.ownedAccounts.length > 0) {
       accountId = user.ownedAccounts[0].id
+      // Owners have all permissions
+      userPermissions = ['SCAN_CREATE', 'SCAN_VIEW', 'SCAN_EDIT', 'SCAN_DELETE', 'TEAM_VIEW', 'TEAM_INVITE', 'TEAM_REMOVE']
     } else if (user.accountMemberships.length > 0) {
       accountId = user.accountMemberships[0].accountId
+      // Get member's permissions
+      userPermissions = user.accountMemberships[0].permissions || []
     } else {
       return NextResponse.json({ error: "No account found" }, { status: 404 })
     }
@@ -106,6 +112,7 @@ export async function GET(request: NextRequest) {
         scanLimit: account?.scanLimitPerMonth || null,
         resetDate: account?.scanLimitResetAt?.toISOString() || null,
       },
+      permissions: userPermissions,
     })
   } catch (error) {
     console.error("Error fetching scans:", error)
@@ -163,14 +170,25 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "User not found" }, { status: 404 })
     }
 
-    // Determine which account to use
+    // Determine which account to use and check permissions
     let accountId: string
+    let canCreate = false
+    
     if (user.ownedAccounts.length > 0) {
       accountId = user.ownedAccounts[0].id
+      canCreate = true // Owners can always create
     } else if (user.accountMemberships.length > 0) {
       accountId = user.accountMemberships[0].accountId
+      // Check if user has SCAN_CREATE permission
+      const permissions = user.accountMemberships[0].permissions || []
+      canCreate = permissions.includes('SCAN_CREATE')
     } else {
       return NextResponse.json({ error: "No account found" }, { status: 404 })
+    }
+
+    // Check permission
+    if (!canCreate) {
+      return NextResponse.json({ error: "You don't have permission to create scans" }, { status: 403 })
     }
 
     // Check account scan limits

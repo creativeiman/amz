@@ -11,6 +11,7 @@ import { toast } from "sonner"
 import { LoadingPage } from "@/components/loading"
 import { Card } from "@/components/ui/card"
 import { format } from "date-fns"
+import { useSession } from "next-auth/react"
 
 type AccountUsage = {
   scansUsed: number
@@ -19,11 +20,20 @@ type AccountUsage = {
 }
 
 export default function ScansPage() {
+  const { data: session } = useSession()
   const [scans, setScans] = React.useState<Scan[]>([])
   const [isLoading, setIsLoading] = React.useState(true)
   const [selectedScan, setSelectedScan] = React.useState<Scan | null>(null)
   const [isSheetOpen, setIsSheetOpen] = React.useState(false)
   const [accountUsage, setAccountUsage] = React.useState<AccountUsage | null>(null)
+  const [userPermissions, setUserPermissions] = React.useState<string[]>([])
+
+  // Check if user is owner or has SCAN_CREATE permission
+  const canCreateScan = React.useMemo(() => {
+    const isOwner = session?.user?.isOwner
+    const hasPermission = userPermissions.includes('SCAN_CREATE')
+    return isOwner || hasPermission
+  }, [session?.user?.isOwner, userPermissions])
 
   // Fetch scans
   const fetchScans = React.useCallback(async () => {
@@ -33,6 +43,7 @@ export default function ScansPage() {
       const data = await response.json()
       setScans(data.scans)
       setAccountUsage(data.usage)
+      setUserPermissions(data.permissions || [])
     } catch (error) {
       console.error("Error fetching scans:", error)
       toast.error("Failed to load scans")
@@ -123,10 +134,12 @@ export default function ScansPage() {
             Scan product labels for compliance analysis
           </p>
         </div>
-        <Button onClick={handleCreateNew} disabled={isLimitReached} className="w-full sm:w-auto">
-          <Plus className="mr-2 h-4 w-4" />
-          New Scan
-        </Button>
+        {canCreateScan && (
+          <Button onClick={handleCreateNew} disabled={isLimitReached} className="w-full sm:w-auto">
+            <Plus className="mr-2 h-4 w-4" />
+            New Scan
+          </Button>
+        )}
       </div>
 
       {/* Usage Card */}

@@ -205,6 +205,65 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         if (!existingUser) {
           console.log('[SignIn Callback] Creating new user for:', user.email)
+          
+          // Check if user has a pending invitation
+          const pendingInvitation = await prisma.accountInvite.findFirst({
+            where: {
+              email: user.email!,
+              expiresAt: {
+                gt: new Date(), // Not expired
+              },
+            },
+            include: {
+              account: {
+                select: {
+                  id: true,
+                  name: true,
+                  isActive: true,
+                },
+              },
+            },
+          })
+
+          if (pendingInvitation) {
+            console.log('[SignIn Callback] User has pending invitation, creating as team member')
+            
+            // Create user WITHOUT account (they'll be added as team member)
+            const newUser = await prisma.user.create({
+              data: {
+                name: user.name,
+                email: user.email!,
+                image: user.image,
+                role: 'USER',
+                isActive: true,
+                emailVerified: new Date(),
+              },
+            })
+
+            // Add user as team member
+            await prisma.accountMember.create({
+              data: {
+                accountId: pendingInvitation.accountId,
+                userId: newUser.id,
+                role: pendingInvitation.role,
+                permissions: pendingInvitation.permissions,
+                invitedBy: pendingInvitation.invitedBy,
+                isActive: true,
+              },
+            })
+
+            // Delete the used invitation
+            await prisma.accountInvite.delete({
+              where: { id: pendingInvitation.id },
+            })
+
+            console.log('[SignIn Callback] User added as team member to:', pendingInvitation.account.name)
+            return true
+          }
+
+          // No pending invitation - create user with their own account
+          console.log('[SignIn Callback] No pending invitation, creating user with account')
+          
           // Calculate next month's first day for scan limit reset
           const nextMonthReset = new Date()
           nextMonthReset.setMonth(nextMonthReset.getMonth() + 1)
@@ -234,7 +293,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
               },
             },
           })
-          console.log('[SignIn Callback] New user created:', newUser.id)
+          console.log('[SignIn Callback] New user created with account:', newUser.id)
           return true
         }
 

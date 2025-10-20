@@ -1,49 +1,20 @@
-import { NextResponse } from 'next/server'
-import { auth } from '@/lib/auth'
+import { ApiHandler, isErrorResponse } from '@/lib/api-handler'
 import { prisma } from '@/db/client'
 
 export async function GET() {
-  try {
-    const session = await auth()
-    
-    if (!session || !session.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
-    // Get user's account (either owned or member of)
-    const user = await prisma.user.findUnique({
-      where: { id: session.user.id },
-      include: {
-        ownedAccounts: {
-          where: { isActive: true },
-          take: 1,
-        },
-        accountMemberships: {
-          where: { isActive: true },
-          include: {
-            account: true,
-          },
-          take: 1,
-        },
-      },
+  return ApiHandler.handle(async () => {
+    const context = await ApiHandler.getUserContext({
+      requireAuth: true,
+      requireAccount: true,
     })
-    
-    if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 })
-    }
 
-    // Determine which account to use (owned account takes priority)
-    const accountId = user.ownedAccounts[0]?.id || user.accountMemberships[0]?.accountId
-    
-    if (!accountId) {
-      return NextResponse.json({ error: 'No account found' }, { status: 404 })
-    }
+    if (isErrorResponse(context)) return context
+
+    const accountId = context.accountId!
 
     // Fetch all scans for the account
     const allScans = await prisma.scan.findMany({
-      where: {
-        accountId,
-      },
+      where: { accountId },
       select: {
         id: true,
         productName: true,
@@ -53,9 +24,7 @@ export async function GET() {
         status: true,
         createdAt: true,
       },
-      orderBy: {
-        createdAt: 'desc',
-      },
+      orderBy: { createdAt: 'desc' },
     })
 
     // Calculate stats
@@ -72,7 +41,7 @@ export async function GET() {
           accountId,
           status: 'COMPLETED',
         },
-        status: 'FAILED', // Only count failed issues
+        status: 'FAILED',
       },
     })
 
@@ -104,10 +73,10 @@ export async function GET() {
     })
 
     if (!account) {
-      return NextResponse.json({ error: 'Account not found' }, { status: 404 })
+      return ApiHandler.notFound('Account not found')
     }
 
-    return NextResponse.json({
+    return {
       stats: {
         totalScans,
         compliantScans,
@@ -122,10 +91,6 @@ export async function GET() {
       account: {
         plan: account.plan,
       },
-    }, { status: 200 })
-  } catch (error) {
-    console.error('Error fetching dashboard overview:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
-  }
+    }
+  })
 }
-

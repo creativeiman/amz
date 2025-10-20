@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { auth } from '@/lib/auth'
+import { NextRequest } from 'next/server'
+import { ApiHandler, isErrorResponse } from '@/lib/api-handler'
 import { prisma } from '@/db/client'
 
 // POST resend an invitation (Owner only)
@@ -7,37 +7,28 @@ export async function POST(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  try {
-    const session = await auth()
+  return ApiHandler.handle(async () => {
+    const context = await ApiHandler.getUserContext({
+      requireAuth: true,
+      requireAccount: true,
+    })
     
-    if (!session || !session.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+    if (isErrorResponse(context)) return context
 
     // Only account owners can resend invitations
-    if (session.user.role !== 'USER') {
-      return NextResponse.json({ error: 'Forbidden: Only account owners can resend invitations' }, { status: 403 })
+    if (!context.isOwner) {
+      return ApiHandler.forbidden('Only account owners can resend invitations')
     }
 
     const { id } = await params
-
-    // Get user's account (must be owner)
-    const account = await prisma.account.findFirst({
-      where: { ownerId: session.user.id },
-      select: { id: true, name: true },
-    })
-
-    if (!account) {
-      return NextResponse.json({ error: 'No account found. Only account owners can resend invitations.' }, { status: 404 })
-    }
 
     // Verify the invitation belongs to this account
     const invitation = await prisma.accountInvite.findUnique({
       where: { id },
     })
 
-    if (!invitation || invitation.accountId !== account.id) {
-      return NextResponse.json({ error: 'Invitation not found' }, { status: 404 })
+    if (!invitation || invitation.accountId !== context.accountId) {
+      return ApiHandler.notFound('Invitation not found')
     }
 
     // Update expiry date (extend by 7 days from now)
@@ -54,13 +45,6 @@ export async function POST(
     // TODO: Resend invitation email
     // await sendInvitationEmail(invitation.email, invitation.id, account.name)
 
-    return NextResponse.json(
-      { message: 'Invitation resent successfully' },
-      { status: 200 }
-    )
-  } catch (error) {
-    console.error('Error resending invitation:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
-  }
+    return { message: 'Invitation resent successfully' }
+  })
 }
-

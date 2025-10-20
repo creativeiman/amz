@@ -1,73 +1,63 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest } from 'next/server'
+import { ApiHandler, isErrorResponse } from '@/lib/api-handler'
 import { prisma } from '@/db/client'
-import { auth } from '@/lib/auth'
 
 export async function POST(request: NextRequest) {
-  try {
-    const session = await auth()
+  return ApiHandler.handle(async () => {
+    const context = await ApiHandler.getUserContext({ requireAuth: true })
     
-    if (!session || !session.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+    if (isErrorResponse(context)) return context
 
-    const body = await request.json()
-    const { token } = body
-
-    // Validation
-    if (!token) {
-      return NextResponse.json({ error: 'Token is required' }, { status: 400 })
-    }
+    const body = await ApiHandler.validateBody<{ token: string }>(request, ['token'])
+    
+    if (isErrorResponse(body)) return body
 
     // Find the invitation
     const invitation = await prisma.accountInvite.findUnique({
-      where: { token },
+      where: { token: body.token },
     })
 
     if (!invitation) {
-      return NextResponse.json(
-        { error: 'Invalid invitation link. This invitation may have already been used or does not exist.' },
-        { status: 404 }
-      )
+      return ApiHandler.notFound('Invalid invitation link. This invitation may have already been used or does not exist.')
     }
 
     // Check if invitation has expired
     if (new Date() > invitation.expiresAt) {
-      return NextResponse.json(
-        { error: 'This invitation has expired. Please request a new invitation from your team administrator.' },
-        { status: 410 }
+      return ApiHandler.error(
+        'This invitation has expired. Please request a new invitation from your team administrator.',
+        undefined,
+        410
       )
     }
 
     // Verify that the OAuth user's email matches the invitation email
-    if (session.user.email !== invitation.email) {
-      return NextResponse.json(
-        { error: 'This invitation is for a different email address. Please sign in with the correct Google account.' },
-        { status: 403 }
-      )
+    if (context.session?.user?.email !== invitation.email) {
+      return ApiHandler.forbidden('This invitation is for a different email address. Please sign in with the correct Google account.')
     }
 
     // Check if user is already a member of this account
     const existingMembership = await prisma.accountMember.findFirst({
       where: {
-        userId: session.user.id,
+        userId: context.userId,
         accountId: invitation.accountId,
       },
     })
 
     if (existingMembership) {
-      return NextResponse.json(
-        { error: 'You are already a member of this team.' },
-        { status: 409 }
+      return ApiHandler.error(
+        'You are already a member of this team.',
+        undefined,
+        409
       )
     }
 
     // Add user as account member and delete invitation in a transaction
-    const result = await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx) => {
       // Add user as account member
       await tx.accountMember.create({
         data: {
           accountId: invitation.accountId,
-          userId: session.user.id,
+          userId: context.userId,
           role: invitation.role,
           permissions: invitation.permissions,
           invitedBy: invitation.invitedBy,
@@ -79,22 +69,11 @@ export async function POST(request: NextRequest) {
       await tx.accountInvite.delete({
         where: { id: invitation.id },
       })
-
-      return { success: true }
     })
 
-    return NextResponse.json(
-      {
-        message: 'Invitation accepted successfully',
-        redirectUrl: '/dashboard',
-      },
-      { status: 200 }
-    )
-  } catch (error) {
-    console.error('Error accepting OAuth invitation:', error)
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    )
-  }
+    return {
+      message: 'Invitation accepted successfully',
+      redirectUrl: '/dashboard',
+    }
+  })
 }

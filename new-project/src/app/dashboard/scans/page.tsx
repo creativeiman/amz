@@ -12,6 +12,7 @@ import { LoadingPage } from "@/components/loading"
 import { Card } from "@/components/ui/card"
 import { format } from "date-fns"
 import { useSession } from "next-auth/react"
+import { api, ApiError } from "@/lib/api-client"
 
 type AccountUsage = {
   scansUsed: number
@@ -38,15 +39,19 @@ export default function ScansPage() {
   // Fetch scans
   const fetchScans = React.useCallback(async () => {
     try {
-      const response = await fetch("/dashboard/api/scans")
-      if (!response.ok) throw new Error("Failed to fetch scans")
-      const data = await response.json()
+      const data = await api.get<{
+        scans: Scan[]
+        usage: AccountUsage
+        permissions: string[]
+      }>("/dashboard/api/scans")
+      
       setScans(data.scans)
       setAccountUsage(data.usage)
       setUserPermissions(data.permissions || [])
     } catch (error) {
       console.error("Error fetching scans:", error)
-      toast.error("Failed to load scans")
+      const message = error instanceof ApiError ? error.message : "Failed to load scans"
+      toast.error(message)
     } finally {
       setIsLoading(false)
     }
@@ -82,15 +87,7 @@ export default function ScansPage() {
   const handleSave = React.useCallback(
     async (formData: FormData) => {
       try {
-        const response = await fetch("/dashboard/api/scans", {
-          method: "POST",
-          body: formData, // FormData for file upload
-        })
-
-        if (!response.ok) {
-          const error = await response.json()
-          throw new Error(error.error || "Failed to create scan")
-        }
+        await api.post("/dashboard/api/scans", formData)
 
         toast.success("Scan created successfully")
         fetchScans()
@@ -98,7 +95,7 @@ export default function ScansPage() {
         setSelectedScan(null)
       } catch (error) {
         console.error("Error saving scan:", error)
-        const errorMessage = error instanceof Error ? error.message : "Failed to create scan"
+        const errorMessage = error instanceof ApiError ? error.message : "Failed to create scan"
         toast.error(errorMessage)
         throw error
       }

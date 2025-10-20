@@ -1,15 +1,16 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { auth } from '@/lib/auth'
+import { NextRequest } from 'next/server'
+import { ApiHandler, isErrorResponse } from '@/lib/api-handler'
 import { prisma } from '@/db/client'
 
 // GET all accounts (Admin only)
 export async function GET() {
-  try {
-    const session = await auth()
+  return ApiHandler.handle(async () => {
+    const context = await ApiHandler.getUserContext({
+      requireAuth: true,
+      requireAdmin: true,
+    })
     
-    if (!session || session.user.role !== 'ADMIN') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+    if (isErrorResponse(context)) return context
 
     const accounts = await prisma.account.findMany({
       select: {
@@ -64,43 +65,44 @@ export async function GET() {
       updatedAt: account.updatedAt,
     }))
 
-    return NextResponse.json({ accounts: formattedAccounts }, { status: 200 })
-  } catch (error) {
-    console.error('Error fetching users:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
-  }
+    return { accounts: formattedAccounts }
+  })
 }
 
 // POST create new account (Admin only)
 export async function POST(request: NextRequest) {
-  try {
-    const session = await auth()
+  return ApiHandler.handle(async () => {
+    const context = await ApiHandler.getUserContext({
+      requireAuth: true,
+      requireAdmin: true,
+    })
     
-    if (!session || session.user.role !== 'ADMIN') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+    if (isErrorResponse(context)) return context
 
-    const body = await request.json()
-    const { accountName, ownerName, ownerEmail, plan, isEmailVerified, isActive } = body
-
-    // Basic validation
-    if (!accountName || !ownerName || !ownerEmail || !plan) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
-    }
+    const body = await ApiHandler.validateBody<{
+      accountName: string
+      ownerName: string
+      ownerEmail: string
+      plan: string
+      isEmailVerified?: boolean
+      isActive?: boolean
+    }>(request, ['accountName', 'ownerName', 'ownerEmail', 'plan'])
+    
+    if (isErrorResponse(body)) return body
 
     // Check if user already exists
     let owner = await prisma.user.findUnique({
-      where: { email: ownerEmail },
+      where: { email: body.ownerEmail },
     })
 
     if (!owner) {
       // Create new user as owner
       owner = await prisma.user.create({
         data: {
-          name: ownerName,
-          email: ownerEmail,
+          name: body.ownerName,
+          email: body.ownerEmail,
           role: 'USER',
-          emailVerified: isEmailVerified ? new Date() : null,
+          emailVerified: body.isEmailVerified ? new Date() : null,
         },
       })
     }
@@ -114,13 +116,13 @@ export async function POST(request: NextRequest) {
     // Create the account
     const newAccount = await prisma.account.create({
       data: {
-        name: accountName,
-        slug: `${accountName.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}`,
+        name: body.accountName,
+        slug: `${body.accountName.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}`,
         ownerId: owner.id,
-        plan,
-        subscriptionStatus: plan === 'FREE' ? 'ACTIVE' : 'INACTIVE',
-        isActive: isActive !== undefined ? isActive : true,
-        scanLimitPerMonth: plan === 'FREE' ? 3 : plan === 'ONE_TIME' ? 1 : null,
+        plan: body.plan as any,
+        subscriptionStatus: body.plan === 'FREE' ? 'ACTIVE' : 'INACTIVE',
+        isActive: body.isActive !== undefined ? body.isActive : true,
+        scanLimitPerMonth: body.plan === 'FREE' ? 3 : body.plan === 'ONE_TIME' ? 1 : null,
         scansUsedThisMonth: 0,
         scanLimitResetAt: nextMonthReset,
       },
@@ -136,9 +138,6 @@ export async function POST(request: NextRequest) {
       },
     })
 
-    return NextResponse.json({ account: newAccount }, { status: 201 })
-  } catch (error) {
-    console.error('Error creating user:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
-  }
+    return { account: newAccount }
+  })
 }

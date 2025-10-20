@@ -1,36 +1,26 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { auth } from '@/lib/auth'
+import { NextRequest } from 'next/server'
+import { ApiHandler, isErrorResponse } from '@/lib/api-handler'
 import { prisma } from '@/db/client'
-import { canAddTeamMember, getRemainingSlots, getPlanLimits } from '@/config/plans'
+import { canAddTeamMember, getPlanLimits } from '@/config/plans'
 
 // GET all invitations for the user's account (Owner only)
 export async function GET() {
-  try {
-    const session = await auth()
+  return ApiHandler.handle(async () => {
+    const context = await ApiHandler.getUserContext({
+      requireAuth: true,
+      requireAccount: true,
+    })
     
-    if (!session || !session.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+    if (isErrorResponse(context)) return context
 
     // Only account owners can view invitations
-    if (session.user.role !== 'USER') {
-      return NextResponse.json({ error: 'Forbidden: Only account owners can access this' }, { status: 403 })
-    }
-
-    // Get user's account (must be owner)
-    const account = await prisma.account.findFirst({
-      where: { ownerId: session.user.id },
-      select: { id: true },
-    })
-
-    if (!account) {
-      console.error(`No account found for user: ${session.user.id} (${session.user.email})`)
-      return NextResponse.json({ error: 'No account found. Only account owners can manage invitations.' }, { status: 404 })
+    if (!context.isOwner) {
+      return ApiHandler.forbidden('Only account owners can access invitations')
     }
 
     // Get all invitations for this account
     const invitations = await prisma.accountInvite.findMany({
-      where: { accountId: account.id },
+      where: { accountId: context.accountId! },
       orderBy: {
         createdAt: 'desc',
       },
@@ -59,25 +49,23 @@ export async function GET() {
       createdAt: invite.createdAt,
     }))
 
-    return NextResponse.json({ invitations: formattedInvitations }, { status: 200 })
-  } catch (error) {
-    console.error('Error fetching invitations:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
-  }
+    return { invitations: formattedInvitations }
+  })
 }
 
 // POST create a new invitation (Owner only)
 export async function POST(request: NextRequest) {
-  try {
-    const session = await auth()
+  return ApiHandler.handle(async () => {
+    const context = await ApiHandler.getUserContext({
+      requireAuth: true,
+      requireAccount: true,
+    })
     
-    if (!session || !session.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+    if (isErrorResponse(context)) return context
 
     // Only account owners can send invitations
-    if (session.user.role !== 'USER') {
-      return NextResponse.json({ error: 'Forbidden: Only account owners can send invitations' }, { status: 403 })
+    if (!context.isOwner) {
+      return ApiHandler.forbidden('Only account owners can send invitations')
     }
 
     const body = await request.json()
@@ -85,12 +73,12 @@ export async function POST(request: NextRequest) {
 
     // Validation
     if (!email || !role || !permissions || !Array.isArray(permissions)) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
+      return ApiHandler.badRequest('Missing required fields')
     }
 
-    // Get user's account (must be owner)
-    const account = await prisma.account.findFirst({
-      where: { ownerId: session.user.id },
+    // Get account with counts
+    const account = await prisma.account.findUnique({
+      where: { id: context.accountId! },
       select: { 
         id: true,
         plan: true,
@@ -104,15 +92,12 @@ export async function POST(request: NextRequest) {
     })
 
     if (!account) {
-      return NextResponse.json({ error: 'No account found. Only account owners can send invitations.' }, { status: 404 })
+      return ApiHandler.notFound('Account not found')
     }
 
     // Check if trying to invite yourself (the account owner)
-    if (session.user.email === email) {
-      return NextResponse.json(
-        { error: 'You cannot invite yourself. You are already the account owner.' },
-        { status: 400 }
-      )
+    if (context.session?.user?.email === email) {
+      return ApiHandler.badRequest('You cannot invite yourself. You are already the account owner.')
     }
 
     // Check plan limits for team members
@@ -123,27 +108,19 @@ export async function POST(request: NextRequest) {
 
     // Check if plan allows team members
     if (planLimits.maxTeamMembers === 0) {
-      return NextResponse.json(
-        { 
-          error: `Team collaboration is not available on the ${planLimits.name} plan. Upgrade to Deluxe to invite team members.`,
-          upgradeRequired: true,
-        },
-        { status: 403 }
+      return ApiHandler.error(
+        `Team collaboration is not available on the ${planLimits.name} plan. Upgrade to Deluxe to invite team members.`,
+        undefined,
+        403
       )
     }
 
     // Check if adding this member would exceed the limit
     if (!canAddTeamMember(account.plan, totalCount)) {
-      const remaining = getRemainingSlots(account.plan, totalCount)
-      return NextResponse.json(
-        { 
-          error: `You've reached the maximum of ${planLimits.maxTeamMembers} team members for your ${planLimits.name} plan. You currently have ${currentMemberCount} active members and ${pendingInvitesCount} pending invitations.`,
-          limitReached: true,
-          currentMembers: currentMemberCount,
-          pendingInvites: pendingInvitesCount,
-          maxAllowed: planLimits.maxTeamMembers,
-        },
-        { status: 403 }
+      return ApiHandler.error(
+        `You've reached the maximum of ${planLimits.maxTeamMembers} team members for your ${planLimits.name} plan. You currently have ${currentMemberCount} active members and ${pendingInvitesCount} pending invitations.`,
+        undefined,
+        403
       )
     }
 
@@ -165,9 +142,10 @@ export async function POST(request: NextRequest) {
     if (existingUser) {
       // Check if they own any accounts
       if (existingUser.ownedAccounts && existingUser.ownedAccounts.length > 0) {
-        return NextResponse.json(
-          { error: 'This user already owns an account and cannot be invited as a team member.' },
-          { status: 409 }
+        return ApiHandler.error(
+          'This user already owns an account and cannot be invited as a team member.',
+          undefined,
+          409
         )
       }
 
@@ -177,16 +155,18 @@ export async function POST(request: NextRequest) {
       )
       
       if (isMemberOfThisAccount) {
-        return NextResponse.json(
-          { error: 'This user is already a member of your account.' },
-          { status: 409 }
+        return ApiHandler.error(
+          'This user is already a member of your account.',
+          undefined,
+          409
         )
       }
 
       // User exists but is a member of another account
-      return NextResponse.json(
-        { error: 'This email is already registered in the platform. Each user can only belong to one account.' },
-        { status: 409 }
+      return ApiHandler.error(
+        'This email is already registered in the platform. Each user can only belong to one account.',
+        undefined,
+        409
       )
     }
 
@@ -202,9 +182,10 @@ export async function POST(request: NextRequest) {
     })
 
     if (existingInvite) {
-      return NextResponse.json(
-        { error: 'An active invitation already exists for this email' },
-        { status: 409 }
+      return ApiHandler.error(
+        'An active invitation already exists for this email',
+        undefined,
+        409
       )
     }
 
@@ -222,7 +203,7 @@ export async function POST(request: NextRequest) {
         email,
         role,
         permissions,
-        invitedBy: session.user.id,
+        invitedBy: context.userId,
         token,
         expiresAt,
       },
@@ -242,23 +223,16 @@ export async function POST(request: NextRequest) {
     // TODO: Send invitation email
     // await sendInvitationEmail(email, invitation.token, account.name)
 
-    return NextResponse.json(
-      {
-        invitation: {
-          id: invitation.id,
-          email: invitation.email,
-          role: invitation.role,
-          permissions: invitation.permissions,
-          invitedBy: invitation.invitedBy,
-          expiresAt: invitation.expiresAt,
-          createdAt: invitation.createdAt,
-        },
+    return {
+      invitation: {
+        id: invitation.id,
+        email: invitation.email,
+        role: invitation.role,
+        permissions: invitation.permissions,
+        invitedBy: invitation.invitedBy,
+        expiresAt: invitation.expiresAt,
+        createdAt: invitation.createdAt,
       },
-      { status: 201 }
-    )
-  } catch (error) {
-    console.error('Error creating invitation:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
-  }
+    }
+  })
 }
-

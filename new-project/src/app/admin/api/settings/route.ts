@@ -1,15 +1,16 @@
-import { NextRequest, NextResponse } from "next/server"
-import { auth } from "@/lib/auth"
+import { NextRequest } from "next/server"
+import { ApiHandler, isErrorResponse } from "@/lib/api-handler"
 import { prisma } from "@/db/client"
 
 // GET /admin/api/settings - Get system settings
-export async function GET(request: NextRequest) {
-  try {
-    const session = await auth()
+export async function GET() {
+  return ApiHandler.handle(async () => {
+    const context = await ApiHandler.getUserContext({
+      requireAuth: true,
+      requireAdmin: true,
+    })
     
-    if (!session?.user?.id || session.user.role !== "ADMIN") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
+    if (isErrorResponse(context)) return context
 
     // Get or create settings (singleton pattern)
     let settings = await prisma.systemSettings.findUnique({
@@ -30,7 +31,7 @@ export async function GET(request: NextRequest) {
       })
     }
 
-    return NextResponse.json({
+    return {
       settings: {
         masterPrompt: settings.masterPrompt || "",
         commonRules: settings.commonRules || "",
@@ -38,21 +39,19 @@ export async function GET(request: NextRequest) {
         ukRules: settings.ukRules || "",
         euRules: settings.euRules || "",
       },
-    })
-  } catch (error) {
-    console.error("Error fetching settings:", error)
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
-  }
+    }
+  })
 }
 
 // PUT /admin/api/settings - Update system settings
 export async function PUT(request: NextRequest) {
-  try {
-    const session = await auth()
+  return ApiHandler.handle(async () => {
+    const context = await ApiHandler.getUserContext({
+      requireAuth: true,
+      requireAdmin: true,
+    })
     
-    if (!session?.user?.id || session.user.role !== "ADMIN") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
+    if (isErrorResponse(context)) return context
 
     const body = await request.json()
     const {
@@ -83,13 +82,9 @@ export async function PUT(request: NextRequest) {
       },
     })
 
-    return NextResponse.json({
+    return {
       message: "Settings updated successfully",
       settings,
-    })
-  } catch (error) {
-    console.error("Error updating settings:", error)
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
-  }
+    }
+  })
 }
-

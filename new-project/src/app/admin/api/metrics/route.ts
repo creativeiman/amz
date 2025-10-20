@@ -1,14 +1,14 @@
-import { NextResponse } from 'next/server'
-import { auth } from '@/lib/auth'
+import { ApiHandler, isErrorResponse } from '@/lib/api-handler'
 import { prisma } from '@/db/client'
 
 export async function GET() {
-  try {
-    const session = await auth()
+  return ApiHandler.handle(async () => {
+    const context = await ApiHandler.getUserContext({
+      requireAuth: true,
+      requireAdmin: true,
+    })
     
-    if (!session || session.user.role !== 'ADMIN') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+    if (isErrorResponse(context)) return context
 
     // Get date ranges
     const now = new Date()
@@ -250,7 +250,7 @@ export async function GET() {
       time: string
     }> = []
 
-    return NextResponse.json({
+    return {
       mrr: Math.round(mrr * 100) / 100,
       mrrGrowth,
       totalUsers,
@@ -270,10 +270,7 @@ export async function GET() {
       technicalMetrics,
       alerts,
       totalRevenue: Math.round(totalRevenue * 100) / 100,
-    }, { status: 200 })
-  } catch (error) {
-    console.error('Error fetching admin metrics:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
-  }
+    }
+  })
 }
 

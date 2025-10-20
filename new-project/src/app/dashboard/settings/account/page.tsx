@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { LoadingPage } from "@/components/loading"
+import { api, ApiError } from "@/lib/api-client"
 
 const accountSchema = z.object({
   name: z.string().min(2, "Account name must be at least 2 characters"),
@@ -70,10 +71,7 @@ export default function AccountSettingsPage() {
       }
 
       try {
-        const response = await fetch("/dashboard/api/account")
-        if (!response.ok) throw new Error("Failed to fetch account")
-        
-        const data = await response.json()
+        const data = await api.get<{ account: AccountData }>("/dashboard/api/account")
         setAccountData(data.account)
         reset({
           name: data.account.name,
@@ -82,7 +80,8 @@ export default function AccountSettingsPage() {
         })
       } catch (error) {
         console.error("Error fetching account:", error)
-        toast.error("Failed to load account settings")
+        const message = error instanceof ApiError ? error.message : "Failed to load account settings"
+        toast.error(message)
       } finally {
         setIsLoading(false)
       }
@@ -105,18 +104,11 @@ export default function AccountSettingsPage() {
     setIsSaving(true)
 
     try {
-      const response = await fetch("/dashboard/api/account", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      })
-
-      if (!response.ok) {
-        const error = await response.json()
-        throw new Error(error.error || "Failed to update account")
-      }
-
-      const result = await response.json()
+      const result = await api.patch<{
+        message: string
+        account: AccountData
+      }>("/dashboard/api/account", data)
+      
       setAccountData(result.account)
       reset(data)
       
@@ -126,7 +118,8 @@ export default function AccountSettingsPage() {
       toast.success("Account settings updated successfully")
     } catch (error) {
       console.error("Error updating account:", error)
-      toast.error(error instanceof Error ? error.message : "Failed to update account")
+      const message = error instanceof ApiError ? error.message : "Failed to update account"
+      toast.error(message)
     } finally {
       setIsSaving(false)
     }

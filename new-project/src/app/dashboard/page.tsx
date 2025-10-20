@@ -54,8 +54,9 @@ export default function DashboardPage() {
     try {
       const response = await fetch("/dashboard/api/overview")
       if (!response.ok) throw new Error("Failed to fetch dashboard data")
-      const dashboardData = await response.json()
-      setData(dashboardData)
+      const result = await response.json()
+      // ApiHandler wraps response in { data: ... }
+      setData(result.data || result)
     } catch (error) {
       console.error("Error fetching dashboard data:", error)
       toast.error("Failed to load dashboard data")

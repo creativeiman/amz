@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { auth } from '@/lib/auth'
+import { NextRequest } from 'next/server'
+import { ApiHandler, isErrorResponse } from '@/lib/api-handler'
 import { prisma } from '@/db/client'
 
 // PATCH update member status (Owner only)
@@ -7,16 +7,17 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  try {
-    const session = await auth()
+  return ApiHandler.handle(async () => {
+    const context = await ApiHandler.getUserContext({
+      requireAuth: true,
+      requireAccount: true,
+    })
     
-    if (!session || !session.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+    if (isErrorResponse(context)) return context
 
     // Only account owners can update team member status
-    if (session.user.role !== 'USER') {
-      return NextResponse.json({ error: 'Forbidden: Only account owners can update team members' }, { status: 403 })
+    if (!context.isOwner) {
+      return ApiHandler.forbidden('Only account owners can update team members')
     }
 
     const { id } = await params
@@ -24,17 +25,7 @@ export async function PATCH(
     const { isActive } = body
 
     if (typeof isActive !== 'boolean') {
-      return NextResponse.json({ error: 'isActive must be a boolean' }, { status: 400 })
-    }
-
-    // Get user's account (must be owner)
-    const account = await prisma.account.findFirst({
-      where: { ownerId: session.user.id },
-      select: { id: true },
-    })
-
-    if (!account) {
-      return NextResponse.json({ error: 'No account found. Only account owners can manage team members.' }, { status: 404 })
+      return ApiHandler.badRequest('isActive must be a boolean')
     }
 
     // Verify the member belongs to this account
@@ -42,8 +33,8 @@ export async function PATCH(
       where: { id },
     })
 
-    if (!member || member.accountId !== account.id) {
-      return NextResponse.json({ error: 'Member not found' }, { status: 404 })
+    if (!member || member.accountId !== context.accountId) {
+      return ApiHandler.notFound('Member not found')
     }
 
     // Update member status
@@ -52,11 +43,8 @@ export async function PATCH(
       data: { isActive },
     })
 
-    return NextResponse.json({ member: updatedMember }, { status: 200 })
-  } catch (error) {
-    console.error('Error updating team member:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
-  }
+    return { member: updatedMember }
+  })
 }
 
 // DELETE a team member (Owner only)
@@ -64,37 +52,28 @@ export async function DELETE(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  try {
-    const session = await auth()
+  return ApiHandler.handle(async () => {
+    const context = await ApiHandler.getUserContext({
+      requireAuth: true,
+      requireAccount: true,
+    })
     
-    if (!session || !session.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+    if (isErrorResponse(context)) return context
 
     // Only account owners can remove team members
-    if (session.user.role !== 'USER') {
-      return NextResponse.json({ error: 'Forbidden: Only account owners can remove team members' }, { status: 403 })
+    if (!context.isOwner) {
+      return ApiHandler.forbidden('Only account owners can remove team members')
     }
 
     const { id } = await params
-
-    // Get user's account (must be owner)
-    const account = await prisma.account.findFirst({
-      where: { ownerId: session.user.id },
-      select: { id: true },
-    })
-
-    if (!account) {
-      return NextResponse.json({ error: 'No account found. Only account owners can manage team members.' }, { status: 404 })
-    }
 
     // Verify the member belongs to this account
     const member = await prisma.accountMember.findUnique({
       where: { id },
     })
 
-    if (!member || member.accountId !== account.id) {
-      return NextResponse.json({ error: 'Member not found' }, { status: 404 })
+    if (!member || member.accountId !== context.accountId) {
+      return ApiHandler.notFound('Member not found')
     }
 
     // Delete the member
@@ -102,10 +81,6 @@ export async function DELETE(
       where: { id },
     })
 
-    return NextResponse.json({ message: 'Member removed successfully' }, { status: 200 })
-  } catch (error) {
-    console.error('Error removing team member:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
-  }
+    return { message: 'Member removed successfully' }
+  })
 }
-

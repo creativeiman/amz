@@ -19,6 +19,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
+import { api, ApiError } from "@/lib/api-client"
 
 const profileSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -79,18 +80,14 @@ export default function ProfilePage() {
     setIsSavingProfile(true)
 
     try {
-      const response = await fetch("/dashboard/api/profile", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      })
-
-      if (!response.ok) {
-        const error = await response.json()
-        throw new Error(error.error || "Failed to update profile")
-      }
-
-      const result = await response.json()
+      const result = await api.patch<{
+        message: string
+        user: {
+          id: string
+          name: string
+          email: string
+        }
+      }>("/dashboard/api/profile", data)
 
       // Update session - pass empty object to force trigger
       await update({})
@@ -104,7 +101,8 @@ export default function ProfilePage() {
       toast.success("Profile updated successfully")
     } catch (error) {
       console.error("Error updating profile:", error)
-      toast.error(error instanceof Error ? error.message : "Failed to update profile")
+      const message = error instanceof ApiError ? error.message : "Failed to update profile"
+      toast.error(message)
     } finally {
       setIsSavingProfile(false)
     }
@@ -114,26 +112,17 @@ export default function ProfilePage() {
     setIsSavingPassword(true)
 
     try {
-      const response = await fetch("/dashboard/api/profile/password", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          currentPassword: data.currentPassword,
-          newPassword: data.newPassword,
-        }),
+      await api.patch<{ message: string }>("/dashboard/api/profile/password", {
+        currentPassword: data.currentPassword,
+        newPassword: data.newPassword,
       })
-
-      if (!response.ok) {
-        const error = await response.json()
-        toast.error(error.error || "Failed to change password")
-        setIsSavingPassword(false)
-        return
-      }
 
       passwordForm.reset()
       toast.success("Password changed successfully")
-    } catch {
-      toast.error("An unexpected error occurred")
+    } catch (error) {
+      console.error("Error changing password:", error)
+      const message = error instanceof ApiError ? error.message : "An unexpected error occurred"
+      toast.error(message)
     } finally {
       setIsSavingPassword(false)
     }

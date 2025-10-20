@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { auth } from '@/lib/auth'
+import { NextRequest } from 'next/server'
+import { ApiHandler, isErrorResponse } from '@/lib/api-handler'
 import { prisma } from '@/db/client'
 
 // GET single account (Admin only)
@@ -7,12 +7,13 @@ export async function GET(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  try {
-    const session = await auth()
+  return ApiHandler.handle(async () => {
+    const context = await ApiHandler.getUserContext({
+      requireAuth: true,
+      requireAdmin: true,
+    })
     
-    if (!session || session.user.role !== 'ADMIN') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+    if (isErrorResponse(context)) return context
 
     const { id } = await params
 
@@ -67,7 +68,7 @@ export async function GET(
     })
 
     if (!account) {
-      return NextResponse.json({ error: 'Account not found' }, { status: 404 })
+      return ApiHandler.notFound('Account not found')
     }
 
     const formattedAccount = {
@@ -100,11 +101,8 @@ export async function GET(
       updatedAt: account.updatedAt,
     }
 
-    return NextResponse.json({ account: formattedAccount }, { status: 200 })
-  } catch (error) {
-    console.error('Error fetching account:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
-  }
+    return { account: formattedAccount }
+  })
 }
 
 // PUT update account (Admin only)
@@ -112,12 +110,13 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  try {
-    const session = await auth()
+  return ApiHandler.handle(async () => {
+    const context = await ApiHandler.getUserContext({
+      requireAuth: true,
+      requireAdmin: true,
+    })
     
-    if (!session || session.user.role !== 'ADMIN') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+    if (isErrorResponse(context)) return context
 
     const { id } = await params
     const body = await request.json()
@@ -136,11 +135,8 @@ export async function PUT(
       },
     })
 
-    return NextResponse.json({ account }, { status: 200 })
-  } catch (error) {
-    console.error('Error updating account:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
-  }
+    return { account }
+  })
 }
 
 // DELETE account (Admin only)
@@ -148,12 +144,13 @@ export async function DELETE(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  try {
-    const session = await auth()
+  return ApiHandler.handle(async () => {
+    const context = await ApiHandler.getUserContext({
+      requireAuth: true,
+      requireAdmin: true,
+    })
     
-    if (!session || session.user.role !== 'ADMIN') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+    if (isErrorResponse(context)) return context
 
     const { id } = await params
 
@@ -162,10 +159,6 @@ export async function DELETE(
       where: { id },
     })
 
-    return NextResponse.json({ message: 'Account deleted successfully' }, { status: 200 })
-  } catch (error) {
-    console.error('Error deleting account:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
-  }
+    return { message: 'Account deleted successfully' }
+  })
 }
-

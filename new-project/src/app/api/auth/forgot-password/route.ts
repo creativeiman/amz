@@ -1,23 +1,17 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest } from 'next/server'
+import { ApiHandler, isErrorResponse } from '@/lib/api-handler'
 import { prisma } from '@/db/client'
 import { EmailService } from '@/lib/email-service'
 import crypto from 'crypto'
 
 export async function POST(request: NextRequest) {
-  try {
-    const body = await request.json()
-    const { email } = body
-
-    // Validate input
-    if (!email || typeof email !== 'string') {
-      return NextResponse.json(
-        { error: 'Email is required' },
-        { status: 400 }
-      )
-    }
+  return ApiHandler.handle(async () => {
+    const body = await ApiHandler.validateBody<{ email: string }>(request, ['email'])
+    
+    if (isErrorResponse(body)) return body
 
     // Normalize email
-    const normalizedEmail = email.toLowerCase().trim()
+    const normalizedEmail = body.email.toLowerCase().trim()
 
     // Find user by email
     const user = await prisma.user.findUnique({
@@ -27,27 +21,25 @@ export async function POST(request: NextRequest) {
     // Security: Always return success even if user doesn't exist
     // This prevents email enumeration attacks
     if (!user) {
-      return NextResponse.json({
+      return {
         message: 'If an account exists with this email, you will receive a password reset link.',
-      })
+      }
     }
 
     // Check if user account is active
     if (!user.isActive) {
-      return NextResponse.json({
+      return {
         message: 'If an account exists with this email, you will receive a password reset link.',
-      })
+      }
     }
 
     // Check if user has a password (OAuth users don't have passwords)
     if (!user.password) {
       // User signed in with OAuth (e.g., Google) - they don't have a password to reset
-      return NextResponse.json(
-        { 
-          error: 'OAUTH_ACCOUNT',
-          message: 'This account uses Google Sign-In. You don\'t need a password - just sign in with Google.',
-        },
-        { status: 400 }
+      return ApiHandler.error(
+        'OAUTH_ACCOUNT',
+        'This account uses Google Sign-In. You don\'t need a password - just sign in with Google.',
+        400
       )
     }
 
@@ -84,15 +76,8 @@ export async function POST(request: NextRequest) {
       // Still return success to prevent information leak
     }
 
-    return NextResponse.json({
+    return {
       message: 'If an account exists with this email, you will receive a password reset link.',
-    })
-  } catch (error) {
-    console.error('Forgot password error:', error)
-    return NextResponse.json(
-      { error: 'An error occurred while processing your request' },
-      { status: 500 }
-    )
-  }
+    }
+  })
 }
-

@@ -6,6 +6,7 @@ import { toast } from "sonner"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { getPlanLimits, canAddTeamMember } from "@/config/plans"
+import { api, ApiError } from "@/lib/api-client"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -92,13 +93,12 @@ export default function TeamPage() {
     if (!isAccountOwner) return
     
     try {
-      const response = await fetch("/dashboard/api/team/members")
-      if (!response.ok) throw new Error("Failed to fetch members")
-      const data = await response.json()
+      const data = await api.get<{ members: typeof members }>("/dashboard/api/team/members")
       setMembers(data.members || [])
     } catch (error) {
       console.error("Error fetching members:", error)
-      toast.error("Failed to load team members")
+      const message = error instanceof ApiError ? error.message : "Failed to load team members"
+      toast.error(message)
     }
   }, [isAccountOwner])
 
@@ -108,13 +108,12 @@ export default function TeamPage() {
     if (!isAccountOwner) return
     
     try {
-      const response = await fetch("/dashboard/api/team/invitations")
-      if (!response.ok) throw new Error("Failed to fetch invitations")
-      const data = await response.json()
+      const data = await api.get<{ invitations: typeof invitations }>("/dashboard/api/team/invitations")
       setInvitations(data.invitations || [])
     } catch (error) {
       console.error("Error fetching invitations:", error)
-      toast.error("Failed to load invitations")
+      const message = error instanceof ApiError ? error.message : "Failed to load invitations"
+      toast.error(message)
     } finally {
       setIsLoading(false)
     }

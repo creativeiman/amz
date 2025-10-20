@@ -1,35 +1,24 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { auth } from '@/lib/auth'
+import { ApiHandler, isErrorResponse } from '@/lib/api-handler'
 import { prisma } from '@/db/client'
 
 // GET all team members for the user's account (Owner only)
 export async function GET() {
-  try {
-    const session = await auth()
+  return ApiHandler.handle(async () => {
+    const context = await ApiHandler.getUserContext({
+      requireAuth: true,
+      requireAccount: true,
+    })
     
-    if (!session || !session.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+    if (isErrorResponse(context)) return context
 
     // Only account owners can manage team members
-    if (session.user.role !== 'USER') {
-      return NextResponse.json({ error: 'Forbidden: Only account owners can access this' }, { status: 403 })
-    }
-
-    // Get user's account (must be owner)
-    const account = await prisma.account.findFirst({
-      where: { ownerId: session.user.id },
-      select: { id: true },
-    })
-
-    if (!account) {
-      console.error(`No account found for user: ${session.user.id} (${session.user.email})`)
-      return NextResponse.json({ error: 'No account found. Only account owners can manage team members.' }, { status: 404 })
+    if (!context.isOwner) {
+      return ApiHandler.forbidden('Only account owners can access team members')
     }
 
     // Get all team members for this account
     const members = await prisma.accountMember.findMany({
-      where: { accountId: account.id },
+      where: { accountId: context.accountId! },
       include: {
         user: {
           select: {
@@ -56,10 +45,6 @@ export async function GET() {
       joinedAt: member.createdAt,
     }))
 
-    return NextResponse.json({ members: formattedMembers }, { status: 200 })
-  } catch (error) {
-    console.error('Error fetching team members:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
-  }
+    return { members: formattedMembers }
+  })
 }
-

@@ -1,16 +1,20 @@
-import { NextRequest, NextResponse } from "next/server"
-import { auth } from "@/lib/auth"
+import { NextRequest } from "next/server"
+import { ApiHandler, isErrorResponse } from "@/lib/api-handler"
 import { prisma } from "@/db/client"
+import { AccountPermission } from "@prisma/client"
 
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  try {
-    const session = await auth()
-    if (!session?.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
+  return ApiHandler.handle(async () => {
+    const context = await ApiHandler.getUserContext({
+      requireAuth: true,
+      requireAccount: true,
+      requirePermissions: [AccountPermission.SCAN_VIEW],
+    })
+    
+    if (isErrorResponse(context)) return context
 
     const { id } = await params
 
@@ -30,22 +34,12 @@ export async function GET(
     })
 
     if (!scan) {
-      return NextResponse.json({ error: "Scan not found" }, { status: 404 })
+      return ApiHandler.notFound("Scan not found")
     }
 
-    // Check if user has access to this scan
-    const userAccount = await prisma.accountMember.findFirst({
-      where: {
-        userId: session.user.id,
-        accountId: scan.accountId,
-        isActive: true,
-      },
-    })
-
-    const isOwner = scan.account.ownerId === session.user.id
-
-    if (!userAccount && !isOwner) {
-      return NextResponse.json({ error: "Access denied" }, { status: 403 })
+    // Check if user has access to this scan (must be from their account)
+    if (scan.accountId !== context.accountId) {
+      return ApiHandler.forbidden("Access denied")
     }
 
     // Transform the data to match the expected format
@@ -65,12 +59,6 @@ export async function GET(
       plan: scan.account.plan,
     }
 
-    return NextResponse.json(formattedScan)
-  } catch (error) {
-    console.error("Error fetching scan:", error)
-    return NextResponse.json(
-      { error: "Failed to fetch scan" },
-      { status: 500 }
-    )
-  }
+    return formattedScan
+  })
 }

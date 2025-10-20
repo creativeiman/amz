@@ -1,20 +1,24 @@
-import { NextRequest, NextResponse } from "next/server"
-import { auth } from "@/lib/auth"
+import { NextRequest } from "next/server"
+import { ApiHandler, isErrorResponse } from "@/lib/api-handler"
 import { prisma } from "@/db/client"
 import { getPresignedUrl } from "@/lib/minio-client"
+import { AccountPermission } from "@prisma/client"
 
 /**
  * Generate presigned URL for downloading label from MinIO
  */
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  try {
-    const session = await auth()
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
+  return ApiHandler.handle(async () => {
+    const context = await ApiHandler.getUserContext({
+      requireAuth: true,
+      requireAccount: true,
+      requirePermissions: [AccountPermission.SCAN_VIEW],
+    })
+    
+    if (isErrorResponse(context)) return context
 
     const { id } = await params
 
@@ -27,35 +31,20 @@ export async function GET(
         productName: true,
         originalFilename: true,
         accountId: true,
-        account: {
-          select: {
-            ownerId: true,
-          },
-        },
       },
     })
 
     if (!scan) {
-      return NextResponse.json({ error: "Scan not found" }, { status: 404 })
+      return ApiHandler.notFound("Scan not found")
     }
 
-    // Check access permissions
-    const isOwner = scan.account.ownerId === session.user.id
-    const isMember = await prisma.accountMember.findUnique({
-      where: {
-        accountId_userId: {
-          accountId: scan.accountId,
-          userId: session.user.id,
-        },
-      },
-    })
-
-    if (!isOwner && !isMember) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+    // Check if scan belongs to user's account
+    if (scan.accountId !== context.accountId) {
+      return ApiHandler.forbidden("Access denied")
     }
 
     if (!scan.labelUrl) {
-      return NextResponse.json({ error: "No label file found" }, { status: 404 })
+      return ApiHandler.notFound("No label file found")
     }
 
     // Generate presigned URL from MinIO (expires in 1 hour)
@@ -64,17 +53,10 @@ export async function GET(
     // Use original filename if available, otherwise generate from product name
     const filename = scan.originalFilename || `${scan.productName}-label.${scan.labelUrl.split(".").pop()}`
 
-    return NextResponse.json({
+    return {
       url: presignedUrl,
       filename,
       expiresIn: 3600, // 1 hour
-    })
-  } catch (error) {
-    console.error("Error generating download URL:", error)
-    return NextResponse.json(
-      { error: "Failed to generate download URL" },
-      { status: 500 }
-    )
-  }
+    }
+  })
 }
-

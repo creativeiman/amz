@@ -1,55 +1,24 @@
-import { NextRequest, NextResponse } from "next/server"
-import { auth } from "@/lib/auth"
+import { NextRequest } from "next/server"
+import { ApiHandler, isErrorResponse } from "@/lib/api-handler"
 import { prisma } from "@/db/client"
 import { uploadFile, validateFile } from "@/lib/file-upload"
 import { addScanJob } from "@/lib/queue/scan-queue"
-import { Category } from "@prisma/client"
+import { Category, AccountPermission } from "@prisma/client"
 
 // GET /dashboard/api/scans - Get all scans for current user's account
 export async function GET() {
-  try {
-    const session = await auth()
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
-
-    // Get user's account
-    const user = await prisma.user.findUnique({
-      where: { id: session.user.id },
-      include: {
-        ownedAccounts: true,
-        accountMemberships: {
-          include: {
-            account: true,
-          },
-        },
-      },
+  return ApiHandler.handle(async () => {
+    const context = await ApiHandler.getUserContext({
+      requireAuth: true,
+      requireAccount: true,
     })
-
-    if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 })
-    }
-
-    // Determine which account to use and get permissions
-    let accountId: string
-    let userPermissions: string[] = []
     
-    if (user.ownedAccounts.length > 0) {
-      accountId = user.ownedAccounts[0].id
-      // Owners have all permissions
-      userPermissions = ['SCAN_CREATE', 'SCAN_VIEW', 'SCAN_EDIT', 'SCAN_DELETE', 'TEAM_VIEW', 'TEAM_INVITE', 'TEAM_REMOVE']
-    } else if (user.accountMemberships.length > 0) {
-      accountId = user.accountMemberships[0].accountId
-      // Get member's permissions
-      userPermissions = user.accountMemberships[0].permissions || []
-    } else {
-      return NextResponse.json({ error: "No account found" }, { status: 404 })
-    }
+    if (isErrorResponse(context)) return context
 
     // Fetch scans for the account
     const scans = await prisma.scan.findMany({
       where: {
-        accountId,
+        accountId: context.accountId!,
       },
       include: {
         _count: {
@@ -97,7 +66,7 @@ export async function GET() {
 
     // Get account usage info
     const account = await prisma.account.findUnique({
-      where: { id: accountId },
+      where: { id: context.accountId! },
       select: {
         scansUsedThisMonth: true,
         scanLimitPerMonth: true,
@@ -105,28 +74,28 @@ export async function GET() {
       },
     })
 
-    return NextResponse.json({
+    return {
       scans: formattedScans,
       usage: {
         scansUsed: account?.scansUsedThisMonth || 0,
         scanLimit: account?.scanLimitPerMonth || null,
         resetDate: account?.scanLimitResetAt?.toISOString() || null,
       },
-      permissions: userPermissions,
-    })
-  } catch (error) {
-    console.error("Error fetching scans:", error)
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
-  }
+      permissions: context.permissions || [],
+    }
+  })
 }
 
 // POST /dashboard/api/scans - Create a new scan
 export async function POST(request: NextRequest) {
-  try {
-    const session = await auth()
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
+  return ApiHandler.handle(async () => {
+    const context = await ApiHandler.getUserContext({
+      requireAuth: true,
+      requireAccount: true,
+      requirePermissions: [AccountPermission.SCAN_CREATE],
+    })
+    
+    if (isErrorResponse(context)) return context
 
     // Get form data
     const formData = await request.formData()
@@ -137,108 +106,77 @@ export async function POST(request: NextRequest) {
 
     // Validate required fields
     if (!productName || !category || !marketplacesJson || !labelFile) {
-      return NextResponse.json(
-        { error: "Missing required fields" },
-        { status: 400 }
-      )
+      return ApiHandler.badRequest("Missing required fields")
     }
 
     let marketplaces: string[]
     try {
       marketplaces = JSON.parse(marketplacesJson)
     } catch {
-      return NextResponse.json(
-        { error: "Invalid marketplaces format" },
-        { status: 400 }
-      )
+      return ApiHandler.badRequest("Invalid marketplaces format")
     }
 
-    // Get user's account
-    const user = await prisma.user.findUnique({
-      where: { id: session.user.id },
-      include: {
-        ownedAccounts: true,
-        accountMemberships: {
-          include: {
-            account: true,
-          },
-        },
+    // Get account to check scan limits
+    const account = await prisma.account.findUnique({
+      where: { id: context.accountId! },
+      select: {
+        id: true,
+        plan: true,
+        scansUsedThisMonth: true,
+        scanLimitPerMonth: true,
+        scanLimitResetAt: true,
       },
     })
 
-    if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 })
-    }
-
-    // Determine which account to use and check permissions
-    let accountId: string
-    let canCreate = false
-    
-    if (user.ownedAccounts.length > 0) {
-      accountId = user.ownedAccounts[0].id
-      canCreate = true // Owners can always create
-    } else if (user.accountMemberships.length > 0) {
-      accountId = user.accountMemberships[0].accountId
-      // Check if user has SCAN_CREATE permission
-      const permissions = user.accountMemberships[0].permissions || []
-      canCreate = permissions.includes('SCAN_CREATE')
-    } else {
-      return NextResponse.json({ error: "No account found" }, { status: 404 })
-    }
-
-    // Check permission
-    if (!canCreate) {
-      return NextResponse.json({ error: "You don't have permission to create scans" }, { status: 403 })
-    }
-
-    // Check account scan limits
-    const account = await prisma.account.findUnique({
-      where: { id: accountId },
-    })
-
     if (!account) {
-      return NextResponse.json({ error: "Account not found" }, { status: 404 })
+      return ApiHandler.notFound("Account not found")
     }
 
+    // Check if user has reached scan limit
     if (
       account.scanLimitPerMonth !== null &&
       account.scansUsedThisMonth >= account.scanLimitPerMonth
     ) {
-      return NextResponse.json(
-        { error: "Scan limit reached for this month" },
-        { status: 403 }
+      return ApiHandler.forbidden(
+        `Scan limit reached. You have used ${account.scansUsedThisMonth} of ${account.scanLimitPerMonth} scans this month.`
       )
     }
 
     // Validate file
-    const validation = validateFile(labelFile)
-    if (!validation.valid) {
-      return NextResponse.json(
-        { error: validation.error },
-        { status: 400 }
+    const fileValidation = validateFile(labelFile)
+    if (!fileValidation.valid) {
+      return ApiHandler.badRequest(fileValidation.error || "Invalid file")
+    }
+
+    // Upload file
+    let labelUrl: string
+    try {
+      labelUrl = await uploadFile(labelFile, "labels")
+    } catch (error) {
+      console.error("File upload error:", error)
+      return ApiHandler.error(
+        "File upload failed",
+        error instanceof Error ? error.message : "Unknown error",
+        500
       )
     }
 
-    // Upload file to storage
-    const labelUrl = await uploadFile(labelFile, "labels")
-
-    // Create scan with QUEUED status
+    // Create scan record
     const scan = await prisma.scan.create({
       data: {
-        accountId,
-        createdBy: session.user.id,
         productName,
         category: category as Category,
         marketplaces,
         labelUrl,
-        originalFilename: labelFile.name, // Preserve original filename
-        status: "QUEUED", // Changed from PROCESSING to QUEUED
+        status: "QUEUED",
+        accountId: context.accountId!,
+        createdBy: context.userId,
       },
     })
 
     // Increment scans used
     await prisma.account.update({
-      where: { id: accountId },
+      where: { id: context.accountId! },
       data: {
         scansUsedThisMonth: {
           increment: 1,
@@ -246,29 +184,25 @@ export async function POST(request: NextRequest) {
       },
     })
 
-    // Queue the scan job for background processing
+    // Add to queue for processing
     await addScanJob({
       scanId: scan.id,
-      userId: session.user.id,
+      userId: context.userId,
       imageUrl: labelUrl,
       category: category as Category,
-      marketplaces: marketplaces,
+      marketplaces,
       productName,
     })
 
-    return NextResponse.json(
-      {
-        message: "Scan queued for processing",
-        scan: {
-          id: scan.id,
-          productName: scan.productName,
-          status: scan.status,
-        },
+    return {
+      message: "Scan created successfully",
+      scan: {
+        id: scan.id,
+        productName: scan.productName,
+        category: scan.category,
+        status: scan.status,
+        createdAt: scan.createdAt.toISOString(),
       },
-      { status: 201 }
-    )
-  } catch (error) {
-    console.error("Error creating scan:", error)
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
-  }
+    }
+  })
 }

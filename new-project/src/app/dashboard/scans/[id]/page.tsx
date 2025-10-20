@@ -23,6 +23,7 @@ import {
   ArrowRight
 } from 'lucide-react'
 import { toast } from 'sonner'
+import { api, ApiError } from '@/lib/api-client'
 import { MarkdownEditor } from '@/components/markdown-editor'
 
 interface AIResults {
@@ -106,22 +107,20 @@ export default function ScanDetailPage() {
   const fetchScanDetails = async () => {
     try {
       setIsLoading(true)
-      const response = await fetch(`/dashboard/api/scans/${scanId}`)
-      
-      if (!response.ok) {
-        if (response.status === 404) {
-          toast.error('Scan not found')
-          router.push('/dashboard/scans')
-          return
-        }
-        throw new Error('Failed to fetch scan details')
-      }
-
-      const data = await response.json()
+      const data = await api.get<typeof scan>(`/dashboard/api/scans/${scanId}`)
       setScan(data)
     } catch (error) {
       console.error('Error fetching scan:', error)
-      toast.error('Failed to load scan details')
+      
+      // Handle 404 errors
+      if (error instanceof ApiError && error.status === 404) {
+        toast.error('Scan not found')
+        router.push('/dashboard/scans')
+        return
+      }
+      
+      const message = error instanceof ApiError ? error.message : 'Failed to load scan details'
+      toast.error(message)
     } finally {
       setIsLoading(false)
     }
@@ -389,9 +388,8 @@ export default function ScanDetailPage() {
                     toast.loading('Preparing download...')
                     
                     // Get presigned URL
-                    const response = await fetch(`/dashboard/api/scans/${scan.id}/download`)
-                    if (!response.ok) throw new Error('Download failed')
-                    const { url, filename } = await response.json()
+                    const data = await api.get<{ url: string; filename: string }>(`/dashboard/api/scans/${scan.id}/download`)
+                    const { url, filename } = data
                     
                     // Fetch file as blob to force download
                     const fileResponse = await fetch(url)

@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { GoogleSignInButton } from "@/components/auth/google-signin-button"
+import { api, ApiError } from "@/lib/api-client"
 
 // Form validation schema
 const loginSchema = z.object({
@@ -59,25 +60,18 @@ function LoginForm() {
 
     try {
       // First, verify credentials and check user/account status via our API
-      const verifyResponse = await fetch('/api/auth/verify', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: data.email,
-          password: data.password,
-        }),
+      const verifyData = await api.post<{
+        success: boolean
+        user: {
+          id: string
+          email: string
+          name: string
+          role: string
+        }
+      }>('/api/auth/verify', {
+        email: data.email,
+        password: data.password,
       })
-
-      const verifyData = await verifyResponse.json()
-
-      // If verification failed, show the specific error message
-      if (!verifyResponse.ok) {
-        setError(verifyData.message || 'Authentication failed')
-        setIsLoading(false)
-        return
-      }
 
       // Verification passed, now sign in with NextAuth
       const result = await signIn("credentials", {
@@ -101,8 +95,10 @@ function LoginForm() {
         }
         router.refresh()
       }
-    } catch {
-      setError("Something went wrong. Please try again.")
+    } catch (error) {
+      console.error("Login error:", error)
+      const message = error instanceof ApiError ? error.message : "Something went wrong. Please try again."
+      setError(message)
       setIsLoading(false)
     }
   }

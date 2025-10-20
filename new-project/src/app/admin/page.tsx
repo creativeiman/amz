@@ -86,8 +86,9 @@ export default function AdminDashboardPage() {
         }
         throw new Error("Failed to fetch metrics")
       }
-      const data = await response.json()
-      setMetrics(data)
+      const result = await response.json()
+      // ApiHandler wraps response in { data: ... }
+      setMetrics(result.data || result)
       setLastRefresh(new Date())
     } catch (error) {
       console.error("Error fetching metrics:", error)

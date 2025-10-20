@@ -1,45 +1,30 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest } from 'next/server'
+import { ApiHandler, isErrorResponse } from '@/lib/api-handler'
 import { prisma } from '@/db/client'
 import bcrypt from 'bcryptjs'
 
 export async function POST(request: NextRequest) {
-  try {
-    const body = await request.json()
-    const { token, password } = body
+  return ApiHandler.handle(async () => {
+    const body = await ApiHandler.validateBody<{
+      token: string
+      password: string
+    }>(request, ['token', 'password'])
+    
+    if (isErrorResponse(body)) return body
 
-    // Validate input
-    if (!token || typeof token !== 'string') {
-      return NextResponse.json(
-        { error: 'Reset token is required' },
-        { status: 400 }
-      )
-    }
-
-    if (!password || typeof password !== 'string') {
-      return NextResponse.json(
-        { error: 'Password is required' },
-        { status: 400 }
-      )
-    }
-
-    if (password.length < 8) {
-      return NextResponse.json(
-        { error: 'Password must be at least 8 characters long' },
-        { status: 400 }
-      )
+    // Validate password length
+    if (body.password.length < 8) {
+      return ApiHandler.badRequest('Password must be at least 8 characters long')
     }
 
     // Find the reset token
     const resetToken = await prisma.passwordResetToken.findUnique({
-      where: { token },
+      where: { token: body.token },
       include: { user: true },
     })
 
     if (!resetToken) {
-      return NextResponse.json(
-        { error: 'Invalid or expired reset token' },
-        { status: 400 }
-      )
+      return ApiHandler.badRequest('Invalid or expired reset token')
     }
 
     // Check if token has expired
@@ -49,22 +34,16 @@ export async function POST(request: NextRequest) {
         where: { id: resetToken.id },
       })
 
-      return NextResponse.json(
-        { error: 'Reset token has expired. Please request a new password reset.' },
-        { status: 400 }
-      )
+      return ApiHandler.badRequest('Reset token has expired. Please request a new password reset.')
     }
 
     // Check if user account is active
     if (!resetToken.user.isActive) {
-      return NextResponse.json(
-        { error: 'Your account is not active. Please contact support.' },
-        { status: 403 }
-      )
+      return ApiHandler.forbidden('Your account is not active. Please contact support.')
     }
 
     // Hash the new password
-    const hashedPassword = await bcrypt.hash(password, 10)
+    const hashedPassword = await bcrypt.hash(body.password, 10)
 
     // Update user password and delete the reset token in a transaction
     await prisma.$transaction([
@@ -81,15 +60,8 @@ export async function POST(request: NextRequest) {
       }),
     ])
 
-    return NextResponse.json({
+    return {
       message: 'Password has been successfully reset. You can now log in with your new password.',
-    })
-  } catch (error) {
-    console.error('Reset password error:', error)
-    return NextResponse.json(
-      { error: 'An error occurred while resetting your password' },
-      { status: 500 }
-    )
-  }
+    }
+  })
 }
-

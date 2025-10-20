@@ -26,6 +26,7 @@ import { useSession, signOut } from "next-auth/react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ThemeToggle } from "@/components/theme-toggle"
 import Link from "next/link"
+import { api } from "@/lib/api-client"
 
 interface MenuItem {
   title: string
@@ -109,11 +110,8 @@ export function DashboardSidebar() {
   React.useEffect(() => {
     async function fetchAccountName() {
       try {
-        const response = await fetch("/dashboard/api/account")
-        if (response.ok) {
-          const data = await response.json()
-          setAccountName(data.account.name)
-        }
+        const data = await api.get<{ account: { name: string } }>("/dashboard/api/account")
+        setAccountName(data.account.name)
       } catch (error) {
         console.error("Error fetching account name:", error)
       }

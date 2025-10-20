@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { GoogleSignInButton } from "@/components/auth/google-signin-button"
+import { api, ApiError } from "@/lib/api-client"
 
 // Form validation schema
 const registerSchema = z.object({
@@ -60,22 +61,11 @@ function RegisterForm() {
 
     try {
       // Step 1: Register the user
-      const response = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: data.name,
-          email: data.email,
-          password: data.password,
-        }),
+      await api.post("/api/auth/register", {
+        name: data.name,
+        email: data.email,
+        password: data.password,
       })
-
-      if (!response.ok) {
-        const errorData = await response.json()
-        setError(errorData.error || "Registration failed. Please try again.")
-        setIsLoading(false)
-        return
-      }
 
       // Step 2: Automatically log the user in
       const signInResult = await signIn("credentials", {
@@ -98,8 +88,10 @@ function RegisterForm() {
         }
         router.refresh()
       }
-    } catch {
-      setError("Something went wrong. Please try again.")
+    } catch (error) {
+      console.error("Error registering user:", error)
+      const message = error instanceof ApiError ? error.message : "Something went wrong. Please try again."
+      setError(message)
       setIsLoading(false)
     }
   }

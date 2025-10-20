@@ -15,6 +15,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
 import { format } from "date-fns"
+import { api, ApiError } from "@/lib/api-client"
 
 export type Scan = {
   id: string
@@ -217,16 +218,10 @@ export const createColumns = (): ColumnDef<Scan>[] => [
 
         try {
           // Get presigned URL from MinIO
-          const response = await fetch(`/dashboard/api/scans/${scan.id}/download`)
-          
-          if (!response.ok) {
-            throw new Error('Failed to generate download URL')
-          }
-
-          const { url, filename } = await response.json()
+          const data = await api.get<{ url: string; filename: string }>(`/dashboard/api/scans/${scan.id}/download`)
 
           // Fetch file as blob to force download (not open in browser)
-          const fileResponse = await fetch(url)
+          const fileResponse = await fetch(data.url)
           if (!fileResponse.ok) throw new Error('Failed to fetch file')
           const blob = await fileResponse.blob()
           
@@ -234,7 +229,7 @@ export const createColumns = (): ColumnDef<Scan>[] => [
           const blobUrl = window.URL.createObjectURL(blob)
           const link = document.createElement("a")
           link.href = blobUrl
-          link.download = filename
+          link.download = data.filename
           document.body.appendChild(link)
           link.click()
           document.body.removeChild(link)
@@ -243,7 +238,8 @@ export const createColumns = (): ColumnDef<Scan>[] => [
           window.URL.revokeObjectURL(blobUrl)
         } catch (error) {
           console.error('Download failed:', error)
-          alert('Failed to download label. Please try again.')
+          const message = error instanceof ApiError ? error.message : 'Failed to download label. Please try again.'
+          alert(message)
         }
       }
 

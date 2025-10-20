@@ -7,6 +7,7 @@ import { DataTable } from "./data-table"
 import { createColumns, Account } from "./columns"
 import { AccountSheet } from "./account-sheet"
 import { toast } from "sonner"
+import { api, ApiError } from "@/lib/api-client"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -28,13 +29,12 @@ export default function AdminAccountsPage() {
   // Fetch accounts
   const fetchAccounts = React.useCallback(async () => {
     try {
-      const response = await fetch("/admin/api/accounts")
-      if (!response.ok) throw new Error("Failed to fetch accounts")
-      const data = await response.json()
+      const data = await api.get<{ accounts: Account[] }>("/admin/api/accounts")
       setAccounts(data.accounts)
     } catch (error) {
       console.error("Error fetching accounts:", error)
-      toast.error("Failed to load accounts")
+      const message = error instanceof ApiError ? error.message : "Failed to load accounts"
+      toast.error(message)
     } finally {
       setIsLoading(false)
     }
@@ -66,17 +66,13 @@ export default function AdminAccountsPage() {
     if (!accountToDelete) return
 
     try {
-      const response = await fetch(`/admin/api/accounts/${accountToDelete.id}`, {
-        method: "DELETE",
-      })
-
-      if (!response.ok) throw new Error("Failed to delete account")
-
+      await api.delete(`/admin/api/accounts/${accountToDelete.id}`)
       toast.success("Account deleted successfully")
       fetchAccounts()
     } catch (error) {
       console.error("Error deleting account:", error)
-      toast.error("Failed to delete account")
+      const message = error instanceof ApiError ? error.message : "Failed to delete account"
+      toast.error(message)
     } finally {
       setAccountToDelete(null)
     }
@@ -95,20 +91,10 @@ export default function AdminAccountsPage() {
       try {
         const isUpdate = !!selectedAccount
 
-        const response = await fetch(
-          isUpdate ? `/admin/api/accounts/${selectedAccount.id}` : "/admin/api/accounts",
-          {
-            method: isUpdate ? "PUT" : "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data),
-          }
-        )
-
-        if (!response.ok) {
-          const error = await response.json()
-          throw new Error(error.error || "Failed to save account")
+        if (isUpdate) {
+          await api.put(`/admin/api/accounts/${selectedAccount.id}`, data)
+        } else {
+          await api.post("/admin/api/accounts", data)
         }
 
         toast.success(

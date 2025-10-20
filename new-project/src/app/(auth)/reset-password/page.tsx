@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
+import { api, ApiError } from "@/lib/api-client"
 
 // Form validation schema
 const resetPasswordSchema = z.object({
@@ -70,26 +71,16 @@ function ResetPasswordForm() {
     setError(null)
 
     try {
-      const response = await fetch("/api/auth/reset-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          token,
-          password: data.password,
-        }),
+      await api.post("/api/auth/reset-password", {
+        token,
+        password: data.password,
       })
 
-      const result = await response.json()
-
-      if (!response.ok) {
-        setError(result.error || "Failed to reset password")
-        setIsLoading(false)
-        return
-      }
-
       setSuccess(true)
-    } catch {
-      setError("Something went wrong. Please try again.")
+    } catch (error) {
+      console.error("Error resetting password:", error)
+      const message = error instanceof ApiError ? error.message : "Something went wrong. Please try again."
+      setError(message)
       setIsLoading(false)
     }
   }

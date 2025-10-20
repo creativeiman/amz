@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
+import { api, ApiError } from "@/lib/api-client"
 
 // Form validation schema
 const forgotPasswordSchema = z.object({
@@ -42,31 +43,25 @@ export default function ForgotPasswordPage() {
     setSuccess(false)
 
     try {
-      const response = await fetch("/api/auth/forgot-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: data.email }),
-      })
-
-      const result = await response.json()
-
-      if (!response.ok) {
-        // Check if this is an OAuth account
-        if (result.error === 'OAUTH_ACCOUNT') {
-          setIsOAuthAccount(true)
-          setError(result.message)
-        } else {
-          setError(result.error || "Failed to send reset email")
-        }
-        setIsLoading(false)
-        return
-      }
-
+      await api.post("/api/auth/forgot-password", { email: data.email })
+      
       // Show success message
       setSuccess(true)
       form.reset()
-    } catch {
-      setError("Something went wrong. Please try again.")
+    } catch (error) {
+      console.error("Error sending reset email:", error)
+      
+      if (error instanceof ApiError) {
+        // Check if this is an OAuth account
+        if (error.details === 'OAUTH_ACCOUNT') {
+          setIsOAuthAccount(true)
+          setError(error.message)
+        } else {
+          setError(error.message)
+        }
+      } else {
+        setError("Something went wrong. Please try again.")
+      }
     } finally {
       setIsLoading(false)
     }

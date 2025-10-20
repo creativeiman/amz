@@ -17,6 +17,7 @@ import { ComplianceIssues } from "./_components/compliance-issues"
 import { TechnicalHealth } from "./_components/technical-health"
 import { RecentAlerts } from "./_components/recent-alerts"
 import { SecondaryKPIs } from "./_components/secondary-kpis"
+import { api, ApiError } from "@/lib/api-client"
 
 interface AdminMetrics {
   mrr: number
@@ -78,21 +79,17 @@ export default function AdminDashboardPage() {
 
   const fetchMetrics = async () => {
     try {
-      const response = await fetch("/admin/api/metrics")
-      if (!response.ok) {
-        if (response.status === 401) {
-          router.push("/login")
-          return
-        }
-        throw new Error("Failed to fetch metrics")
-      }
-      const result = await response.json()
-      // ApiHandler wraps response in { data: ... }
-      setMetrics(result.data || result)
+      const data = await api.get<AdminMetrics>("/admin/api/metrics")
+      setMetrics(data)
       setLastRefresh(new Date())
     } catch (error) {
       console.error("Error fetching metrics:", error)
-      toast.error("Failed to fetch metrics")
+      if (error instanceof ApiError && error.status === 401) {
+        router.push("/login")
+        return
+      }
+      const message = error instanceof ApiError ? error.message : "Failed to fetch metrics"
+      toast.error(message)
     } finally {
       setIsLoading(false)
     }

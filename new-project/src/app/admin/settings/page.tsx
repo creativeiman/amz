@@ -9,6 +9,7 @@ import { toast } from "sonner"
 import { LoadingPage } from "@/components/loading"
 import { Save } from "lucide-react"
 import { MarkdownEditor } from "@/components/markdown-editor"
+import { api, ApiError } from "@/lib/api-client"
 
 type Settings = {
   masterPrompt: string
@@ -33,36 +34,30 @@ export default function AdminSettingsPage() {
   React.useEffect(() => {
     const fetchSettings = async () => {
       try {
-        const response = await fetch("/admin/api/settings")
-        if (!response.ok) throw new Error("Failed to fetch settings")
-        const data = await response.json()
-        setSettings(data.settings || settings)
+        const data = await api.get<{ settings: Settings }>("/admin/api/settings")
+        setSettings(data.settings)
       } catch (error) {
         console.error("Error fetching settings:", error)
-        toast.error("Failed to load settings")
+        const message = error instanceof ApiError ? error.message : "Failed to load settings"
+        toast.error(message)
       } finally {
         setIsLoading(false)
       }
     }
 
     fetchSettings()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleSave = async () => {
     setIsSaving(true)
     try {
-      const response = await fetch("/admin/api/settings", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(settings),
-      })
-
-      if (!response.ok) throw new Error("Failed to save settings")
-
+      await api.put("/admin/api/settings", settings)
       toast.success("Settings saved successfully")
     } catch (error) {
       console.error("Error saving settings:", error)
-      toast.error("Failed to save settings")
+      const message = error instanceof ApiError ? error.message : "Failed to save settings"
+      toast.error(message)
     } finally {
       setIsSaving(false)
     }

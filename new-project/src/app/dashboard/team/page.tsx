@@ -135,18 +135,19 @@ export default function TeamPage() {
     role: "EDITOR" | "VIEWER"
     permissions: AccountPermission[]
   }): Promise<boolean> => {
-    const response = await fetch("/dashboard/api/team/invitations", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    })
-
-    if (!response.ok) {
-      const error = await response.json()
-      const errorMessage = error.error || "Failed to send invitation"
+    try {
+      await api.post("/dashboard/api/team/invitations", data)
       
-      // Show upgrade prompt if team feature is not available
-      if (error.upgradeRequired) {
+      toast.success("Invitation sent successfully")
+      fetchInvitations()
+      setIsInviteDialogOpen(false)
+      return true
+    } catch (error) {
+      console.error("Error sending invitation:", error)
+      const errorMessage = error instanceof ApiError ? error.message : "Failed to send invitation"
+      
+      // Check for specific error types in the message
+      if (errorMessage.includes("Upgrade") || errorMessage.includes("not available")) {
         toast.error(errorMessage, {
           duration: 5000,
           action: {
@@ -154,98 +155,67 @@ export default function TeamPage() {
             onClick: () => router.push('/dashboard/billing'),
           },
         })
-      } 
-      // Show limit reached message
-      else if (error.limitReached) {
+      } else {
         toast.error(errorMessage, {
           duration: 5000,
         })
-      } 
-      // Standard error
-      else {
-        toast.error(errorMessage)
       }
       
-      // Return false to indicate failure
       return false
     }
-
-    toast.success("Invitation sent successfully")
-    fetchInvitations()
-    setIsInviteDialogOpen(false)
-    // Return true to indicate success
-    return true
   }
 
   // Handle toggle member status
   const handleToggleMemberStatus = async (memberId: string, currentStatus: boolean) => {
     try {
-      const response = await fetch(`/dashboard/api/team/members/${memberId}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ isActive: !currentStatus }),
-      })
-
-      if (!response.ok) throw new Error("Failed to update member status")
-
+      await api.patch(`/dashboard/api/team/members/${memberId}`, { isActive: !currentStatus })
       toast.success(`Member ${!currentStatus ? "activated" : "deactivated"} successfully`)
       fetchMembers()
     } catch (error) {
       console.error("Error updating member status:", error)
-      toast.error("Failed to update member status")
+      const message = error instanceof ApiError ? error.message : "Failed to update member status"
+      toast.error(message)
     }
   }
 
   // Handle remove member
   const handleRemoveMember = async (memberId: string) => {
     try {
-      const response = await fetch(`/dashboard/api/team/members/${memberId}`, {
-        method: "DELETE",
-      })
-
-      if (!response.ok) throw new Error("Failed to remove member")
-
+      await api.delete(`/dashboard/api/team/members/${memberId}`)
       toast.success("Member removed successfully")
       fetchMembers()
       setMemberToRemove(null)
     } catch (error) {
       console.error("Error removing member:", error)
-      toast.error("Failed to remove member")
+      const message = error instanceof ApiError ? error.message : "Failed to remove member"
+      toast.error(message)
     }
   }
 
   // Handle cancel invitation
   const handleCancelInvite = async (inviteId: string) => {
     try {
-      const response = await fetch(`/dashboard/api/team/invitations/${inviteId}`, {
-        method: "DELETE",
-      })
-
-      if (!response.ok) throw new Error("Failed to cancel invitation")
-
+      await api.delete(`/dashboard/api/team/invitations/${inviteId}`)
       toast.success("Invitation cancelled")
       fetchInvitations()
       setInviteToCancel(null)
     } catch (error) {
       console.error("Error cancelling invitation:", error)
-      toast.error("Failed to cancel invitation")
+      const message = error instanceof ApiError ? error.message : "Failed to cancel invitation"
+      toast.error(message)
     }
   }
 
   // Handle resend invitation
   const handleResendInvite = async (inviteId: string) => {
     try {
-      const response = await fetch(`/dashboard/api/team/invitations/${inviteId}/resend`, {
-        method: "POST",
-      })
-
-      if (!response.ok) throw new Error("Failed to resend invitation")
-
+      await api.post(`/dashboard/api/team/invitations/${inviteId}/resend`)
       toast.success("Invitation resent successfully")
       fetchInvitations()
     } catch (error) {
       console.error("Error resending invitation:", error)
-      toast.error("Failed to resend invitation")
+      const message = error instanceof ApiError ? error.message : "Failed to resend invitation"
+      toast.error(message)
     }
   }
 

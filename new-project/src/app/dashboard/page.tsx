@@ -10,6 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { StatsCard } from "./_components/stats-card"
 import { RecentScansTable } from "./_components/recent-scans-table"
 import { UsageCard } from "./_components/usage-card"
+import { api, ApiError } from "@/lib/api-client"
 
 interface DashboardData {
   stats: {
@@ -52,14 +53,12 @@ export default function DashboardPage() {
 
   const fetchDashboardData = async () => {
     try {
-      const response = await fetch("/dashboard/api/overview")
-      if (!response.ok) throw new Error("Failed to fetch dashboard data")
-      const result = await response.json()
-      // ApiHandler wraps response in { data: ... }
-      setData(result.data || result)
+      const data = await api.get<DashboardData>("/dashboard/api/overview")
+      setData(data)
     } catch (error) {
       console.error("Error fetching dashboard data:", error)
-      toast.error("Failed to load dashboard data")
+      const message = error instanceof ApiError ? error.message : "Failed to load dashboard data"
+      toast.error(message)
     } finally {
       setIsLoading(false)
     }

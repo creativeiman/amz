@@ -9,6 +9,7 @@ import * as z from "zod"
 import { signIn, useSession } from "next-auth/react"
 import { CheckCircle2, AlertCircle, Loader2 } from "lucide-react"
 import { GoogleSignInButton } from "@/components/auth/google-signin-button"
+import { api, ApiError } from "@/lib/api-client"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -86,19 +87,13 @@ function AcceptInviteContent() {
 
     const verifyToken = async () => {
       try {
-        const response = await fetch(`/api/invitations/verify?token=${token}`)
-        const data = await response.json()
-
-        if (!response.ok) {
-          setError(data.error || "Invalid or expired invitation")
-          setIsLoading(false)
-          return
-        }
-
+        const data = await api.get<{ invitation: InvitationDetails }>(`/api/invitations/verify?token=${token}`)
         setInvitationDetails(data.invitation)
         setIsLoading(false)
-      } catch {
-        setError("Failed to verify invitation. Please try again.")
+      } catch (error) {
+        console.error("Error verifying invitation:", error)
+        const message = error instanceof ApiError ? error.message : "Failed to verify invitation. Please try again."
+        setError(message)
         setIsLoading(false)
       }
     }
@@ -114,23 +109,11 @@ function AcceptInviteContent() {
 
     try {
       // Step 1: Accept the invitation
-      const response = await fetch("/api/invitations/accept", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          token,
-          name: data.name,
-          password: data.password,
-        }),
+      await api.post("/api/invitations/accept", {
+        token,
+        name: data.name,
+        password: data.password,
       })
-
-      const result = await response.json()
-
-      if (!response.ok) {
-        setError(result.error || "Failed to accept invitation")
-        setIsSubmitting(false)
-        return
-      }
 
       setSuccess(true)
 
@@ -153,8 +136,10 @@ function AcceptInviteContent() {
           router.refresh()
         }, 1500)
       }
-    } catch {
-      setError("Something went wrong. Please try again.")
+    } catch (error) {
+      console.error("Error accepting invitation:", error)
+      const message = error instanceof ApiError ? error.message : "Something went wrong. Please try again."
+      setError(message)
       setIsSubmitting(false)
     }
   }
@@ -166,25 +151,15 @@ function AcceptInviteContent() {
     setError(null)
 
     try {
-      const response = await fetch("/api/invitations/accept-oauth", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token }),
-      })
-
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || "Failed to accept invitation")
-      }
-
-      const result = await response.json()
+      const result = await api.post<{ redirectUrl?: string }>("/api/invitations/accept-oauth", { token })
       setSuccess(true)
       setTimeout(() => {
         router.push(result.redirectUrl || "/dashboard")
       }, 2000)
     } catch (error) {
       console.error("Error accepting OAuth invitation:", error)
-      setError(error instanceof Error ? error.message : "Failed to accept invitation")
+      const message = error instanceof ApiError ? error.message : "Failed to accept invitation"
+      setError(message)
     } finally {
       setIsAcceptingOAuth(false)
     }

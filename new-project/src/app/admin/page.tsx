@@ -193,12 +193,20 @@ export default function AdminDashboardPage() {
         </div>
       </div>
 
-      {/* KPI Cards */}
+      {/* KPI Cards - Row 1 */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         <KPICard 
           title="Monthly Recurring Revenue" 
           value={metrics.mrr} 
           change={metrics.mrrGrowth}
+          trend="up"
+          icon={DollarSign}
+          format="currency"
+        />
+        <KPICard 
+          title="Total Revenue" 
+          value={metrics.totalRevenue} 
+          change={0}
           trend="up"
           icon={DollarSign}
           format="currency"
@@ -217,11 +225,37 @@ export default function AdminDashboardPage() {
           trend="up"
           icon={Activity}
         />
+      </div>
+
+      {/* KPI Cards - Row 2 */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         <KPICard 
           title="Conversion Rate" 
           value={metrics.conversionRate} 
           change={-2.1}
           trend="down"
+          icon={TrendingUp}
+          format="percentage"
+        />
+        <KPICard 
+          title="Total Scans" 
+          value={metrics.totalScans} 
+          change={metrics.scanGrowth}
+          trend="up"
+          icon={Activity}
+        />
+        <KPICard 
+          title="Scans This Month" 
+          value={metrics.scansThisMonth} 
+          change={0}
+          trend="up"
+          icon={Activity}
+        />
+        <KPICard 
+          title="Avg Scan Score" 
+          value={metrics.avgScanScore} 
+          change={0}
+          trend="up"
           icon={TrendingUp}
           format="percentage"
         />

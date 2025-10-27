@@ -1,8 +1,9 @@
 'use client'
 
-import { CreditCard, CheckCircle, X, ArrowRight, Rocket } from 'lucide-react'
+import { CreditCard, CheckCircle, X, ArrowRight, Rocket, Users, AlertTriangle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import { useFreshAccount } from '@/hooks/use-fresh-account'
 
 const plans = [
   {
@@ -67,19 +68,141 @@ const plans = [
   },
 ]
 
+interface TeamBlockModal {
+  show: boolean
+  members: Array<{ id: string; name: string | null; email: string }>
+  invites: Array<{ id: string; email: string }>
+}
+
 export function PricingSection() {
   const router = useRouter()
+  const { account } = useFreshAccount() // ✅ Use centralized hook
   const [loading, setLoading] = useState<string | null>(null)
+  const [teamBlockModal, setTeamBlockModal] = useState<TeamBlockModal>({
+    show: false,
+    members: [],
+    invites: [],
+  })
+
+  // Get current plan from fresh account data
+  // null means not logged in, so don't default to FREE
+  const currentPlan = account?.plan || null
+  const isLoggedIn = account !== null
+
+  // Check if a plan should be disabled
+  const isPlanDisabled = (planId: string): boolean => {
+    // If not logged in, no plans are disabled
+    if (!isLoggedIn || !currentPlan) return false
+    
+    // Normalize both: replace hyphens with underscores and uppercase
+    const normalizedPlanId = planId.toUpperCase().replace(/-/g, '_')
+    const normalizedCurrentPlan = currentPlan.toUpperCase().replace(/-/g, '_')
+    
+    console.log('[Pricing] Comparing:', { planId, normalizedPlanId, currentPlan, normalizedCurrentPlan, isLoggedIn })
+    
+    // Can't select current plan again
+    if (normalizedCurrentPlan === normalizedPlanId) return true
+    
+    // If on ONE_TIME, can't "downgrade" to anything (already paid $59.99!)
+    if (normalizedCurrentPlan === 'ONE_TIME') {
+      // Already paid, can't go to FREE or DELUXE
+      if (normalizedPlanId === 'FREE' || normalizedPlanId === 'DELUXE') return true
+    }
+    
+    return false
+  }
+
+  // Get button text based on current plan
+  const getButtonText = (planId: string, defaultText: string): string => {
+    // If not logged in, show default text
+    if (!isLoggedIn || !currentPlan) return defaultText
+    
+    // Normalize both: replace hyphens with underscores and uppercase
+    const normalizedPlanId = planId.toUpperCase().replace(/-/g, '_')
+    const normalizedCurrentPlan = currentPlan.toUpperCase().replace(/-/g, '_')
+    
+    if (normalizedCurrentPlan === normalizedPlanId) {
+      return 'Current Plan'
+    }
+    
+    if (normalizedCurrentPlan === 'ONE_TIME' && normalizedPlanId === 'DELUXE') {
+      return 'Not Available'
+    }
+    
+    return defaultText
+  }
 
   const handlePlanClick = async (planId: string) => {
     setLoading(planId)
     
     try {
-      // Redirect to register with plan parameter
-      // After registration, user will be redirected to billing with this plan
-      router.push(`/register?plan=${planId}`)
+      if (planId === 'free') {
+        // Check if user is logged in and on a paid plan (downgrade scenario)
+        if (account && currentPlan !== 'FREE') {
+          // Validate team members before downgrade
+          const validationResponse = await fetch('/api/billing/validate-downgrade')
+          const validation = await validationResponse.json()
+
+          if (!validation.canDowngrade) {
+            // Show modal with team members that need to be removed
+            setTeamBlockModal({
+              show: true,
+              members: validation.activeMembers || [],
+              invites: validation.pendingInvites || [],
+            })
+            setLoading(null)
+            return
+          }
+
+          // Proceed with downgrade
+          const downgradeResponse = await fetch('/api/billing/downgrade', {
+            method: 'POST',
+          })
+
+          if (!downgradeResponse.ok) {
+            const data = await downgradeResponse.json()
+            throw new Error(data.error || 'Failed to downgrade')
+          }
+
+          // Success - refresh page to show updated plan
+          window.location.href = '/dashboard/billing?downgraded=true'
+          return
+        }
+        
+        // Not logged in or already on FREE - redirect to register
+        router.push('/register?plan=free')
+      } else if (planId === 'deluxe' || planId === 'one-time') {
+        // Call Stripe checkout API for paid plans
+        const response = await fetch('/api/stripe/checkout', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            planId: planId === 'deluxe' ? 'DELUXE' : 'ONE_TIME',
+          }),
+        })
+
+        const data = await response.json()
+
+        if (!response.ok) {
+          // If user is not logged in, redirect to register with plan
+          if (response.status === 401) {
+            router.push(`/register?plan=${planId}`)
+            return
+          }
+          throw new Error(data.error || 'Failed to create checkout session')
+        }
+
+        // Redirect to Stripe checkout
+        if (data.url) {
+          window.location.href = data.url
+        }
+      }
     } catch (error) {
       console.error('Error processing plan selection:', error)
+      // Show error to user (you can add a toast notification here)
+      alert('Failed to start checkout. Please try again.')
     } finally {
       setLoading(null)
     }
@@ -185,7 +308,7 @@ export function PricingSection() {
                 {/* CTA Button */}
                 <button
                   onClick={() => handlePlanClick(plan.planId)}
-                  disabled={loading === plan.planId}
+                  disabled={loading === plan.planId || isPlanDisabled(plan.planId)}
                   className={`group w-full py-4 rounded-full font-bold transition-all duration-300 hover:scale-105 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed ${
                     plan.popular
                       ? 'bg-white text-orange-600 hover:bg-gray-100 shadow-xl'
@@ -206,7 +329,7 @@ export function PricingSection() {
                       ) : (
                         <ArrowRight className="w-5 h-5 mr-2 group-hover:translate-x-1 transition-transform duration-300" />
                       )}
-                      {plan.buttonText}
+                      {getButtonText(plan.planId, plan.buttonText)}
                     </>
                   )}
                 </button>
@@ -215,6 +338,109 @@ export function PricingSection() {
           ))}
         </div>
       </div>
+
+      {/* Team Member Blocking Modal */}
+      {teamBlockModal.show && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-md w-full p-6 animate-in fade-in zoom-in duration-200">
+            <div className="flex items-start gap-4 mb-4">
+              <div className="p-3 rounded-full bg-amber-100 dark:bg-amber-900/30">
+                <AlertTriangle className="w-6 h-6 text-amber-600 dark:text-amber-400" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                  Remove Team Members First
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  You need to remove the following team members and cancel pending invitations before downgrading to the Free plan:
+                </p>
+              </div>
+            </div>
+
+            {/* Active Members List */}
+            {teamBlockModal.members.length > 0 && (
+              <div className="mb-4">
+                <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
+                  <Users className="w-4 h-4" />
+                  Active Members ({teamBlockModal.members.length})
+                </h4>
+                <ul className="space-y-2">
+                  {teamBlockModal.members.map((member) => (
+                    <li
+                      key={member.id}
+                      className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-slate-700 rounded-lg"
+                    >
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-blue-500 flex items-center justify-center text-white text-sm font-semibold">
+                        {member.name?.[0] || member.email[0].toUpperCase()}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                          {member.name || 'Unnamed User'}
+                        </p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                          {member.email}
+                        </p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Pending Invitations List */}
+            {teamBlockModal.invites.length > 0 && (
+              <div className="mb-6">
+                <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
+                  <CreditCard className="w-4 h-4" />
+                  Pending Invitations ({teamBlockModal.invites.length})
+                </h4>
+                <ul className="space-y-2">
+                  {teamBlockModal.invites.map((invite) => (
+                    <li
+                      key={invite.id}
+                      className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-slate-700 rounded-lg"
+                    >
+                      <div className="w-8 h-8 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center">
+                        <Users className="w-4 h-4 text-gray-600 dark:text-gray-300" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                          {invite.email}
+                        </p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          Pending invitation
+                        </p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Action Buttons */}
+            <div className="flex gap-3">
+              <button
+                onClick={() =>
+                  setTeamBlockModal({ show: false, members: [], invites: [] })
+                }
+                className="flex-1 px-4 py-3 rounded-lg border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-semibold hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  setTeamBlockModal({ show: false, members: [], invites: [] })
+                  window.location.href = '/dashboard/team'
+                }}
+                className="flex-1 px-4 py-3 rounded-lg bg-gradient-to-r from-orange-600 to-blue-600 text-white font-semibold hover:from-orange-700 hover:to-blue-700 transition-all shadow-lg flex items-center justify-center gap-2"
+              >
+                <Users className="w-4 h-4" />
+                Go to Team Management
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   )
 }

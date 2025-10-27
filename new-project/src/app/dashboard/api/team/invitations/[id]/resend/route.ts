@@ -42,8 +42,33 @@ export async function POST(
       },
     })
 
-    // TODO: Resend invitation email
-    // await sendInvitationEmail(invitation.email, invitation.id, account.name)
+    // Get account details for email
+    const accountWithOwner = await prisma.account.findUnique({
+      where: { id: invitation.accountId },
+      include: {
+        owner: {
+          select: { name: true, email: true },
+        },
+      },
+    })
+
+    // Resend invitation email
+    const inviterName = accountWithOwner?.owner.name || 'Team Owner'
+    const accountName = accountWithOwner?.owner.name || 'the team'
+    
+    const { EmailService } = await import('@/lib/email-service')
+    const emailSent = await EmailService.sendInvitationEmail(
+      invitation.email,
+      inviterName,
+      accountName,
+      invitation.token,
+      invitation.role
+    )
+
+    if (!emailSent) {
+      console.error('Failed to resend invitation email to:', invitation.email)
+      // Still continue - the invitation expiry is updated
+    }
 
     return { message: 'Invitation resent successfully' }
   })

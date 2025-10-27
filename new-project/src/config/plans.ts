@@ -1,6 +1,8 @@
 // Plan configurations and limits
 // This is the single source of truth for all plan-related configuration
 
+import { getStripeOneTimePriceId, getStripeDeluxePriceId } from './env'
+
 export const PLAN_LIMITS = {
   FREE: {
     name: 'Basic',
@@ -18,9 +20,9 @@ export const PLAN_LIMITS = {
   ONE_TIME: {
     name: 'One-Time Use',
     price: 59.99,
-    stripePriceId: process.env.NEXT_PUBLIC_STRIPE_ONE_TIME_PRICE_ID || '',
-    maxTeamMembers: 0, // No team members allowed
-    scansPerMonth: 1, // Single comprehensive scan
+    stripePriceId: getStripeOneTimePriceId(), // Auto-switches between test/live based on STRIPE_MODE
+    maxTeamMembers: 2, // ✅ Same as DELUXE - team collaboration included!
+    scansPerMonth: null, // ✅ Unlimited (same as DELUXE)
     features: [
       '1 comprehensive in-depth scan',
       'All Deluxe features for single product',
@@ -33,7 +35,7 @@ export const PLAN_LIMITS = {
   DELUXE: {
     name: 'Deluxe',
     price: 29.99,
-    stripePriceId: process.env.NEXT_PUBLIC_STRIPE_DELUXE_PRICE_ID || '',
+    stripePriceId: getStripeDeluxePriceId(), // Auto-switches between test/live based on STRIPE_MODE
     maxTeamMembers: 2, // Up to 2 team members (as per old project)
     scansPerMonth: null, // Unlimited (null = unlimited)
     features: [

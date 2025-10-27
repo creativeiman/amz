@@ -78,6 +78,18 @@ export async function POST(request: NextRequest) {
       return { user: newUser, account: newAccount }
     })
 
+    // Send welcome email
+    const { EmailService } = await import('@/lib/email-service')
+    const emailSent = await EmailService.sendWelcomeEmail(
+      result.user.email,
+      result.user.name || 'User'
+    )
+
+    if (!emailSent) {
+      console.error('Failed to send welcome email to:', result.user.email)
+      // Still continue - the account is created
+    }
+
     return {
       message: 'Account created successfully',
       user: {

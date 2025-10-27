@@ -107,6 +107,7 @@ CREATE TABLE "accounts" (
     "stripe_customer_id" TEXT,
     "stripe_subscription_id" TEXT,
     "subscription_status" "SubscriptionStatus" NOT NULL DEFAULT 'INACTIVE',
+    "subscription_cancel_at" TIMESTAMP(3),
     "is_active" BOOLEAN NOT NULL DEFAULT true,
     "business_name" TEXT,
     "primary_marketplace" TEXT,

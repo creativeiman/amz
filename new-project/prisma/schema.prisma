@@ -111,6 +111,7 @@ model Account {
   stripeCustomerId     String?            @unique @map("stripe_customer_id")
   stripeSubscriptionId String?            @unique @map("stripe_subscription_id")
   subscriptionStatus   SubscriptionStatus @default(INACTIVE) @map("subscription_status")
+  subscriptionCancelAt DateTime?          @map("subscription_cancel_at") // When subscription will end (for scheduled cancellations)
   isActive             Boolean            @default(true) @map("is_active") // Account status
   businessName         String?            @map("business_name")
   primaryMarketplace   String?            @map("primary_marketplace")

@@ -7,6 +7,7 @@ import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { getPlanLimits, canAddTeamMember } from "@/config/plans"
 import { api, ApiError } from "@/lib/api-client"
+import { useFreshAccount } from "@/hooks/use-fresh-account"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -67,6 +68,7 @@ type Invitation = {
 export default function TeamPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
+  const { account } = useFreshAccount() // ✅ Use centralized hook
   const [members, setMembers] = React.useState<Member[]>([])
   const [invitations, setInvitations] = React.useState<Invitation[]>([])
   const [isLoading, setIsLoading] = React.useState(true)
@@ -76,6 +78,9 @@ export default function TeamPage() {
 
   // Check if user is an account owner
   const isAccountOwner = Boolean((session?.user as { isOwner?: boolean })?.isOwner)
+
+  // Get current plan from fresh account data
+  const currentPlan = account?.plan || 'FREE'
 
   // Redirect non-owners to dashboard
   React.useEffect(() => {
@@ -120,7 +125,7 @@ export default function TeamPage() {
   }, [isAccountOwner])
 
   React.useEffect(() => {
-    // Only fetch data if user is an account owner
+    // Only fetch data if user is an account owner (plan fetched by hook)
     if (status !== 'loading' && isAccountOwner) {
       fetchMembers()
       fetchInvitations()
@@ -243,32 +248,33 @@ export default function TeamPage() {
     return null
   }
 
-  // Get current plan limits
-  const userPlan = session?.user?.plan || 'FREE'
-  const planLimits = getPlanLimits(userPlan)
+  // Get current plan limits (using fresh API data, not JWT!)
+  const planLimits = getPlanLimits(currentPlan)
   const totalMembers = members.length + invitations.length
-  const canInvite = canAddTeamMember(userPlan, totalMembers)
+  const canInvite = canAddTeamMember(currentPlan, totalMembers)
   const remainingSlots = planLimits.maxTeamMembers - totalMembers
+
+  console.log('[Team Page] Plan limits:', { currentPlan, maxTeamMembers: planLimits.maxTeamMembers, canInvite })
 
   return (
     <div className="space-y-6">
-      {/* Plan limits banner */}
-      {planLimits.maxTeamMembers === 0 && (
+      {/* Plan limits banner - only show for FREE plan */}
+      {currentPlan === 'FREE' && (
         <Card className="border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-950">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-amber-900 dark:text-amber-100">
               <Crown className="h-5 w-5" />
-              Upgrade to Deluxe for Team Collaboration
+              Upgrade for Team Collaboration
             </CardTitle>
             <CardDescription className="text-amber-800 dark:text-amber-200">
-              Team collaboration is not available on your current plan. Upgrade to Deluxe to invite up to 2 team members and unlock unlimited scans.
+              Team collaboration is not available on your current plan. Upgrade to Deluxe ($29.99/month) or One-Time ($59.99 forever) to invite up to 2 team members and unlock unlimited scans.
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Button variant="default" asChild>
-              <a href="/dashboard/billing">
+              <a href="/pricing">
                 <Crown className="mr-2 h-4 w-4" />
-                Upgrade to Deluxe
+                View Plans
               </a>
             </Button>
           </CardContent>

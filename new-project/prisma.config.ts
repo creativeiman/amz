@@ -4,5 +4,9 @@
  * No need to configure them in prisma.config.ts
  */
 
-import 'dotenv/config'
+import * as dotenv from 'dotenv'
+import * as path from 'path'
+
+// Load .env.local file
+dotenv.config({ path: path.resolve(__dirname, '.env.local') })
 

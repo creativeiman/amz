@@ -294,6 +294,19 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             },
           })
           console.log('[SignIn Callback] New user created with account:', newUser.id)
+          
+          // Send welcome email to new OAuth user
+          const { EmailService } = await import('@/lib/email-service')
+          const emailSent = await EmailService.sendWelcomeEmail(
+            newUser.email,
+            newUser.name || 'User'
+          )
+          
+          if (!emailSent) {
+            console.error('[SignIn Callback] Failed to send welcome email to:', newUser.email)
+            // Still continue - the account is created
+          }
+          
           return true
         }
 
@@ -477,13 +490,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
       }
 
-      // Periodically verify user and account are still active
-      // Check every ~5 minutes (token is refreshed periodically)
+      // Periodically verify user, account status, and PLAN
+      // Check every ~30 seconds (faster than 5 minutes to catch plan changes quickly)
       const lastChecked = token.lastChecked as number | undefined
       const now = Date.now()
-      const fiveMinutes = 5 * 60 * 1000
+      const thirtySeconds = 30 * 1000 // Check every 30 seconds instead of 5 minutes
 
-      if (!lastChecked || now - lastChecked > fiveMinutes) {
+      if (!lastChecked || now - lastChecked > thirtySeconds) {
         try {
           const { prisma } = await import('@/db/client')
           
@@ -495,6 +508,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
               ownedAccounts: {
                 select: {
                   isActive: true,
+                  plan: true, // ← ADD: Fetch plan!
                 },
                 take: 1,
               },
@@ -504,6 +518,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                   account: {
                     select: {
                       isActive: true,
+                      plan: true, // ← ADD: Fetch plan!
                     },
                   },
                 },
@@ -517,19 +532,34 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             return null
           }
 
-          // For regular users, check account status (either owned or member)
+          // For regular users, check account status AND sync plan (either owned or member)
           if (dbUser.role === 'USER') {
             let accountActive = false
+            let currentPlan: 'FREE' | 'DELUXE' | 'ONE_TIME' = 'FREE'
             
             // Check owned accounts
             if (dbUser.ownedAccounts && dbUser.ownedAccounts.length > 0) {
               const account = dbUser.ownedAccounts[0]
               accountActive = account.isActive
+              currentPlan = account.plan
+              
+              // ⚡ SYNC PLAN: Update token if plan changed!
+              if (token.plan !== currentPlan) {
+                console.log(`[JWT Callback] ✅ Plan sync: ${token.plan} → ${currentPlan}`)
+                token.plan = currentPlan
+              }
             } 
             // Check account memberships
             else if (dbUser.accountMemberships && dbUser.accountMemberships.length > 0) {
               const membership = dbUser.accountMemberships[0]
               accountActive = membership.isActive && membership.account.isActive
+              currentPlan = membership.account.plan
+              
+              // ⚡ SYNC PLAN: Update token if plan changed!
+              if (token.plan !== currentPlan) {
+                console.log(`[JWT Callback] ✅ Plan sync (member): ${token.plan} → ${currentPlan}`)
+                token.plan = currentPlan
+              }
             }
             
             if (!accountActive) {

@@ -27,6 +27,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ThemeToggle } from "@/components/theme-toggle"
 import Link from "next/link"
 import { api } from "@/lib/api-client"
+import { useFreshAccount } from "@/hooks/use-fresh-account"
 
 interface MenuItem {
   title: string
@@ -98,29 +99,14 @@ function getUserInitials(name: string | null | undefined) {
 export function DashboardSidebar() {
   const { data: session } = useSession()
   const user = session?.user
-  const [accountName, setAccountName] = React.useState<string | null>(null)
+  const { account } = useFreshAccount() // ✅ Use centralized hook for fresh account data
 
-  const planBadge = getPlanBadge(user?.plan || 'FREE')
+  // Use fresh account data for plan badge, fallback to JWT if API fails
+  const planBadge = getPlanBadge(account?.plan || user?.plan || 'FREE')
   
   // Check if user is an account owner by checking if they have the "isOwner" flag
   // This will be added to the session in the auth callback
   const isAccountOwner = Boolean((user as { isOwner?: boolean })?.isOwner)
-
-  // Fetch account name (refetch when session changes)
-  React.useEffect(() => {
-    async function fetchAccountName() {
-      try {
-        const data = await api.get<{ account: { name: string } }>("/dashboard/api/account")
-        setAccountName(data.account.name)
-      } catch (error) {
-        console.error("Error fetching account name:", error)
-      }
-    }
-
-    if (session) {
-      fetchAccountName()
-    }
-  }, [session])
 
   // Filter menu items based on user role
   const visibleMenuItems = menuItems.filter((item) => {
@@ -139,7 +125,7 @@ export function DashboardSidebar() {
             <Building2 className="h-5 w-5 text-muted-foreground" />
             <div className="flex-1 min-w-0">
               <h2 className="text-sm font-semibold truncate">
-                {accountName || 'Loading...'}
+                {account?.name || 'Loading...'}
               </h2>
               <p className="text-xs text-muted-foreground">Workspace</p>
             </div>

@@ -209,19 +209,33 @@ export async function POST(request: NextRequest) {
       },
     })
 
-    // Log invitation link for testing (TODO: Send via email in production)
-    const invitationLink = `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/accept-invite?token=${invitation.token}`
-    console.log('\n🔗 Invitation Link Generated:')
-    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
-    console.log(`📧 To: ${email}`)
-    console.log(`👤 Role: ${role}`)
-    console.log(`🔑 Token: ${invitation.token}`)
-    console.log(`🌐 Link: ${invitationLink}`)
-    console.log(`⏰ Expires: ${expiresAt.toLocaleString()}`)
-    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n')
+    // Get account details for email
+    const accountWithOwner = await prisma.account.findUnique({
+      where: { id: account.id },
+      include: {
+        owner: {
+          select: { name: true, email: true },
+        },
+      },
+    })
 
-    // TODO: Send invitation email
-    // await sendInvitationEmail(email, invitation.token, account.name)
+    // Send invitation email
+    const inviterName = accountWithOwner?.owner.name || 'Team Owner'
+    const accountName = accountWithOwner?.owner.name || 'the team'
+    
+    const { EmailService } = await import('@/lib/email-service')
+    const emailSent = await EmailService.sendInvitationEmail(
+      email,
+      inviterName,
+      accountName,
+      invitation.token,
+      role
+    )
+
+    if (!emailSent) {
+      console.error('Failed to send invitation email to:', email)
+      // Still continue - the invitation is created
+    }
 
     return {
       invitation: {

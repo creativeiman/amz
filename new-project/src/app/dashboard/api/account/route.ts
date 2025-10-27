@@ -24,6 +24,7 @@ export async function GET() {
         billingEmail: true,
         primaryMarketplace: true,
         productCategories: true,
+        subscriptionCancelAt: true, // For displaying cancellation warning
       },
     })
 
@@ -75,6 +76,7 @@ export async function PATCH(request: NextRequest) {
         billingEmail: true,
         primaryMarketplace: true,
         productCategories: true,
+        subscriptionCancelAt: true,
       },
     })
 

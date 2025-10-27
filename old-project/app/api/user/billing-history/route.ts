@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
         {
           id: 'onetime-payment-1',
           description: 'One-Time Plan - Single Payment',
-          amount: 59.99,
+          amount: 99.99,
           date: new Date().toISOString(),
           status: 'paid',
           invoice: 'INV-ONETIME-001'

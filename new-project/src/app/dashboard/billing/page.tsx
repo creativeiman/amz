@@ -215,7 +215,7 @@ function BillingPageContent() {
               </p>
               <p className="text-sm text-muted-foreground mt-1">
                 {currentPlan === 'DELUXE' && '$29.99 / month'}
-                {currentPlan === 'ONE_TIME' && '$59.99 one-time'}
+                {currentPlan === 'ONE_TIME' && '$99.99 one-time'}
                 {currentPlan === 'FREE' && '$0.00 / month'}
               </p>
             </div>

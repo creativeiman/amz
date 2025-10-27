@@ -35,7 +35,7 @@ export default function ChangePlanModal({ isOpen, onClose, currentPlan, onPlanCh
     {
       id: 'one-time',
       name: 'One-Time Plan',
-      price: '$59.99',
+      price: '$99.99',
       description: 'Single comprehensive scan',
       features: ['1 comprehensive scan', 'All Deluxe features', '30-day access', 'No recurring charges'],
       current: currentPlan === 'one-time'

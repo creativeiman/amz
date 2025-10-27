@@ -50,7 +50,7 @@ const plans = [
   {
     name: 'One-Time Use',
     description: 'Perfect for geo-expansion',
-    price: '$59.99',
+    price: '$99.99',
     period: 'one-time',
     features: [
       '1 comprehensive in-depth scan',
@@ -103,7 +103,7 @@ export function PricingSection() {
     // Can't select current plan again
     if (normalizedCurrentPlan === normalizedPlanId) return true
     
-    // If on ONE_TIME, can't "downgrade" to anything (already paid $59.99!)
+    // If on ONE_TIME, can't "downgrade" to anything (already paid $99.99!)
     if (normalizedCurrentPlan === 'ONE_TIME') {
       // Already paid, can't go to FREE or DELUXE
       if (normalizedPlanId === 'FREE' || normalizedPlanId === 'DELUXE') return true

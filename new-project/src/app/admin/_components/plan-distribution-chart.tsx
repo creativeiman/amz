@@ -17,7 +17,7 @@ const chartConfig = {
     color: "var(--chart-2)",
   },
   oneTime: {
-    label: "One-Time ($59.99)",
+    label: "One-Time ($99.99)",
     color: "var(--chart-3)",
   },
 } satisfies ChartConfig

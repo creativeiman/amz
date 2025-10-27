@@ -93,7 +93,7 @@ export default function TermsPage() {
                 <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">1 scan per account lifetime, basic compliance report, view-only results</p>
               </div>
               <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-                <h4 className="font-semibold text-orange-600 dark:text-orange-400">One-Time Use ($59.99)</h4>
+                <h4 className="font-semibold text-orange-600 dark:text-orange-400">One-Time Use ($99.99)</h4>
                 <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">Single comprehensive scan, 30-day access, all Deluxe features, no recurring charges</p>
               </div>
               <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">

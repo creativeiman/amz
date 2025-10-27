@@ -136,7 +136,7 @@ function PostPaymentSignupContent() {
       case 'one-time':
         return {
           name: 'One-Time Use',
-          price: '$59.99',
+          price: '$99.99',
           features: [
             '1 comprehensive in-depth scan',
             'All Deluxe features for single product',

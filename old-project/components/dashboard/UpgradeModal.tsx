@@ -67,7 +67,7 @@ export default function UpgradeModal({ isOpen, onClose, trigger }: UpgradeModalP
     },
     {
       name: 'One-Time Use',
-      price: '$59.99',
+      price: '$99.99',
       period: 'one-time',
       features: [
         '1 comprehensive in-depth scan',
@@ -112,7 +112,7 @@ export default function UpgradeModal({ isOpen, onClose, trigger }: UpgradeModalP
           },
           body: JSON.stringify({
             planId: 'one-time',
-            price: 5999, // $59.99 in cents
+            price: 9999, // $99.99 in cents
             recurring: false,
           }),
         })

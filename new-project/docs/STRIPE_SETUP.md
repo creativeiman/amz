@@ -32,7 +32,7 @@ NEXT_PUBLIC_STRIPE_LIVE_PUBLISHABLE_KEY=""
 STRIPE_LIVE_WEBHOOK_SECRET=""
 
 # Stripe Price IDs
-NEXT_PUBLIC_STRIPE_ONE_TIME_PRICE_ID="price_1SLU2t9W2vd5PpZc5eryXilL"
+NEXT_PUBLIC_STRIPE_ONE_TIME_PRICE_ID="price_1SMz5M9W2vd5PpZcUOxZ5gNG"
 NEXT_PUBLIC_STRIPE_DELUXE_PRICE_ID="price_1SLU2T9W2vd5PpZcnhHVFZHz"
 ```
 
@@ -57,7 +57,7 @@ This allows you to easily switch between test and production Stripe accounts.
 
 Your products should already be set up with these price IDs:
 
-- **One-Time Use Plan**: `price_1SLU2t9W2vd5PpZc5eryXilL` ($59.99)
+- **One-Time Use Plan**: `price_1SMz5M9W2vd5PpZcUOxZ5gNG` ($99.99)
 - **Deluxe Plan**: `price_1SLU2T9W2vd5PpZcnhHVFZHz` ($29.99/month)
 
 To verify:

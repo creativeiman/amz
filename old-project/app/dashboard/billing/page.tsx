@@ -72,7 +72,7 @@ export default function BillingPage() {
       case 'one-time':
         return {
           name: 'One-Time Plan',
-          price: '$59.99',
+          price: '$99.99',
           period: 'one-time',
           features: ['Single product analysis', 'Comprehensive report', 'Geo-expansion support'],
           color: 'from-green-600 to-emerald-600'

@@ -19,7 +19,7 @@ export const PLAN_LIMITS = {
   },
   ONE_TIME: {
     name: 'One-Time Use',
-    price: 59.99,
+    price: 99.99,
     stripePriceId: getStripeOneTimePriceId(), // Auto-switches between test/live based on STRIPE_MODE
     maxTeamMembers: 2, // ✅ Same as DELUXE - team collaboration included!
     scansPerMonth: null, // ✅ Unlimited (same as DELUXE)

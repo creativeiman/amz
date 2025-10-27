@@ -267,7 +267,7 @@ export default function TeamPage() {
               Upgrade for Team Collaboration
             </CardTitle>
             <CardDescription className="text-amber-800 dark:text-amber-200">
-              Team collaboration is not available on your current plan. Upgrade to Deluxe ($29.99/month) or One-Time ($59.99 forever) to invite up to 2 team members and unlock unlimited scans.
+              Team collaboration is not available on your current plan. Upgrade to Deluxe ($29.99/month) or One-Time ($99.99 forever) to invite up to 2 team members and unlock unlimited scans.
             </CardDescription>
           </CardHeader>
           <CardContent>

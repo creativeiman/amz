@@ -1,6 +1,6 @@
 "use client"
 
-import { LayoutDashboard, Users, BarChart3, Settings, Shield, ChevronUp, LogOut } from "lucide-react"
+import { LayoutDashboard, Users, Settings, Shield, ChevronUp, LogOut } from "lucide-react"
 import {
   Sidebar,
   SidebarContent,
@@ -36,11 +36,6 @@ const menuItems = [
     title: "Accounts",
     url: "/admin/accounts",
     icon: Users,
-  },
-  {
-    title: "Analytics",
-    url: "/admin/analytics",
-    icon: BarChart3,
   },
   {
     title: "Settings",

@@ -1,0 +1,32 @@
+{
+  "title": "Account Settings",
+  "subtitle": "Manage your workspace and account information",
+  
+  "alert.workspaceSettings": "These settings apply to your entire workspace and will be visible to all team members.",
+  
+  "workspace.title": "Workspace Information",
+  "workspace.description": "Update your workspace name and business details",
+  "workspace.name": "Workspace Name",
+  "workspace.namePlaceholder": "e.g., My Business, ACME Corp",
+  "workspace.nameHint": "This name will be displayed in the sidebar and throughout your dashboard",
+  "workspace.businessName": "Business Name (Optional)",
+  "workspace.businessNamePlaceholder": "Legal business name",
+  "workspace.billingEmail": "Billing Email (Optional)",
+  "workspace.billingEmailPlaceholder": "billing@example.com",
+  "workspace.billingEmailHint": "Used for invoices and billing notifications",
+  "workspace.plan": "Plan",
+  "workspace.workspaceId": "Workspace ID",
+  "workspace.saving": "Saving...",
+  "workspace.saveChanges": "Save Changes",
+  "workspace.cancel": "Cancel",
+  
+  "validation.nameMin": "Account name must be at least 2 characters",
+  "validation.invalidEmail": "Invalid email address",
+  
+  "toast.failedToLoad": "Failed to load account settings",
+  "toast.updateSuccess": "Account settings updated successfully",
+  "toast.updateFailed": "Failed to update account",
+  
+  "error.ownersOnly": "Only account owners can access account settings"
+}
+

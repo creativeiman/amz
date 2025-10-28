@@ -1,0 +1,32 @@
+{
+  "title": "Configuración de la Cuenta",
+  "subtitle": "Administre su espacio de trabajo e información de la cuenta",
+  
+  "alert.workspaceSettings": "Esta configuración se aplica a todo su espacio de trabajo y será visible para todos los miembros del equipo.",
+  
+  "workspace.title": "Información del Espacio de Trabajo",
+  "workspace.description": "Actualice el nombre de su espacio de trabajo y detalles comerciales",
+  "workspace.name": "Nombre del Espacio de Trabajo",
+  "workspace.namePlaceholder": "ej., Mi Negocio, ACME Corp",
+  "workspace.nameHint": "Este nombre se mostrará en la barra lateral y en todo su panel",
+  "workspace.businessName": "Nombre Comercial (Opcional)",
+  "workspace.businessNamePlaceholder": "Nombre legal del negocio",
+  "workspace.billingEmail": "Correo de Facturación (Opcional)",
+  "workspace.billingEmailPlaceholder": "facturacion@ejemplo.com",
+  "workspace.billingEmailHint": "Utilizado para facturas y notificaciones de facturación",
+  "workspace.plan": "Plan",
+  "workspace.workspaceId": "ID del Espacio de Trabajo",
+  "workspace.saving": "Guardando...",
+  "workspace.saveChanges": "Guardar Cambios",
+  "workspace.cancel": "Cancelar",
+  
+  "validation.nameMin": "El nombre de la cuenta debe tener al menos 2 caracteres",
+  "validation.invalidEmail": "Dirección de correo electrónico inválida",
+  
+  "toast.failedToLoad": "Error al cargar la configuración de la cuenta",
+  "toast.updateSuccess": "Configuración de la cuenta actualizada exitosamente",
+  "toast.updateFailed": "Error al actualizar la cuenta",
+  
+  "error.ownersOnly": "Solo los propietarios de la cuenta pueden acceder a la configuración de la cuenta"
+}
+

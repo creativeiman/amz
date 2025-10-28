@@ -1,0 +1,23 @@
+{
+  "welcome": "Welcome back",
+  "subtitle": "Manage your product compliance and scan history",
+  "newScan": "New Scan",
+  "stats.totalScans": "Total Scans",
+  "stats.compliant": "Compliant",
+  "stats.issuesFound": "Issues Found",
+  "stats.avgScore": "Avg Score",
+  "recentScans.title": "Recent Scans",
+  "recentScans.viewAll": "View All",
+  "recentScans.empty": "No scans yet",
+  "recentScans.emptySubtitle": "Get started by creating your first compliance scan",
+  "usage.title": "Scan Usage",
+  "usage.unlimited": "Unlimited",
+  "usage.scansUsed": "scans used",
+  "usage.upgrade": "Upgrade Plan",
+  "upgrade.title": "You've reached your scan limit",
+  "upgrade.description": "Upgrade to Deluxe for unlimited scans and advanced features",
+  "upgrade.button": "Upgrade Now",
+  "failedToLoad": "Failed to load dashboard",
+  "loading": "Loading..."
+}
+

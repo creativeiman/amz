@@ -1,0 +1,91 @@
+{
+  "title": "Team-Verwaltung",
+  "subtitle": "Verwalten Sie Ihre Teammitglieder und Einladungen",
+  "inviteMember": "Mitglied Einladen",
+  "of": "von",
+  "slotsAvailable": "Team-Plätze verfügbar",
+  "loading": "Team wird geladen...",
+  "failedToLoad": "Fehler beim Laden der Teammitglieder",
+  "error.accessDenied": "Zugriff verweigert. Nur Kontoinhaber können Teammitglieder verwalten.",
+  
+  "upgrade.title": "Upgrade für Team-Zusammenarbeit",
+  "upgrade.description": "Team-Zusammenarbeit ist in Ihrem aktuellen Plan nicht verfügbar. Upgraden Sie auf Deluxe ($29,99/Monat) oder One-Time ($99,99 für immer), um bis zu 2 Teammitglieder einzuladen und unbegrenzte Scans freizuschalten.",
+  "upgrade.button": "Pläne Anzeigen",
+  
+  "tabs.members": "Mitglieder",
+  "tabs.invitations": "Einladungen",
+  
+  "members.title": "Teammitglieder",
+  "members.description": "Personen mit Zugriff auf dieses Konto",
+  "members.empty": "Noch keine Teammitglieder. Laden Sie jemanden ein, um zu beginnen!",
+  
+  "invitations.title": "Ausstehende Einladungen",
+  "invitations.description": "Einladungen zum Beitritt zu Ihrem Team gesendet",
+  "invitations.empty": "Keine ausstehenden Einladungen",
+  
+  "table.name": "Name",
+  "table.email": "E-Mail",
+  "table.role": "Rolle",
+  "table.status": "Status",
+  "table.joined": "Beigetreten",
+  "table.invitedBy": "Eingeladen Von",
+  "table.sent": "Gesendet",
+  "table.expires": "Läuft Ab",
+  "table.actions": "Aktionen",
+  
+  "unnamed": "Unbenannt",
+  "na": "N/V",
+  
+  "role.editor": "Bearbeiter",
+  "role.viewer": "Betrachter",
+  "role.editorDesc": "Kann Scans ansehen und erstellen",
+  "role.viewerDesc": "Kann Scans und Berichte ansehen",
+  
+  "status.active": "Aktiv",
+  "status.inactive": "Inaktiv",
+  "status.expired": "Abgelaufen",
+  
+  "actions.activate": "Aktivieren",
+  "actions.deactivate": "Deaktivieren",
+  "actions.remove": "Entfernen",
+  "actions.copyLink": "Link Kopieren",
+  "actions.resend": "Erneut Senden",
+  "actions.cancel": "Abbrechen",
+  
+  "invite.success": "Einladung erfolgreich gesendet",
+  "invite.failed": "Fehler beim Senden der Einladung",
+  
+  "memberActivated": "Mitglied erfolgreich aktiviert",
+  "memberDeactivated": "Mitglied erfolgreich deaktiviert",
+  "updateFailed": "Fehler beim Aktualisieren des Mitgliedsstatus",
+  
+  "remove.title": "Teammitglied Entfernen",
+  "remove.description": "Sind Sie sicher, dass Sie dieses Teammitglied entfernen möchten? Sie verlieren den Zugriff auf das Konto.",
+  "remove.confirm": "Mitglied Entfernen",
+  "remove.success": "Mitglied erfolgreich entfernt",
+  "remove.failed": "Fehler beim Entfernen des Mitglieds",
+  
+  "cancel": "Abbrechen",
+  "cancel.title": "Einladung Abbrechen",
+  "cancel.description": "Sind Sie sicher, dass Sie diese Einladung abbrechen möchten?",
+  "cancel.confirm": "Einladung Abbrechen",
+  "cancel.success": "Einladung erfolgreich abgebrochen",
+  "cancel.failed": "Fehler beim Abbrechen der Einladung",
+  
+  "resend.success": "Einladung erfolgreich erneut gesendet",
+  "resend.failed": "Fehler beim erneuten Senden der Einladung",
+  
+  "copySuccess": "Einladungslink in die Zwischenablage kopiert!",
+  "copyFailed": "Fehler beim Kopieren des Links",
+  
+  "sheet.title": "Teammitglied Einladen",
+  "sheet.description": "Senden Sie eine Einladung, um Ihrem Team beizutreten. Sie erhalten eine E-Mail mit Anweisungen.",
+  "sheet.emailLabel": "E-Mail-Adresse",
+  "sheet.emailPlaceholder": "kollege@beispiel.com",
+  "sheet.roleLabel": "Rolle",
+  "sheet.rolePlaceholder": "Rolle auswählen",
+  "sheet.noteTitle": "Hinweis:",
+  "sheet.noteDescription": "Die Einladung wird per E-Mail versendet und läuft in 7 Tagen ab. Der Empfänger muss die Einladung annehmen, um Ihrem Team beizutreten.",
+  "sheet.sending": "Wird gesendet...",
+  "sheet.sendInvitation": "Einladung Senden"
+}

@@ -1,0 +1,12 @@
+{
+  "title": "Admin Panel",
+  "menu.dashboard": "Dashboard",
+  "menu.accounts": "Accounts",
+  "menu.settings": "Settings",
+  "user.role": "Role",
+  "user.role.admin": "Admin",
+  "user.role.user": "User",
+  "user.adminSettings": "Admin Settings",
+  "user.logout": "Log Out"
+}
+

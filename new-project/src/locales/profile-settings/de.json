@@ -1,0 +1,44 @@
+{
+  "title": "Profilausstellungen",
+  "subtitle": "Verwalten Sie Ihre persönlichen Informationen und Sicherheit",
+  
+  "profile.title": "Persönliche Informationen",
+  "profile.description": "Aktualisieren Sie Ihren Namen und Ihre E-Mail-Adresse",
+  "profile.name": "Name",
+  "profile.namePlaceholder": "Ihr Name",
+  "profile.email": "E-Mail",
+  "profile.emailPlaceholder": "ihre@email.com",
+  "profile.emailDisabled": "Die E-Mail kann derzeit nicht geändert werden",
+  "profile.saving": "Wird gespeichert...",
+  "profile.saveChanges": "Änderungen Speichern",
+  "profile.cancel": "Abbrechen",
+  
+  "password.title": "Passwort Ändern",
+  "password.description": "Aktualisieren Sie Ihr Passwort, um Ihr Konto zu sichern",
+  "password.currentPassword": "Aktuelles Passwort",
+  "password.currentPasswordPlaceholder": "Geben Sie Ihr aktuelles Passwort ein",
+  "password.newPassword": "Neues Passwort",
+  "password.newPasswordPlaceholder": "Geben Sie Ihr neues Passwort ein (mind. 8 Zeichen)",
+  "password.confirmPassword": "Neues Passwort Bestätigen",
+  "password.confirmPasswordPlaceholder": "Bestätigen Sie Ihr neues Passwort",
+  "password.changing": "Wird geändert...",
+  "password.changePassword": "Passwort Ändern",
+  "password.cancel": "Abbrechen",
+  
+  "security.title": "Kontosicherheit",
+  "security.googleDescription": "Sie haben sich mit Google angemeldet. Ihr Konto ist durch die Authentifizierung von Google gesichert.",
+  "security.googleSignedIn": "Mit Google Angemeldet",
+  "security.googleSecured": "Ihr Konto ist durch das Authentifizierungssystem von Google gesichert.",
+  
+  "validation.nameMin": "Der Name muss mindestens 2 Zeichen lang sein",
+  "validation.invalidEmail": "Ungültige E-Mail-Adresse",
+  "validation.currentPasswordRequired": "Aktuelles Passwort ist erforderlich",
+  "validation.newPasswordMin": "Das neue Passwort muss mindestens 8 Zeichen lang sein",
+  "validation.passwordsMatch": "Passwörter stimmen nicht überein",
+  
+  "toast.profileUpdated": "Profil erfolgreich aktualisiert",
+  "toast.profileFailed": "Fehler beim Aktualisieren des Profils",
+  "toast.passwordChanged": "Passwort erfolgreich geändert",
+  "toast.unexpectedError": "Ein unerwarteter Fehler ist aufgetreten"
+}
+

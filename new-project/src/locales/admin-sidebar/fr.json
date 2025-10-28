@@ -1,0 +1,12 @@
+{
+  "title": "Panneau d'Administration",
+  "menu.dashboard": "Tableau de Bord",
+  "menu.accounts": "Comptes",
+  "menu.settings": "Paramètres",
+  "user.role": "Rôle",
+  "user.role.admin": "Administrateur",
+  "user.role.user": "Utilisateur",
+  "user.adminSettings": "Paramètres Admin",
+  "user.logout": "Se Déconnecter"
+}
+

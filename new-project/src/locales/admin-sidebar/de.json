@@ -1,0 +1,12 @@
+{
+  "title": "Admin-Panel",
+  "menu.dashboard": "Dashboard",
+  "menu.accounts": "Konten",
+  "menu.settings": "Einstellungen",
+  "user.role": "Rolle",
+  "user.role.admin": "Administrator",
+  "user.role.user": "Benutzer",
+  "user.adminSettings": "Admin-Einstellungen",
+  "user.logout": "Abmelden"
+}
+

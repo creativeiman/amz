@@ -1,0 +1,17 @@
+{
+  "workspace": "Workspace",
+  "navigation": "Navigation",
+  "menu.dashboard": "Dashboard",
+  "menu.scans": "Scans",
+  "menu.billing": "Billing",
+  "menu.team": "Team",
+  "menu.accountSettings": "Account Settings",
+  "menu.profile": "Profile",
+  "user.currentPlan": "Current Plan",
+  "user.logout": "Log Out",
+  "plan.free": "Free",
+  "plan.deluxe": "Deluxe",
+  "plan.oneTime": "One-Time",
+  "loading": "Loading..."
+}
+

@@ -15,6 +15,7 @@ import { Card } from "@/components/ui/card"
 import { format } from "date-fns"
 import { useSession } from "next-auth/react"
 import { api, ApiError } from "@/lib/api-client"
+import { useTranslation } from "@/hooks/useTranslation"
 
 type AccountUsage = {
   scansUsed: number
@@ -26,6 +27,7 @@ function ScansPageContent() {
   const { data: session } = useSession()
   const searchParams = useSearchParams()
   const router = useRouter()
+  const { t } = useTranslation('dashboard-scans')
   const [scans, setScans] = React.useState<Scan[]>([])
   const [isLoading, setIsLoading] = React.useState(true)
   const [selectedScan, setSelectedScan] = React.useState<Scan | null>(null)
@@ -63,12 +65,12 @@ function ScansPageContent() {
       setUserPermissions(data.permissions || [])
     } catch (error) {
       console.error("Error fetching scans:", error)
-      const message = error instanceof ApiError ? error.message : "Failed to load scans"
+      const message = error instanceof ApiError ? error.message : t('failedToLoad', 'Failed to load scans')
       toast.error(message)
     } finally {
       setIsLoading(false)
     }
-  }, [])
+  }, [t])
 
   React.useEffect(() => {
     fetchScans()
@@ -102,18 +104,18 @@ function ScansPageContent() {
       try {
         await api.post("/dashboard/api/scans", formData)
 
-        toast.success("Scan created successfully")
+        toast.success(t('scanCreated', 'Scan created successfully'))
         fetchScans()
         setIsSheetOpen(false)
         setSelectedScan(null)
       } catch (error) {
         console.error("Error saving scan:", error)
-        const errorMessage = error instanceof ApiError ? error.message : "Failed to create scan"
+        const errorMessage = error instanceof ApiError ? error.message : t('scanFailed', 'Failed to create scan')
         toast.error(errorMessage)
         throw error
       }
     },
-    [fetchScans]
+    [fetchScans, t]
   )
 
   // Handle create new scan
@@ -123,8 +125,8 @@ function ScansPageContent() {
   }, [])
 
   const columns = React.useMemo(
-    () => createColumns(),
-    []
+    () => createColumns(t),
+    [t]
   )
 
   const isLimitReached = accountUsage
@@ -132,22 +134,22 @@ function ScansPageContent() {
     : false
 
   if (isLoading) {
-    return <LoadingPage text="Loading scans..." />
+    return <LoadingPage text={t('loading', 'Loading scans...')} />
   }
 
   return (
     <div className="space-y-4 sm:space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold">Label Scans</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold">{t('title', 'Label Scans')}</h1>
           <p className="text-sm sm:text-base text-muted-foreground mt-1 sm:mt-2">
-            Scan product labels for compliance analysis
+            {t('subtitle', 'Scan product labels for compliance analysis')}
           </p>
         </div>
         {canCreateScan && (
           <Button onClick={handleCreateNew} disabled={isLimitReached} className="w-full sm:w-auto">
             <Plus className="mr-2 h-4 w-4" />
-            New Scan
+            {t('newScan', 'New Scan')}
           </Button>
         )}
       </div>
@@ -162,7 +164,7 @@ function ScansPageContent() {
                   <Zap className="h-5 w-5 text-primary" />
                 </div>
                 <div>
-                  <div className="text-sm text-muted-foreground">Scans Used</div>
+                  <div className="text-sm text-muted-foreground">{t('scansUsed', 'Scans Used')}</div>
                   <div className="text-2xl font-bold">
                     {accountUsage.scansUsed}
                     {accountUsage.scanLimit !== null && (
@@ -171,7 +173,7 @@ function ScansPageContent() {
                       </span>
                     )}
                     {accountUsage.scanLimit === null && (
-                      <span className="text-muted-foreground text-lg font-normal"> / Unlimited</span>
+                      <span className="text-muted-foreground text-lg font-normal"> / {t('unlimited', 'Unlimited')}</span>
                     )}
                   </div>
                 </div>
@@ -185,7 +187,7 @@ function ScansPageContent() {
                       <Calendar className="h-5 w-5 text-blue-500" />
                     </div>
                     <div>
-                      <div className="text-sm text-muted-foreground">Resets On</div>
+                      <div className="text-sm text-muted-foreground">{t('resetsOn', 'Resets On')}</div>
                       <div className="text-lg font-semibold">
                         {format(new Date(accountUsage.resetDate), "MMM d, yyyy")}
                       </div>
@@ -198,13 +200,13 @@ function ScansPageContent() {
             {isLimitReached && (
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg p-4">
                 <span className="text-sm text-red-600 dark:text-red-400 font-medium">
-                  Scan limit reached. Upgrade your plan to continue.
+                  {t('limitReached', 'Scan limit reached. Upgrade your plan to continue.')}
                 </span>
                 <Link 
                   href="/dashboard/billing"
                   className="inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-orange-600 to-blue-600 text-white text-sm font-semibold rounded-lg hover:from-orange-700 hover:to-blue-700 transition-all duration-200 shadow-md hover:shadow-lg whitespace-nowrap"
                 >
-                  Upgrade Plan
+                  {t('upgradePlan', 'Upgrade Plan')}
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Link>
               </div>
@@ -228,9 +230,14 @@ function ScansPageContent() {
   )
 }
 
+function ScansPageFallback() {
+  const { t } = useTranslation('dashboard-scans')
+  return <LoadingPage text={t('loading', 'Loading scans...')} />
+}
+
 export default function ScansPage() {
   return (
-    <Suspense fallback={<LoadingPage text="Loading scans..." />}>
+    <Suspense fallback={<ScansPageFallback />}>
       <ScansPageContent />
     </Suspense>
   )

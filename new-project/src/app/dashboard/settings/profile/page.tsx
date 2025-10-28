@@ -20,28 +20,33 @@ import {
 } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { api, ApiError } from "@/lib/api-client"
+import { useTranslation } from "@/hooks/useTranslation"
 
-const profileSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Invalid email address"),
-})
-
-const passwordSchema = z.object({
-  currentPassword: z.string().min(1, "Current password is required"),
-  newPassword: z.string().min(8, "New password must be at least 8 characters"),
-  confirmPassword: z.string(),
-}).refine((data) => data.newPassword === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"],
-})
-
-type ProfileFormData = z.infer<typeof profileSchema>
-type PasswordFormData = z.infer<typeof passwordSchema>
+// Schema functions will be created inside component to access t()
 
 export default function ProfilePage() {
   const { data: session, update } = useSession()
+  const { t } = useTranslation('profile-settings')
   const [isSavingProfile, setIsSavingProfile] = React.useState(false)
   const [isSavingPassword, setIsSavingPassword] = React.useState(false)
+
+  // Create schemas with translations
+  const profileSchema = z.object({
+    name: z.string().min(2, t('validation.nameMin', 'Name must be at least 2 characters')),
+    email: z.string().email(t('validation.invalidEmail', 'Invalid email address')),
+  })
+
+  const passwordSchema = z.object({
+    currentPassword: z.string().min(1, t('validation.currentPasswordRequired', 'Current password is required')),
+    newPassword: z.string().min(8, t('validation.newPasswordMin', 'New password must be at least 8 characters')),
+    confirmPassword: z.string(),
+  }).refine((data) => data.newPassword === data.confirmPassword, {
+    message: t('validation.passwordsMatch', "Passwords don't match"),
+    path: ["confirmPassword"],
+  })
+
+  type ProfileFormData = z.infer<typeof profileSchema>
+  type PasswordFormData = z.infer<typeof passwordSchema>
 
   // Debug logging
   React.useEffect(() => {
@@ -98,10 +103,10 @@ export default function ProfilePage() {
         email: result.user.email,
       })
       
-      toast.success("Profile updated successfully")
+      toast.success(t('toast.profileUpdated', 'Profile updated successfully'))
     } catch (error) {
       console.error("Error updating profile:", error)
-      const message = error instanceof ApiError ? error.message : "Failed to update profile"
+      const message = error instanceof ApiError ? error.message : t('toast.profileFailed', 'Failed to update profile')
       toast.error(message)
     } finally {
       setIsSavingProfile(false)
@@ -118,10 +123,10 @@ export default function ProfilePage() {
       })
 
       passwordForm.reset()
-      toast.success("Password changed successfully")
+      toast.success(t('toast.passwordChanged', 'Password changed successfully'))
     } catch (error) {
       console.error("Error changing password:", error)
-      const message = error instanceof ApiError ? error.message : "An unexpected error occurred"
+      const message = error instanceof ApiError ? error.message : t('toast.unexpectedError', 'An unexpected error occurred')
       toast.error(message)
     } finally {
       setIsSavingPassword(false)
@@ -131,9 +136,9 @@ export default function ProfilePage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Profile Settings</h1>
+        <h1 className="text-3xl font-bold">{t('title', 'Profile Settings')}</h1>
         <p className="text-muted-foreground mt-2">
-          Manage your personal information and security
+          {t('subtitle', 'Manage your personal information and security')}
         </p>
       </div>
 
@@ -142,21 +147,21 @@ export default function ProfilePage() {
         <CardHeader>
           <div className="flex items-center gap-2">
             <User className="h-5 w-5" />
-            <CardTitle>Personal Information</CardTitle>
+            <CardTitle>{t('profile.title', 'Personal Information')}</CardTitle>
           </div>
           <CardDescription>
-            Update your name and email address
+            {t('profile.description', 'Update your name and email address')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={profileForm.handleSubmit(onSubmitProfile)} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="name">
-                Name <span className="text-red-500">*</span>
+                {t('profile.name', 'Name')} <span className="text-red-500">*</span>
               </Label>
               <Input
                 id="name"
-                placeholder="Your name"
+                placeholder={t('profile.namePlaceholder', 'Your name')}
                 {...profileForm.register("name")}
               />
               {profileForm.formState.errors.name && (
@@ -168,17 +173,17 @@ export default function ProfilePage() {
 
             <div className="space-y-2">
               <Label htmlFor="email">
-                Email <span className="text-red-500">*</span>
+                {t('profile.email', 'Email')} <span className="text-red-500">*</span>
               </Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="your@email.com"
+                placeholder={t('profile.emailPlaceholder', 'your@email.com')}
                 {...profileForm.register("email")}
                 disabled
               />
               <p className="text-xs text-muted-foreground">
-                Email cannot be changed at this time
+                {t('profile.emailDisabled', 'Email cannot be changed at this time')}
               </p>
             </div>
 
@@ -190,10 +195,10 @@ export default function ProfilePage() {
                 {isSavingProfile ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Saving...
+                    {t('profile.saving', 'Saving...')}
                   </>
                 ) : (
-                  "Save Changes"
+                  t('profile.saveChanges', 'Save Changes')
                 )}
               </Button>
               {profileForm.formState.isDirty && (
@@ -203,7 +208,7 @@ export default function ProfilePage() {
                   onClick={() => profileForm.reset()}
                   disabled={isSavingProfile}
                 >
-                  Cancel
+                  {t('profile.cancel', 'Cancel')}
                 </Button>
               )}
             </div>
@@ -217,10 +222,10 @@ export default function ProfilePage() {
           <CardHeader>
             <div className="flex items-center gap-2">
               <Shield className="h-5 w-5" />
-              <CardTitle>Account Security</CardTitle>
+              <CardTitle>{t('security.title', 'Account Security')}</CardTitle>
             </div>
             <CardDescription>
-              You signed in with Google. Your account is secured through Google&apos;s authentication.
+              {t('security.googleDescription', "You signed in with Google. Your account is secured through Google's authentication.")}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -234,8 +239,8 @@ export default function ProfilePage() {
                 </svg>
               </div>
               <div>
-                <p className="text-sm font-medium text-green-800">Signed in with Google</p>
-                <p className="text-xs text-green-600">Your account is secured through Google&apos;s authentication system.</p>
+                <p className="text-sm font-medium text-green-800">{t('security.googleSignedIn', 'Signed in with Google')}</p>
+                <p className="text-xs text-green-600">{t('security.googleSecured', "Your account is secured through Google's authentication system.")}</p>
               </div>
             </div>
           </CardContent>
@@ -245,22 +250,22 @@ export default function ProfilePage() {
           <CardHeader>
             <div className="flex items-center gap-2">
               <KeyRound className="h-5 w-5" />
-              <CardTitle>Change Password</CardTitle>
+              <CardTitle>{t('password.title', 'Change Password')}</CardTitle>
             </div>
             <CardDescription>
-              Update your password to keep your account secure
+              {t('password.description', 'Update your password to keep your account secure')}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={passwordForm.handleSubmit(onSubmitPassword)} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="currentPassword">
-                  Current Password <span className="text-red-500">*</span>
+                  {t('password.currentPassword', 'Current Password')} <span className="text-red-500">*</span>
                 </Label>
                 <Input
                   id="currentPassword"
                   type="password"
-                  placeholder="Enter your current password"
+                  placeholder={t('password.currentPasswordPlaceholder', 'Enter your current password')}
                   {...passwordForm.register("currentPassword")}
                 />
                 {passwordForm.formState.errors.currentPassword && (
@@ -274,12 +279,12 @@ export default function ProfilePage() {
 
               <div className="space-y-2">
                 <Label htmlFor="newPassword">
-                  New Password <span className="text-red-500">*</span>
+                  {t('password.newPassword', 'New Password')} <span className="text-red-500">*</span>
                 </Label>
                 <Input
                   id="newPassword"
                   type="password"
-                  placeholder="Enter your new password (min 8 characters)"
+                  placeholder={t('password.newPasswordPlaceholder', 'Enter your new password (min 8 characters)')}
                   {...passwordForm.register("newPassword")}
                 />
                 {passwordForm.formState.errors.newPassword && (
@@ -291,12 +296,12 @@ export default function ProfilePage() {
 
               <div className="space-y-2">
                 <Label htmlFor="confirmPassword">
-                  Confirm New Password <span className="text-red-500">*</span>
+                  {t('password.confirmPassword', 'Confirm New Password')} <span className="text-red-500">*</span>
                 </Label>
                 <Input
                   id="confirmPassword"
                   type="password"
-                  placeholder="Confirm your new password"
+                  placeholder={t('password.confirmPasswordPlaceholder', 'Confirm your new password')}
                   {...passwordForm.register("confirmPassword")}
                 />
                 {passwordForm.formState.errors.confirmPassword && (
@@ -314,10 +319,10 @@ export default function ProfilePage() {
                   {isSavingPassword ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Changing...
+                      {t('password.changing', 'Changing...')}
                     </>
                   ) : (
-                    "Change Password"
+                    t('password.changePassword', 'Change Password')
                   )}
                 </Button>
                 {passwordForm.formState.isDirty && (
@@ -327,7 +332,7 @@ export default function ProfilePage() {
                     onClick={() => passwordForm.reset()}
                     disabled={isSavingPassword}
                   >
-                    Cancel
+                    {t('password.cancel', 'Cancel')}
                   </Button>
                 )}
               </div>

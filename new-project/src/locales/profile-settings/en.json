@@ -1,0 +1,44 @@
+{
+  "title": "Profile Settings",
+  "subtitle": "Manage your personal information and security",
+  
+  "profile.title": "Personal Information",
+  "profile.description": "Update your name and email address",
+  "profile.name": "Name",
+  "profile.namePlaceholder": "Your name",
+  "profile.email": "Email",
+  "profile.emailPlaceholder": "your@email.com",
+  "profile.emailDisabled": "Email cannot be changed at this time",
+  "profile.saving": "Saving...",
+  "profile.saveChanges": "Save Changes",
+  "profile.cancel": "Cancel",
+  
+  "password.title": "Change Password",
+  "password.description": "Update your password to keep your account secure",
+  "password.currentPassword": "Current Password",
+  "password.currentPasswordPlaceholder": "Enter your current password",
+  "password.newPassword": "New Password",
+  "password.newPasswordPlaceholder": "Enter your new password (min 8 characters)",
+  "password.confirmPassword": "Confirm New Password",
+  "password.confirmPasswordPlaceholder": "Confirm your new password",
+  "password.changing": "Changing...",
+  "password.changePassword": "Change Password",
+  "password.cancel": "Cancel",
+  
+  "security.title": "Account Security",
+  "security.googleDescription": "You signed in with Google. Your account is secured through Google's authentication.",
+  "security.googleSignedIn": "Signed in with Google",
+  "security.googleSecured": "Your account is secured through Google's authentication system.",
+  
+  "validation.nameMin": "Name must be at least 2 characters",
+  "validation.invalidEmail": "Invalid email address",
+  "validation.currentPasswordRequired": "Current password is required",
+  "validation.newPasswordMin": "New password must be at least 8 characters",
+  "validation.passwordsMatch": "Passwords don't match",
+  
+  "toast.profileUpdated": "Profile updated successfully",
+  "toast.profileFailed": "Failed to update profile",
+  "toast.passwordChanged": "Password changed successfully",
+  "toast.unexpectedError": "An unexpected error occurred"
+}
+

@@ -1,0 +1,17 @@
+{
+  "workspace": "Espace de Travail",
+  "navigation": "Navigation",
+  "menu.dashboard": "Tableau de Bord",
+  "menu.scans": "Scans",
+  "menu.billing": "Facturation",
+  "menu.team": "Équipe",
+  "menu.accountSettings": "Paramètres du Compte",
+  "menu.profile": "Profil",
+  "user.currentPlan": "Plan Actuel",
+  "user.logout": "Se Déconnecter",
+  "plan.free": "Gratuit",
+  "plan.deluxe": "Deluxe",
+  "plan.oneTime": "Unique",
+  "loading": "Chargement..."
+}
+

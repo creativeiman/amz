@@ -17,6 +17,8 @@ import { Badge } from "@/components/ui/badge"
 import { format } from "date-fns"
 import { api, ApiError } from "@/lib/api-client"
 
+type TranslationFunction = (key: string, fallback?: string) => string
+
 export type Scan = {
   id: string
   productName: string
@@ -31,11 +33,7 @@ export type Scan = {
   labelUrl?: string
 }
 
-const categoryLabels = {
-  TOYS: "Toys",
-  BABY_PRODUCTS: "Baby Products",
-  COSMETICS_PERSONAL_CARE: "Cosmetics/Personal Care",
-}
+// Category labels moved to translation function
 
 const statusColors = {
   QUEUED: "bg-gray-500/10 text-gray-500 hover:bg-gray-500/20 border-gray-500/20 dark:bg-gray-500/20 dark:text-gray-400",
@@ -57,7 +55,7 @@ const marketplaceFlags: Record<string, string> = {
   DE: "🇩🇪",
 }
 
-export const createColumns = (): ColumnDef<Scan>[] => [
+export const createColumns = (t: TranslationFunction): ColumnDef<Scan>[] => [
   {
     id: "select",
     header: ({ table }) => (
@@ -88,7 +86,7 @@ export const createColumns = (): ColumnDef<Scan>[] => [
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Product Name
+          {t('columns.productName', 'Product Name')}
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )
@@ -104,7 +102,7 @@ export const createColumns = (): ColumnDef<Scan>[] => [
             <Eye className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
           </div>
           <div className="text-xs text-muted-foreground">
-            {categoryLabels[row.original.category]}
+            {t(`category.${row.original.category.toLowerCase()}`, row.original.category)}
           </div>
         </Link>
       )
@@ -112,7 +110,7 @@ export const createColumns = (): ColumnDef<Scan>[] => [
   },
   {
     accessorKey: "marketplaces",
-    header: "Marketplaces",
+    header: () => t('columns.marketplaces', 'Marketplaces'),
     cell: ({ row }) => {
       return (
         <div className="flex gap-2">
@@ -127,12 +125,12 @@ export const createColumns = (): ColumnDef<Scan>[] => [
   },
   {
     accessorKey: "status",
-    header: "Status",
+    header: () => t('columns.status', 'Status'),
     cell: ({ row }) => {
       const status = row.original.status
       return (
         <Badge variant="outline" className={statusColors[status]}>
-          {status}
+          {t(`status.${status.toLowerCase()}`, status)}
         </Badge>
       )
     },
@@ -145,7 +143,7 @@ export const createColumns = (): ColumnDef<Scan>[] => [
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Score
+          {t('columns.score', 'Score')}
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )
@@ -165,24 +163,24 @@ export const createColumns = (): ColumnDef<Scan>[] => [
   },
   {
     accessorKey: "riskLevel",
-    header: "Risk",
+    header: () => t('columns.risk', 'Risk'),
     cell: ({ row }) => {
       const risk = row.original.riskLevel
       if (!risk) return <span className="text-muted-foreground">-</span>
       return (
         <Badge variant="outline" className={riskColors[risk]}>
-          {risk}
+          {t(`risk.${risk.toLowerCase()}`, risk)}
         </Badge>
       )
     },
   },
   {
     accessorKey: "createdByName",
-    header: "Created By",
+    header: () => t('columns.createdBy', 'Created By'),
     cell: ({ row }) => {
       return (
         <span className="text-sm text-muted-foreground">
-          {row.original.createdByName || "Unknown"}
+          {row.original.createdByName || t('unknown', 'Unknown')}
         </span>
       )
     },
@@ -195,7 +193,7 @@ export const createColumns = (): ColumnDef<Scan>[] => [
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Created
+          {t('columns.created', 'Created')}
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )
@@ -252,18 +250,18 @@ export const createColumns = (): ColumnDef<Scan>[] => [
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuLabel>{t('columns.actions', 'Actions')}</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
               <Link href={`/dashboard/scans/${scan.id}`} className="flex items-center">
                 <Eye className="mr-2 h-4 w-4" />
-                View Details
+                {t('columns.viewDetails', 'View Details')}
               </Link>
             </DropdownMenuItem>
             {scan.labelUrl && (
               <DropdownMenuItem onClick={handleDownload}>
                 <Download className="mr-2 h-4 w-4" />
-                Download Label
+                {t('columns.downloadLabel', 'Download Label')}
               </DropdownMenuItem>
             )}
           </DropdownMenuContent>

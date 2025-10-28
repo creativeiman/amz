@@ -1,0 +1,44 @@
+{
+  "title": "Configuración del Perfil",
+  "subtitle": "Administre su información personal y seguridad",
+  
+  "profile.title": "Información Personal",
+  "profile.description": "Actualice su nombre y dirección de correo electrónico",
+  "profile.name": "Nombre",
+  "profile.namePlaceholder": "Su nombre",
+  "profile.email": "Correo Electrónico",
+  "profile.emailPlaceholder": "su@email.com",
+  "profile.emailDisabled": "El correo electrónico no se puede cambiar en este momento",
+  "profile.saving": "Guardando...",
+  "profile.saveChanges": "Guardar Cambios",
+  "profile.cancel": "Cancelar",
+  
+  "password.title": "Cambiar Contraseña",
+  "password.description": "Actualice su contraseña para mantener segura su cuenta",
+  "password.currentPassword": "Contraseña Actual",
+  "password.currentPasswordPlaceholder": "Ingrese su contraseña actual",
+  "password.newPassword": "Nueva Contraseña",
+  "password.newPasswordPlaceholder": "Ingrese su nueva contraseña (mín. 8 caracteres)",
+  "password.confirmPassword": "Confirmar Nueva Contraseña",
+  "password.confirmPasswordPlaceholder": "Confirme su nueva contraseña",
+  "password.changing": "Cambiando...",
+  "password.changePassword": "Cambiar Contraseña",
+  "password.cancel": "Cancelar",
+  
+  "security.title": "Seguridad de la Cuenta",
+  "security.googleDescription": "Inició sesión con Google. Su cuenta está asegurada a través de la autenticación de Google.",
+  "security.googleSignedIn": "Sesión iniciada con Google",
+  "security.googleSecured": "Su cuenta está asegurada a través del sistema de autenticación de Google.",
+  
+  "validation.nameMin": "El nombre debe tener al menos 2 caracteres",
+  "validation.invalidEmail": "Dirección de correo electrónico inválida",
+  "validation.currentPasswordRequired": "Se requiere la contraseña actual",
+  "validation.newPasswordMin": "La nueva contraseña debe tener al menos 8 caracteres",
+  "validation.passwordsMatch": "Las contraseñas no coinciden",
+  
+  "toast.profileUpdated": "Perfil actualizado exitosamente",
+  "toast.profileFailed": "Error al actualizar el perfil",
+  "toast.passwordChanged": "Contraseña cambiada exitosamente",
+  "toast.unexpectedError": "Ocurrió un error inesperado"
+}
+

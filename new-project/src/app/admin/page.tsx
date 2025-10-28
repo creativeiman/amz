@@ -18,6 +18,7 @@ import { TechnicalHealth } from "./_components/technical-health"
 import { RecentAlerts } from "./_components/recent-alerts"
 import { SecondaryKPIs } from "./_components/secondary-kpis"
 import { api, ApiError } from "@/lib/api-client"
+import { useTranslation } from "@/hooks/useTranslation"
 
 interface AdminMetrics {
   mrr: number
@@ -71,6 +72,7 @@ interface AdminMetrics {
 
 export default function AdminDashboardPage() {
   const router = useRouter()
+  const { t } = useTranslation('admin-dashboard')
   const [timeRange, setTimeRange] = useState("30d")
   const [isLoading, setIsLoading] = useState(true)
   const [isRefreshing, setIsRefreshing] = useState(false)
@@ -104,9 +106,9 @@ export default function AdminDashboardPage() {
     setIsRefreshing(true)
     try {
       await fetchMetrics()
-      toast.success("Data refreshed successfully")
+      toast.success(t('dataRefreshed', 'Data refreshed successfully'))
     } catch {
-      toast.error("Failed to refresh data")
+      toast.error(t('refreshFailed', 'Failed to refresh data'))
     } finally {
       setIsRefreshing(false)
     }
@@ -150,7 +152,7 @@ export default function AdminDashboardPage() {
   if (!metrics) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <p className="text-muted-foreground">Failed to load metrics</p>
+        <p className="text-muted-foreground">{t('failedToLoad', 'Failed to load metrics')}</p>
       </div>
     )
   }
@@ -160,12 +162,12 @@ export default function AdminDashboardPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Admin Dashboard</h1>
+          <h1 className="text-3xl font-bold">{t('title', 'Admin Dashboard')}</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Amazon Label Compliance Reviewer
+            {t('subtitle', 'Amazon Label Compliance Reviewer')}
             {lastRefresh && (
               <span className="ml-2">
-                • Last updated: {lastRefresh.toLocaleTimeString()}
+                • {t('lastUpdated', 'Last updated')}: {lastRefresh.toLocaleTimeString()}
               </span>
             )}
           </p>
@@ -173,13 +175,13 @@ export default function AdminDashboardPage() {
         <div className="flex items-center gap-3">
           <Select value={timeRange} onValueChange={setTimeRange}>
             <SelectTrigger className="w-[160px]">
-              <SelectValue placeholder="Select range" />
+              <SelectValue placeholder={t('selectRange', 'Select range')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="7d">Last 7 Days</SelectItem>
-              <SelectItem value="30d">Last 30 Days</SelectItem>
-              <SelectItem value="90d">Last 90 Days</SelectItem>
-              <SelectItem value="1y">Last Year</SelectItem>
+              <SelectItem value="7d">{t('timeRange.7d', 'Last 7 Days')}</SelectItem>
+              <SelectItem value="30d">{t('timeRange.30d', 'Last 30 Days')}</SelectItem>
+              <SelectItem value="90d">{t('timeRange.90d', 'Last 90 Days')}</SelectItem>
+              <SelectItem value="1y">{t('timeRange.1y', 'Last Year')}</SelectItem>
             </SelectContent>
           </Select>
           <Button 
@@ -188,7 +190,7 @@ export default function AdminDashboardPage() {
             size="default"
           >
             <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
-            {isRefreshing ? 'Refreshing...' : 'Refresh'}
+            {isRefreshing ? t('refreshing', 'Refreshing...') : t('refresh', 'Refresh')}
           </Button>
         </div>
       </div>
@@ -196,7 +198,7 @@ export default function AdminDashboardPage() {
       {/* KPI Cards - Row 1 */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         <KPICard 
-          title="Monthly Recurring Revenue" 
+          title={t('kpi.mrr', 'Monthly Recurring Revenue')} 
           value={metrics.mrr} 
           change={metrics.mrrGrowth}
           trend="up"
@@ -204,7 +206,7 @@ export default function AdminDashboardPage() {
           format="currency"
         />
         <KPICard 
-          title="Total Revenue" 
+          title={t('kpi.totalRevenue', 'Total Revenue')} 
           value={metrics.totalRevenue} 
           change={0}
           trend="up"
@@ -212,14 +214,14 @@ export default function AdminDashboardPage() {
           format="currency"
         />
         <KPICard 
-          title="Total Users" 
+          title={t('kpi.totalUsers', 'Total Users')} 
           value={metrics.totalUsers} 
           change={metrics.userGrowthRate}
           trend="up"
           icon={Users}
         />
         <KPICard 
-          title="Active Users (30d)" 
+          title={t('kpi.activeUsers', 'Active Users (30d)')} 
           value={metrics.activeUsers} 
           change={8.3}
           trend="up"
@@ -230,7 +232,7 @@ export default function AdminDashboardPage() {
       {/* KPI Cards - Row 2 */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         <KPICard 
-          title="Conversion Rate" 
+          title={t('kpi.conversionRate', 'Conversion Rate')} 
           value={metrics.conversionRate} 
           change={-2.1}
           trend="down"
@@ -238,14 +240,14 @@ export default function AdminDashboardPage() {
           format="percentage"
         />
         <KPICard 
-          title="Total Scans" 
+          title={t('kpi.totalScans', 'Total Scans')} 
           value={metrics.totalScans} 
           change={metrics.scanGrowth}
           trend="up"
           icon={Activity}
         />
         <KPICard 
-          title="Scans This Month" 
+          title={t('kpi.scansThisMonth', 'Scans This Month')} 
           value={metrics.scansThisMonth} 
           change={0}
           trend="up"

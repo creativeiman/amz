@@ -1,6 +1,6 @@
 "use client"
 
-import { LayoutDashboard, Users, Settings, Shield, ChevronUp, LogOut } from "lucide-react"
+import { LayoutDashboard, Users, Settings, Shield, ChevronUp, LogOut, Languages } from "lucide-react"
 import {
   Sidebar,
   SidebarContent,
@@ -25,20 +25,23 @@ import { useSession, signOut } from "next-auth/react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ThemeToggle } from "@/components/theme-toggle"
 import Link from "next/link"
+import { useTranslation } from "@/hooks/useTranslation"
+import { useLanguage, Language } from "@/contexts/LanguageContext"
+import { getLanguageName, getLanguageFlag } from "@/lib/translation-loader"
 
-const menuItems = [
+const menuItemsConfig = [
   {
-    title: "Dashboard",
+    key: "dashboard",
     url: "/admin",
     icon: LayoutDashboard,
   },
   {
-    title: "Accounts",
+    key: "accounts",
     url: "/admin/accounts",
     icon: Users,
   },
   {
-    title: "Settings",
+    key: "settings",
     url: "/admin/settings",
     icon: Settings,
   },
@@ -69,6 +72,13 @@ function getUserInitials(name: string | null | undefined) {
 export function AdminSidebar() {
   const { data: session } = useSession()
   const user = session?.user
+  const { t } = useTranslation('admin-sidebar')
+  const { language, setLanguage } = useLanguage()
+
+  const menuItems = menuItemsConfig.map(item => ({
+    ...item,
+    title: t(`menu.${item.key}`, item.key)
+  }))
 
   const roleBadge = getRoleBadge(user?.role || 'USER')
 
@@ -77,16 +87,16 @@ export function AdminSidebar() {
       <SidebarHeader>
         <div className="px-4 py-2 flex items-center gap-2">
           <Shield className="h-5 w-5 text-red-600" />
-          <h2 className="text-lg font-semibold">Admin Panel</h2>
+          <h2 className="text-lg font-semibold">{t('title', 'Admin Panel')}</h2>
         </div>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Administration</SidebarGroupLabel>
+          <SidebarGroupLabel>{t('title', 'Administration')}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {menuItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
+                <SidebarMenuItem key={item.key}>
                   <SidebarMenuButton asChild>
                     <Link href={item.url}>
                       <item.icon />
@@ -143,18 +153,40 @@ export function AdminSidebar() {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem className="flex items-center justify-between">
-                  <span className="text-xs text-muted-foreground">Role</span>
+                  <span className="text-xs text-muted-foreground">{t('user.role', 'Role')}</span>
                   <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${roleBadge.color}`}>
-                    {roleBadge.label}
+                    {t(`user.role.${user?.role?.toLowerCase() || 'user'}`, roleBadge.label)}
                   </span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
                   <Link href="/admin/settings" className="cursor-pointer">
                     <Settings className="mr-2 h-4 w-4" />
-                    <span>Admin Settings</span>
+                    <span>{t('user.adminSettings', 'Admin Settings')}</span>
                   </Link>
                 </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <div className="flex items-center px-2 py-1.5 text-sm cursor-pointer hover:bg-accent rounded-sm">
+                      <Languages className="mr-2 h-4 w-4" />
+                      <span className="flex-1">Language</span>
+                      <span className="text-xs">{getLanguageFlag(language)}</span>
+                    </div>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent side="right" align="start">
+                    {(['en', 'es', 'fr', 'de'] as Language[]).map((lang) => (
+                      <DropdownMenuItem
+                        key={lang}
+                        onClick={() => setLanguage(lang)}
+                        className={language === lang ? 'bg-accent' : ''}
+                      >
+                        <span className="mr-2">{getLanguageFlag(lang)}</span>
+                        {getLanguageName(lang)}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
                 <DropdownMenuSeparator />
                 <ThemeToggle />
                 <DropdownMenuSeparator />
@@ -163,7 +195,7 @@ export function AdminSidebar() {
                   onClick={() => signOut({ callbackUrl: '/login' })}
                 >
                   <LogOut className="mr-2 h-4 w-4" />
-                  <span>Log Out</span>
+                  <span>{t('user.logout', 'Log Out')}</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

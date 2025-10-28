@@ -1,0 +1,91 @@
+{
+  "title": "Team Management",
+  "subtitle": "Manage your team members and invitations",
+  "inviteMember": "Invite Member",
+  "of": "of",
+  "slotsAvailable": "team slots available",
+  "loading": "Loading team...",
+  "failedToLoad": "Failed to load team members",
+  "error.accessDenied": "Access denied. Only account owners can manage team members.",
+  
+  "upgrade.title": "Upgrade for Team Collaboration",
+  "upgrade.description": "Team collaboration is not available on your current plan. Upgrade to Deluxe ($29.99/month) or One-Time ($99.99 forever) to invite up to 2 team members and unlock unlimited scans.",
+  "upgrade.button": "View Plans",
+  
+  "tabs.members": "Members",
+  "tabs.invitations": "Invitations",
+  
+  "members.title": "Team Members",
+  "members.description": "People who have access to this account",
+  "members.empty": "No team members yet. Invite someone to get started!",
+  
+  "invitations.title": "Pending Invitations",
+  "invitations.description": "Invitations sent to join your team",
+  "invitations.empty": "No pending invitations",
+  
+  "table.name": "Name",
+  "table.email": "Email",
+  "table.role": "Role",
+  "table.status": "Status",
+  "table.joined": "Joined",
+  "table.invitedBy": "Invited By",
+  "table.sent": "Sent",
+  "table.expires": "Expires",
+  "table.actions": "Actions",
+  
+  "unnamed": "Unnamed",
+  "na": "N/A",
+  
+  "role.editor": "Editor",
+  "role.viewer": "Viewer",
+  "role.editorDesc": "Can view and create scans",
+  "role.viewerDesc": "Can view scans and reports",
+  
+  "status.active": "Active",
+  "status.inactive": "Inactive",
+  "status.expired": "Expired",
+  
+  "actions.activate": "Activate",
+  "actions.deactivate": "Deactivate",
+  "actions.remove": "Remove",
+  "actions.copyLink": "Copy Link",
+  "actions.resend": "Resend",
+  "actions.cancel": "Cancel",
+  
+  "invite.success": "Invitation sent successfully",
+  "invite.failed": "Failed to send invitation",
+  
+  "memberActivated": "Member activated successfully",
+  "memberDeactivated": "Member deactivated successfully",
+  "updateFailed": "Failed to update member status",
+  
+  "remove.title": "Remove Team Member",
+  "remove.description": "Are you sure you want to remove this team member? They will lose access to the account.",
+  "remove.confirm": "Remove Member",
+  "remove.success": "Member removed successfully",
+  "remove.failed": "Failed to remove member",
+  
+  "cancel": "Cancel",
+  "cancel.title": "Cancel Invitation",
+  "cancel.description": "Are you sure you want to cancel this invitation?",
+  "cancel.confirm": "Cancel Invitation",
+  "cancel.success": "Invitation cancelled successfully",
+  "cancel.failed": "Failed to cancel invitation",
+  
+  "resend.success": "Invitation resent successfully",
+  "resend.failed": "Failed to resend invitation",
+  
+  "copySuccess": "Invitation link copied to clipboard!",
+  "copyFailed": "Failed to copy link",
+  
+  "sheet.title": "Invite Team Member",
+  "sheet.description": "Send an invitation to join your team. They'll receive an email with instructions.",
+  "sheet.emailLabel": "Email Address",
+  "sheet.emailPlaceholder": "colleague@example.com",
+  "sheet.roleLabel": "Role",
+  "sheet.rolePlaceholder": "Select a role",
+  "sheet.noteTitle": "Note:",
+  "sheet.noteDescription": "The invitation will be sent via email and will expire in 7 days. The recipient must accept the invitation to join your team.",
+  "sheet.sending": "Sending...",
+  "sheet.sendInvitation": "Send Invitation"
+}

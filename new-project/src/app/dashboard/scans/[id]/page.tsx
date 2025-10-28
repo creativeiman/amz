@@ -25,6 +25,7 @@ import {
 import { toast } from 'sonner'
 import { api, ApiError } from '@/lib/api-client'
 import { MarkdownEditor } from '@/components/markdown-editor'
+import { useTranslation } from '@/hooks/useTranslation'
 
 interface AIResults {
   compliance: {
@@ -73,6 +74,7 @@ export default function ScanDetailPage() {
   const router = useRouter()
   const params = useParams()
   const scanId = params.id as string
+  const { t } = useTranslation('scan-detail')
 
   const [scan, setScan] = useState<ScanDetail | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -114,12 +116,12 @@ export default function ScanDetailPage() {
       
       // Handle 404 errors
       if (error instanceof ApiError && error.status === 404) {
-        toast.error('Scan not found')
+        toast.error(t('error.notFound', 'Scan not found'))
         router.push('/dashboard/scans')
         return
       }
       
-      const message = error instanceof ApiError ? error.message : 'Failed to load scan details'
+      const message = error instanceof ApiError ? error.message : t('error.failedToLoad', 'Failed to load scan details')
       toast.error(message)
     } finally {
       setIsLoading(false)
@@ -202,7 +204,7 @@ export default function ScanDetailPage() {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <Loader2 className="w-12 h-12 animate-spin text-orange-600 dark:text-orange-400 mx-auto mb-4" />
-          <p className="text-muted-foreground">Loading scan details...</p>
+          <p className="text-muted-foreground">{t('loading', 'Loading scan details...')}</p>
         </div>
       </div>
     )
@@ -213,13 +215,13 @@ export default function ScanDetailPage() {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <XCircle className="w-16 h-16 text-red-500 dark:text-red-400 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-foreground mb-2">Scan Not Found</h2>
-          <p className="text-muted-foreground mb-6">The scan you&apos;re looking for doesn&apos;t exist.</p>
+          <h2 className="text-2xl font-bold text-foreground mb-2">{t('notFound.title', 'Scan Not Found')}</h2>
+          <p className="text-muted-foreground mb-6">{t('notFound.description', "The scan you're looking for doesn't exist.")}</p>
           <button
             onClick={() => router.push('/dashboard/scans')}
             className="px-6 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 dark:bg-orange-700 dark:hover:bg-orange-600"
           >
-            Back to Scans
+            {t('notFound.backButton', 'Back to Scans')}
           </button>
         </div>
       </div>
@@ -235,25 +237,25 @@ export default function ScanDetailPage() {
             <Loader2 className="w-16 h-16 animate-spin text-orange-600 dark:text-orange-400 mx-auto mb-4" />
           </div>
           <h2 className="text-2xl font-bold text-foreground mb-2">
-            {scan.status === 'QUEUED' ? 'Scan Queued' : 'Processing...'}
+            {scan.status === 'QUEUED' ? t('processing.queuedTitle', 'Scan Queued') : t('processing.processingTitle', 'Processing...')}
           </h2>
           <p className="text-muted-foreground mb-6">
             {scan.status === 'QUEUED' 
-              ? 'Your scan is waiting in the queue. It will be processed shortly.'
-              : 'Your scan is being analyzed by AI. This usually takes 30-90 seconds.'}
+              ? t('processing.queuedDescription', 'Your scan is waiting in the queue. It will be processed shortly.')
+              : t('processing.processingDescription', 'Your scan is being analyzed by AI. This usually takes 30-90 seconds.')}
           </p>
           <button
             onClick={fetchScanDetails}
             className="px-6 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 dark:bg-orange-700 dark:hover:bg-orange-600 flex items-center gap-2 mx-auto"
           >
             <RefreshCw className="w-4 h-4" />
-            Refresh Status
+            {t('processing.refreshButton', 'Refresh Status')}
           </button>
           <button
             onClick={() => router.push('/dashboard/scans')}
             className="mt-4 text-muted-foreground hover:text-foreground"
           >
-            Back to Scans
+            {t('processing.backButton', 'Back to Scans')}
           </button>
         </div>
       </div>
@@ -266,9 +268,9 @@ export default function ScanDetailPage() {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center max-w-md mx-auto p-8">
           <XCircle className="w-16 h-16 text-red-500 dark:text-red-400 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-foreground mb-2">Analysis Failed</h2>
+          <h2 className="text-2xl font-bold text-foreground mb-2">{t('failed.title', 'Analysis Failed')}</h2>
           <p className="text-muted-foreground mb-4">
-            The AI analysis failed for this scan.
+            {t('failed.description', 'The AI analysis failed for this scan.')}
           </p>
           <div className="bg-red-50 border border-red-200 dark:bg-red-950/30 dark:border-red-800 rounded-lg p-4 mb-6 text-left">
             <p className="text-sm text-red-800 dark:text-red-300 font-mono">{scan.results.error}</p>
@@ -282,7 +284,7 @@ export default function ScanDetailPage() {
             onClick={() => router.push('/dashboard/scans')}
             className="px-6 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 dark:bg-orange-700 dark:hover:bg-orange-600"
           >
-            Back to Scans
+            {t('failed.backButton', 'Back to Scans')}
           </button>
         </div>
       </div>
@@ -302,7 +304,7 @@ export default function ScanDetailPage() {
           <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
         </button>
         <div className="min-w-0 flex-1">
-          <h1 className="text-2xl sm:text-3xl font-bold text-foreground truncate">Scan Results</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground truncate">{t('title', 'Scan Results')}</h1>
           <p className="text-sm text-muted-foreground truncate">
             {scan.productName} • {scan.category}
           </p>
@@ -314,18 +316,18 @@ export default function ScanDetailPage() {
         <div className="bg-card rounded-xl sm:rounded-2xl shadow-lg border p-4 sm:p-6 mb-4 sm:mb-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4 sm:mb-6">
             <div>
-              <h2 className="text-xl sm:text-2xl font-bold text-foreground">Compliance Score</h2>
-              <p className="text-sm text-muted-foreground">Overall compliance assessment</p>
+              <h2 className="text-xl sm:text-2xl font-bold text-foreground">{t('complianceScore', 'Compliance Score')}</h2>
+              <p className="text-sm text-muted-foreground">{t('complianceSubtitle', 'Overall compliance assessment')}</p>
             </div>
             <div className={`px-4 sm:px-6 py-3 sm:py-4 rounded-xl border-2 ${getScoreBgColor(scan.score)} self-start sm:self-auto`}>
               <div className="text-center">
                 <div className={`text-3xl sm:text-4xl font-bold ${getScoreColor(scan.score)}`}>
                   {scan.score}%
                 </div>
-                <div className="text-xs sm:text-sm text-muted-foreground mt-1">Compliance Score</div>
+                <div className="text-xs sm:text-sm text-muted-foreground mt-1">{t('complianceScore', 'Compliance Score')}</div>
                 {scan.riskLevel && (
                   <span className={`inline-block px-2 sm:px-3 py-1 rounded-full text-xs font-semibold mt-2 ${getRiskColor(scan.riskLevel)}`}>
-                    {scan.riskLevel} RISK
+                    {t(`risk.${scan.riskLevel.toLowerCase()}`, scan.riskLevel)} {t('risk', 'RISK')}
                   </span>
                 )}
               </div>
@@ -336,7 +338,7 @@ export default function ScanDetailPage() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="p-4 bg-muted/50 rounded-lg">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-muted-foreground">Issues Found</span>
+                <span className="text-sm text-muted-foreground">{t('stats.issuesFound', 'Issues Found')}</span>
                 <AlertTriangle className="w-4 h-4 text-yellow-500 dark:text-yellow-400" />
               </div>
               <div className="text-2xl font-bold text-foreground">
@@ -345,16 +347,16 @@ export default function ScanDetailPage() {
             </div>
             <div className="p-4 bg-muted/50 rounded-lg">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-muted-foreground">Status</span>
+                <span className="text-sm text-muted-foreground">{t('stats.status', 'Status')}</span>
                 <Shield className="w-4 h-4 text-blue-500 dark:text-blue-400" />
               </div>
               <div className="text-lg font-bold text-foreground">
-                {results?.compliance?.passed ? '✅ PASSED' : '❌ FAILED'}
+                {results?.compliance?.passed ? `✅ ${t('stats.passed', 'PASSED')}` : `❌ ${t('stats.failed', 'FAILED')}`}
               </div>
             </div>
             <div className="p-4 bg-muted/50 rounded-lg">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-muted-foreground">Category</span>
+                <span className="text-sm text-muted-foreground">{t('stats.category', 'Category')}</span>
                 <Package className="w-4 h-4 text-green-500 dark:text-green-400" />
               </div>
               <div className="text-sm font-bold text-foreground">
@@ -363,7 +365,7 @@ export default function ScanDetailPage() {
             </div>
             <div className="p-4 bg-muted/50 rounded-lg">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-muted-foreground">Marketplaces</span>
+                <span className="text-sm text-muted-foreground">{t('stats.marketplaces', 'Marketplaces')}</span>
                 <Shield className="w-4 h-4 text-orange-500 dark:text-orange-400" />
               </div>
               <div className="text-2xl font-bold text-foreground">
@@ -377,11 +379,11 @@ export default function ScanDetailPage() {
         {scan.labelUrl && (
           <div className="bg-card rounded-xl sm:rounded-2xl shadow-lg border p-4 sm:p-6 mb-4 sm:mb-6">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
-              <h3 className="text-base sm:text-lg font-semibold text-foreground">Product Label</h3>
+              <h3 className="text-base sm:text-lg font-semibold text-foreground">{t('productLabel', 'Product Label')}</h3>
               <button
                 onClick={async () => {
                   try {
-                    toast.loading('Preparing download...')
+                    toast.loading(t('download.preparing', 'Preparing download...'))
                     
                     // Get presigned URL
                     const data = await api.get<{ url: string; filename: string }>(`/dashboard/api/scans/${scan.id}/download`)
@@ -405,17 +407,17 @@ export default function ScanDetailPage() {
                     window.URL.revokeObjectURL(blobUrl)
                     
                     toast.dismiss()
-                    toast.success('Download started!')
+                    toast.success(t('download.success', 'Download started!'))
                   } catch (error) {
                     toast.dismiss()
-                    toast.error('Failed to download label')
+                    toast.error(t('download.failed', 'Failed to download label'))
                     console.error('Download error:', error)
                   }
                 }}
                 className="flex items-center justify-center gap-2 px-4 py-2 bg-orange-600 text-white text-sm rounded-lg hover:bg-orange-700 dark:bg-orange-700 dark:hover:bg-orange-600 transition-colors w-full sm:w-auto"
               >
                 <Download className="w-4 h-4" />
-                Download Label
+                {t('download.button', 'Download Label')}
               </button>
             </div>
             <div className="relative w-full bg-muted rounded-lg overflow-hidden flex items-center justify-center" style={{ minHeight: '300px' }}>
@@ -447,10 +449,10 @@ export default function ScanDetailPage() {
           <div className="border-b overflow-x-auto scrollbar-hide">
             <nav className="flex space-x-4 sm:space-x-8 px-4 sm:px-6 min-w-max">
               {[
-                { id: 'overview', label: 'Overview', icon: Eye },
-                { id: 'issues', label: 'Issues', icon: AlertTriangle },
-                { id: 'text', label: 'Summary', icon: FileText },
-                { id: 'recommendations', label: 'Extracted Info', icon: Star }
+                { id: 'overview', label: t('tabs.overview', 'Overview'), icon: Eye },
+                { id: 'issues', label: t('tabs.issues', 'Issues'), icon: AlertTriangle },
+                { id: 'text', label: t('tabs.summary', 'Summary'), icon: FileText },
+                { id: 'recommendations', label: t('tabs.extractedInfo', 'Extracted Info'), icon: Star }
               ].map((tab) => (
                 <button
                   key={tab.id}
@@ -474,14 +476,14 @@ export default function ScanDetailPage() {
               <div className="space-y-4 sm:space-y-6">
                 {/* Extracted Information from AI */}
                 <div>
-                  <h3 className="text-lg font-semibold text-foreground mb-4">Extracted Information</h3>
+                  <h3 className="text-lg font-semibold text-foreground mb-4">{t('extracted.title', 'Extracted Information')}</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-3">
                       {results?.extractedInfo?.productName && (
                         <div className="flex items-center space-x-3">
                           <Package className="w-5 h-5 text-muted-foreground" />
                           <div>
-                            <div className="text-sm text-muted-foreground">Product Name</div>
+                            <div className="text-sm text-muted-foreground">{t('extracted.productName', 'Product Name')}</div>
                             <div className="font-medium text-foreground">{results.extractedInfo.productName}</div>
                           </div>
                         </div>
@@ -490,7 +492,7 @@ export default function ScanDetailPage() {
                         <div className="flex items-center space-x-3">
                           <Building className="w-5 h-5 text-muted-foreground" />
                           <div>
-                            <div className="text-sm text-muted-foreground">Manufacturer</div>
+                            <div className="text-sm text-muted-foreground">{t('extracted.manufacturer', 'Manufacturer')}</div>
                             <div className="font-medium text-foreground">{results.extractedInfo.manufacturer}</div>
                           </div>
                         </div>
@@ -499,7 +501,7 @@ export default function ScanDetailPage() {
                         <div className="flex items-center space-x-3">
                           <Weight className="w-5 h-5 text-muted-foreground" />
                           <div>
-                            <div className="text-sm text-muted-foreground">Weight</div>
+                            <div className="text-sm text-muted-foreground">{t('extracted.weight', 'Weight')}</div>
                             <div className="font-medium text-foreground">{results.extractedInfo.weight}</div>
                           </div>
                         </div>
@@ -508,7 +510,7 @@ export default function ScanDetailPage() {
                         <div className="flex items-center space-x-3">
                           <Shield className="w-5 h-5 text-muted-foreground" />
                           <div>
-                            <div className="text-sm text-muted-foreground">Country of Origin</div>
+                            <div className="text-sm text-muted-foreground">{t('extracted.countryOfOrigin', 'Country of Origin')}</div>
                             <div className="font-medium text-foreground">{results.extractedInfo.countryOfOrigin}</div>
                           </div>
                         </div>
@@ -520,7 +522,7 @@ export default function ScanDetailPage() {
                       {/* Certifications */}
                       {results?.extractedInfo?.certifications && results.extractedInfo.certifications.length > 0 && (
                         <div>
-                          <div className="text-sm text-muted-foreground mb-2">Certifications Found</div>
+                          <div className="text-sm text-muted-foreground mb-2">{t('extracted.certificationsFound', 'Certifications Found')}</div>
                           <div className="flex flex-wrap gap-2">
                             {results.extractedInfo.certifications.map((cert: string, index: number) => (
                               <span key={index} className="px-2 py-1 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300 text-xs rounded-full">
@@ -534,7 +536,7 @@ export default function ScanDetailPage() {
                       {/* Warnings */}
                       {results?.extractedInfo?.warnings && results.extractedInfo.warnings.length > 0 && (
                         <div>
-                          <div className="text-sm text-muted-foreground mb-2">Warnings Found</div>
+                          <div className="text-sm text-muted-foreground mb-2">{t('extracted.warningsFound', 'Warnings Found')}</div>
                           <div className="flex flex-wrap gap-2">
                             {results.extractedInfo.warnings.map((warning: string, index: number) => (
                               <span key={index} className="px-2 py-1 bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300 text-xs rounded-full">
@@ -569,11 +571,11 @@ export default function ScanDetailPage() {
                               </div>
                               <h4 className="font-medium mb-2">{issue.description}</h4>
                               <p className="text-sm font-medium mb-1">
-                                <strong>Recommendation:</strong> {issue.recommendation}
+                                <strong>{t('issues.recommendation', 'Recommendation')}:</strong> {issue.recommendation}
                               </p>
                               {issue.regulation && (
                                 <p className="text-xs text-muted-foreground">
-                                  <strong>Regulation:</strong> {issue.regulation}
+                                  <strong>{t('issues.regulation', 'Regulation')}:</strong> {issue.regulation}
                                 </p>
                               )}
                             </div>
@@ -583,8 +585,8 @@ export default function ScanDetailPage() {
                     ) : (
                       <div className="text-center py-8">
                         <CheckCircle className="w-16 h-16 text-green-500 dark:text-green-400 mx-auto mb-4" />
-                        <h3 className="text-lg font-semibold text-foreground mb-2">No Issues Found</h3>
-                        <p className="text-muted-foreground">Your label appears to be compliant!</p>
+                        <h3 className="text-lg font-semibold text-foreground mb-2">{t('issues.noIssues', 'No Issues Found')}</h3>
+                        <p className="text-muted-foreground">{t('issues.compliant', 'Your label appears to be compliant!')}</p>
                       </div>
                     )}
                   </>
@@ -594,28 +596,28 @@ export default function ScanDetailPage() {
                       <div className="p-4 rounded-full bg-gradient-to-br from-orange-500 to-blue-600 w-20 h-20 flex items-center justify-center mx-auto mb-6">
                         <Sparkles className="w-10 h-10 text-white" />
                       </div>
-                      <h3 className="text-2xl font-bold text-foreground mb-3">Premium Feature</h3>
+                      <h3 className="text-2xl font-bold text-foreground mb-3">{t('premium.title', 'Premium Feature')}</h3>
                       <p className="text-muted-foreground mb-6">
-                        Detailed issue analysis and recommendations are available with our Deluxe or One-Time plans.
+                        {t('premium.issuesDescription', 'Detailed issue analysis and recommendations are available with our Deluxe or One-Time plans.')}
                       </p>
                       <div className="bg-muted/50 border rounded-lg p-4 mb-6 text-left">
-                        <p className="text-sm font-semibold text-foreground mb-2">Upgrade to unlock:</p>
+                        <p className="text-sm font-semibold text-foreground mb-2">{t('premium.upgradeToUnlock', 'Upgrade to unlock:')}</p>
                         <ul className="space-y-2 text-sm text-muted-foreground">
                           <li className="flex items-center gap-2">
                             <CheckCircle className="w-4 h-4 text-green-500" />
-                            Detailed compliance issues breakdown
+                            {t('premium.issuesFeature1', 'Detailed compliance issues breakdown')}
                           </li>
                           <li className="flex items-center gap-2">
                             <CheckCircle className="w-4 h-4 text-green-500" />
-                            Actionable recommendations
+                            {t('premium.issuesFeature2', 'Actionable recommendations')}
                           </li>
                           <li className="flex items-center gap-2">
                             <CheckCircle className="w-4 h-4 text-green-500" />
-                            Regulatory references & citations
+                            {t('premium.issuesFeature3', 'Regulatory references & citations')}
                           </li>
                           <li className="flex items-center gap-2">
                             <CheckCircle className="w-4 h-4 text-green-500" />
-                            Priority levels for each issue
+                            {t('premium.issuesFeature4', 'Priority levels for each issue')}
                           </li>
                         </ul>
                       </div>
@@ -624,7 +626,7 @@ export default function ScanDetailPage() {
                         className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-orange-600 to-blue-600 text-white font-semibold rounded-lg hover:from-orange-700 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl"
                       >
                         <Star className="w-4 h-4 mr-2" />
-                        Upgrade Your Plan
+                        {t('premium.upgradeButton', 'Upgrade Your Plan')}
                         <ArrowRight className="w-4 h-4 ml-2" />
                       </Link>
                     </div>
@@ -640,7 +642,7 @@ export default function ScanDetailPage() {
                   <>
                     {results?.summary ? (
                       <div>
-                        <h3 className="font-medium text-foreground mb-4">Analysis Summary</h3>
+                        <h3 className="font-medium text-foreground mb-4">{t('summary.title', 'Analysis Summary')}</h3>
                         <MarkdownEditor
                           value={results.summary}
                           readOnly={true}
@@ -650,14 +652,14 @@ export default function ScanDetailPage() {
                     ) : (
                       <div className="bg-muted rounded-lg p-4">
                         <div className="text-sm text-muted-foreground italic">
-                          No summary available.
+                          {t('summary.noSummary', 'No summary available.')}
                         </div>
                       </div>
                     )}
 
                     {scan.extractedText && (
                       <div className="bg-muted rounded-lg p-4 mt-4">
-                        <h3 className="font-medium text-foreground mb-2">Extracted Text (OCR)</h3>
+                        <h3 className="font-medium text-foreground mb-2">{t('summary.extractedText', 'Extracted Text (OCR)')}</h3>
                         <div className="text-sm text-foreground whitespace-pre-wrap">
                           {scan.extractedText}
                         </div>
@@ -670,28 +672,28 @@ export default function ScanDetailPage() {
                       <div className="p-4 rounded-full bg-gradient-to-br from-orange-500 to-blue-600 w-20 h-20 flex items-center justify-center mx-auto mb-6">
                         <FileText className="w-10 h-10 text-white" />
                       </div>
-                      <h3 className="text-2xl font-bold text-foreground mb-3">Premium Feature</h3>
+                      <h3 className="text-2xl font-bold text-foreground mb-3">{t('premium.title', 'Premium Feature')}</h3>
                       <p className="text-muted-foreground mb-6">
-                        The detailed AI-generated analysis summary is available with our Deluxe or One-Time plans.
+                        {t('premium.summaryDescription', 'The detailed AI-generated analysis summary is available with our Deluxe or One-Time plans.')}
                       </p>
                       <div className="bg-muted/50 border rounded-lg p-4 mb-6 text-left">
-                        <p className="text-sm font-semibold text-foreground mb-2">Upgrade to unlock:</p>
+                        <p className="text-sm font-semibold text-foreground mb-2">{t('premium.upgradeToUnlock', 'Upgrade to unlock:')}</p>
                         <ul className="space-y-2 text-sm text-muted-foreground">
                           <li className="flex items-center gap-2">
                             <CheckCircle className="w-4 h-4 text-green-500" />
-                            Comprehensive AI-written summary
+                            {t('premium.summaryFeature1', 'Comprehensive AI-written summary')}
                           </li>
                           <li className="flex items-center gap-2">
                             <CheckCircle className="w-4 h-4 text-green-500" />
-                            Complete OCR extracted text
+                            {t('premium.summaryFeature2', 'Complete OCR extracted text')}
                           </li>
                           <li className="flex items-center gap-2">
                             <CheckCircle className="w-4 h-4 text-green-500" />
-                            In-depth compliance analysis
+                            {t('premium.summaryFeature3', 'In-depth compliance analysis')}
                           </li>
                           <li className="flex items-center gap-2">
                             <CheckCircle className="w-4 h-4 text-green-500" />
-                            Market-specific recommendations
+                            {t('premium.summaryFeature4', 'Market-specific recommendations')}
                           </li>
                         </ul>
                       </div>
@@ -700,7 +702,7 @@ export default function ScanDetailPage() {
                         className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-orange-600 to-blue-600 text-white font-semibold rounded-lg hover:from-orange-700 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl"
                       >
                         <Star className="w-4 h-4 mr-2" />
-                        Upgrade Your Plan
+                        {t('premium.upgradeButton', 'Upgrade Your Plan')}
                         <ArrowRight className="w-4 h-4 ml-2" />
                       </Link>
                     </div>
@@ -719,7 +721,7 @@ export default function ScanDetailPage() {
                         {/* Ingredients */}
                         {results.extractedInfo.ingredients && results.extractedInfo.ingredients.length > 0 && (
                           <div className="bg-blue-50 rounded-lg p-4 border border-blue-200 dark:bg-blue-950/30 dark:border-blue-800">
-                            <h4 className="font-medium text-blue-900 dark:text-blue-300 mb-2">Ingredients</h4>
+                            <h4 className="font-medium text-blue-900 dark:text-blue-300 mb-2">{t('info.ingredients', 'Ingredients')}</h4>
                             <ul className="list-disc list-inside text-sm text-blue-800 dark:text-blue-300 space-y-1">
                               {results.extractedInfo.ingredients.map((ingredient: string, index: number) => (
                                 <li key={index}>{ingredient}</li>
@@ -731,7 +733,7 @@ export default function ScanDetailPage() {
                         {/* Product Name */}
                         {results.extractedInfo.productName && (
                           <div className="bg-muted rounded-lg p-4">
-                            <h4 className="font-medium text-foreground mb-2">Product Name (AI)</h4>
+                            <h4 className="font-medium text-foreground mb-2">{t('info.productNameAI', 'Product Name (AI)')}</h4>
                             <p className="text-sm text-muted-foreground">{results.extractedInfo.productName}</p>
                           </div>
                         )}
@@ -739,7 +741,7 @@ export default function ScanDetailPage() {
                         {/* All Extracted Info as JSON */}
                         <details className="bg-muted rounded-lg p-4">
                           <summary className="font-medium text-foreground cursor-pointer">
-                            View Raw Extracted Information
+                            {t('info.viewRaw', 'View Raw Extracted Information')}
                           </summary>
                           <pre className="mt-4 text-xs text-muted-foreground overflow-auto">
                             {JSON.stringify(results.extractedInfo, null, 2)}
@@ -751,8 +753,8 @@ export default function ScanDetailPage() {
                     {!results?.extractedInfo && (
                       <div className="text-center py-8">
                         <FileText className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-                        <h3 className="text-lg font-semibold text-foreground mb-2">No Extracted Information</h3>
-                        <p className="text-muted-foreground">No additional information was extracted.</p>
+                        <h3 className="text-lg font-semibold text-foreground mb-2">{t('info.noInfo', 'No Extracted Information')}</h3>
+                        <p className="text-muted-foreground">{t('info.noInfoDescription', 'No additional information was extracted.')}</p>
                       </div>
                     )}
                   </>
@@ -762,28 +764,28 @@ export default function ScanDetailPage() {
                       <div className="p-4 rounded-full bg-gradient-to-br from-orange-500 to-blue-600 w-20 h-20 flex items-center justify-center mx-auto mb-6">
                         <Star className="w-10 h-10 text-white" />
                       </div>
-                      <h3 className="text-2xl font-bold text-foreground mb-3">Premium Feature</h3>
+                      <h3 className="text-2xl font-bold text-foreground mb-3">{t('premium.title', 'Premium Feature')}</h3>
                       <p className="text-muted-foreground mb-6">
-                        AI-extracted label information and detailed data extraction are available with our Deluxe or One-Time plans.
+                        {t('premium.infoDescription', 'AI-extracted label information and detailed data extraction are available with our Deluxe or One-Time plans.')}
                       </p>
                       <div className="bg-muted/50 border rounded-lg p-4 mb-6 text-left">
-                        <p className="text-sm font-semibold text-foreground mb-2">Upgrade to unlock:</p>
+                        <p className="text-sm font-semibold text-foreground mb-2">{t('premium.upgradeToUnlock', 'Upgrade to unlock:')}</p>
                         <ul className="space-y-2 text-sm text-muted-foreground">
                           <li className="flex items-center gap-2">
                             <CheckCircle className="w-4 h-4 text-green-500" />
-                            AI-extracted ingredients list
+                            {t('premium.infoFeature1', 'AI-extracted ingredients list')}
                           </li>
                           <li className="flex items-center gap-2">
                             <CheckCircle className="w-4 h-4 text-green-500" />
-                            Product details & certifications
+                            {t('premium.infoFeature2', 'Product details & certifications')}
                           </li>
                           <li className="flex items-center gap-2">
                             <CheckCircle className="w-4 h-4 text-green-500" />
-                            Warnings & safety information
+                            {t('premium.infoFeature3', 'Warnings & safety information')}
                           </li>
                           <li className="flex items-center gap-2">
                             <CheckCircle className="w-4 h-4 text-green-500" />
-                            Manufacturer & origin data
+                            {t('premium.infoFeature4', 'Manufacturer & origin data')}
                           </li>
                         </ul>
                       </div>
@@ -792,7 +794,7 @@ export default function ScanDetailPage() {
                         className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-orange-600 to-blue-600 text-white font-semibold rounded-lg hover:from-orange-700 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl"
                       >
                         <Star className="w-4 h-4 mr-2" />
-                        Upgrade Your Plan
+                        {t('premium.upgradeButton', 'Upgrade Your Plan')}
                         <ArrowRight className="w-4 h-4 ml-2" />
                       </Link>
                     </div>
@@ -806,7 +808,7 @@ export default function ScanDetailPage() {
         {/* Raw AI Response (Debug) */}
         <details className="bg-card rounded-2xl shadow-lg border p-6">
           <summary className="font-semibold text-foreground cursor-pointer">
-            View Raw AI Response (Debug)
+            {t('debug.title', 'View Raw AI Response (Debug)')}
           </summary>
           <pre className="mt-4 text-xs text-muted-foreground overflow-auto bg-muted p-4 rounded-lg">
             {JSON.stringify(results, null, 2)}

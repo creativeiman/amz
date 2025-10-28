@@ -22,14 +22,9 @@ import {
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { LoadingPage } from "@/components/loading"
 import { api, ApiError } from "@/lib/api-client"
+import { useTranslation } from "@/hooks/useTranslation"
 
-const accountSchema = z.object({
-  name: z.string().min(2, "Account name must be at least 2 characters"),
-  businessName: z.string().optional(),
-  billingEmail: z.string().email("Invalid email address").optional().or(z.literal("")),
-})
-
-type AccountFormData = z.infer<typeof accountSchema>
+// Schema will be created inside component to access t()
 
 interface AccountData {
   id: string
@@ -43,12 +38,22 @@ interface AccountData {
 export default function AccountSettingsPage() {
   const { data: session, status, update } = useSession()
   const router = useRouter()
+  const { t } = useTranslation('account-settings')
   const [isLoading, setIsLoading] = React.useState(true)
   const [isSaving, setIsSaving] = React.useState(false)
   const [accountData, setAccountData] = React.useState<AccountData | null>(null)
 
   const isOwner = Boolean((session?.user as { isOwner?: boolean })?.isOwner)
   const isSessionLoading = status === 'loading'
+
+  // Create schema with translations
+  const accountSchema = z.object({
+    name: z.string().min(2, t('validation.nameMin', 'Account name must be at least 2 characters')),
+    businessName: z.string().optional(),
+    billingEmail: z.string().email(t('validation.invalidEmail', 'Invalid email address')).optional().or(z.literal("")),
+  })
+
+  type AccountFormData = z.infer<typeof accountSchema>
 
   const {
     register,
@@ -80,7 +85,7 @@ export default function AccountSettingsPage() {
         })
       } catch (error) {
         console.error("Error fetching account:", error)
-        const message = error instanceof ApiError ? error.message : "Failed to load account settings"
+        const message = error instanceof ApiError ? error.message : t('toast.failedToLoad', 'Failed to load account settings')
         toast.error(message)
       } finally {
         setIsLoading(false)
@@ -88,17 +93,17 @@ export default function AccountSettingsPage() {
     }
 
     fetchAccountData()
-  }, [isOwner, isSessionLoading, reset])
+  }, [isOwner, isSessionLoading, reset, t])
 
   // Redirect non-owners (only after session has loaded)
   React.useEffect(() => {
     if (isSessionLoading) return
     
     if (!isLoading && !isOwner) {
-      toast.error("Only account owners can access account settings")
+      toast.error(t('error.ownersOnly', 'Only account owners can access account settings'))
       router.push("/dashboard/settings/profile")
     }
-  }, [isOwner, isLoading, isSessionLoading, router])
+  }, [isOwner, isLoading, isSessionLoading, router, t])
 
   const onSubmit = async (data: AccountFormData) => {
     setIsSaving(true)
@@ -115,10 +120,10 @@ export default function AccountSettingsPage() {
       // Update session to refresh any cached data
       await update()
       
-      toast.success("Account settings updated successfully")
+      toast.success(t('toast.updateSuccess', 'Account settings updated successfully'))
     } catch (error) {
       console.error("Error updating account:", error)
-      const message = error instanceof ApiError ? error.message : "Failed to update account"
+      const message = error instanceof ApiError ? error.message : t('toast.updateFailed', 'Failed to update account')
       toast.error(message)
     } finally {
       setIsSaving(false)
@@ -138,50 +143,50 @@ export default function AccountSettingsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Account Settings</h1>
+        <h1 className="text-3xl font-bold">{t('title', 'Account Settings')}</h1>
         <p className="text-muted-foreground mt-2">
-          Manage your workspace and account information
+          {t('subtitle', 'Manage your workspace and account information')}
         </p>
       </div>
 
       <Alert>
         <Building2 className="h-4 w-4" />
         <AlertDescription>
-          These settings apply to your entire workspace and will be visible to all team members.
+          {t('alert.workspaceSettings', 'These settings apply to your entire workspace and will be visible to all team members.')}
         </AlertDescription>
       </Alert>
 
       <Card>
         <CardHeader>
-          <CardTitle>Workspace Information</CardTitle>
+          <CardTitle>{t('workspace.title', 'Workspace Information')}</CardTitle>
           <CardDescription>
-            Update your workspace name and business details
+            {t('workspace.description', 'Update your workspace name and business details')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="space-y-2">
               <Label htmlFor="name">
-                Workspace Name <span className="text-red-500">*</span>
+                {t('workspace.name', 'Workspace Name')} <span className="text-red-500">*</span>
               </Label>
               <Input
                 id="name"
-                placeholder="e.g., My Business, ACME Corp"
+                placeholder={t('workspace.namePlaceholder', 'e.g., My Business, ACME Corp')}
                 {...register("name")}
               />
               {errors.name && (
                 <p className="text-sm text-red-600">{errors.name.message}</p>
               )}
               <p className="text-xs text-muted-foreground">
-                This name will be displayed in the sidebar and throughout your dashboard
+                {t('workspace.nameHint', 'This name will be displayed in the sidebar and throughout your dashboard')}
               </p>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="businessName">Business Name (Optional)</Label>
+              <Label htmlFor="businessName">{t('workspace.businessName', 'Business Name (Optional)')}</Label>
               <Input
                 id="businessName"
-                placeholder="Legal business name"
+                placeholder={t('workspace.businessNamePlaceholder', 'Legal business name')}
                 {...register("businessName")}
               />
               {errors.businessName && (
@@ -190,18 +195,18 @@ export default function AccountSettingsPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="billingEmail">Billing Email (Optional)</Label>
+              <Label htmlFor="billingEmail">{t('workspace.billingEmail', 'Billing Email (Optional)')}</Label>
               <Input
                 id="billingEmail"
                 type="email"
-                placeholder="billing@example.com"
+                placeholder={t('workspace.billingEmailPlaceholder', 'billing@example.com')}
                 {...register("billingEmail")}
               />
               {errors.billingEmail && (
                 <p className="text-sm text-red-600">{errors.billingEmail.message}</p>
               )}
               <p className="text-xs text-muted-foreground">
-                Used for invoices and billing notifications
+                {t('workspace.billingEmailHint', 'Used for invoices and billing notifications')}
               </p>
             </div>
 
@@ -209,11 +214,11 @@ export default function AccountSettingsPage() {
               <div className="pt-4 border-t">
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
-                    <p className="text-muted-foreground">Plan</p>
+                    <p className="text-muted-foreground">{t('workspace.plan', 'Plan')}</p>
                     <p className="font-medium capitalize">{accountData.plan}</p>
                   </div>
                   <div>
-                    <p className="text-muted-foreground">Workspace ID</p>
+                    <p className="text-muted-foreground">{t('workspace.workspaceId', 'Workspace ID')}</p>
                     <p className="font-mono text-xs">{accountData.slug}</p>
                   </div>
                 </div>
@@ -225,10 +230,10 @@ export default function AccountSettingsPage() {
                 {isSaving ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Saving...
+                    {t('workspace.saving', 'Saving...')}
                   </>
                 ) : (
-                  "Save Changes"
+                  t('workspace.saveChanges', 'Save Changes')
                 )}
               </Button>
               {isDirty && (
@@ -238,7 +243,7 @@ export default function AccountSettingsPage() {
                   onClick={() => reset()}
                   disabled={isSaving}
                 >
-                  Cancel
+                  {t('workspace.cancel', 'Cancel')}
                 </Button>
               )}
             </div>

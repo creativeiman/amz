@@ -26,6 +26,7 @@ import { Scan } from "./columns"
 import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Upload, X, FileImage } from "lucide-react"
+import { useTranslation } from "@/hooks/useTranslation"
 
 const scanSchema = z.object({
   productName: z.string().min(2, "Product name must be at least 2 characters"),
@@ -43,11 +44,7 @@ interface ScanSheetProps {
   onSave: (formData: FormData) => Promise<void>
 }
 
-const categoryLabels = {
-  TOYS: "Toys",
-  BABY_PRODUCTS: "Baby Products",
-  COSMETICS_PERSONAL_CARE: "Cosmetics/Personal Care",
-}
+// Category labels moved to translation function
 
 const statusColors = {
   QUEUED: "bg-gray-500/10 text-gray-500 dark:bg-gray-500/20 dark:text-gray-400",
@@ -64,12 +61,13 @@ const riskColors = {
 }
 
 const marketplaceOptions = [
-  { id: "US", name: "United States", flag: "🇺🇸" },
-  { id: "UK", name: "United Kingdom", flag: "🇬🇧" },
-  { id: "DE", name: "Germany", flag: "🇩🇪" },
+  { id: "US", flag: "🇺🇸" },
+  { id: "UK", flag: "🇬🇧" },
+  { id: "DE", flag: "🇩🇪" },
 ]
 
 export function ScanSheet({ scan, isOpen, onClose, onSave }: ScanSheetProps) {
+  const { t } = useTranslation('dashboard-scans')
   const [isSubmitting, setIsSubmitting] = React.useState(false)
   const [selectedFile, setSelectedFile] = React.useState<File | null>(null)
   const [filePreview, setFilePreview] = React.useState<string | null>(null)
@@ -201,15 +199,23 @@ export function ScanSheet({ scan, isOpen, onClose, onSave }: ScanSheetProps) {
 
   const isViewMode = !!scan
 
+  const getCategoryLabel = (category: string) => {
+    return t(`category.${category.toLowerCase()}`, category)
+  }
+
+  const getMarketplaceName = (id: string) => {
+    return t(`marketplace.${id.toLowerCase()}`, id)
+  }
+
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
       <SheetContent className="sm:max-w-[640px] flex flex-col overflow-y-auto">
         <SheetHeader>
-          <SheetTitle>{isViewMode ? "Scan Details" : "New Label Scan"}</SheetTitle>
+          <SheetTitle>{isViewMode ? t('sheet.viewTitle', 'Scan Details') : t('sheet.newTitle', 'New Label Scan')}</SheetTitle>
           <SheetDescription>
             {isViewMode
-              ? "View scan details and compliance results."
-              : "Upload a product label image for compliance analysis."}
+              ? t('sheet.viewDescription', 'View scan details and compliance results.')
+              : t('sheet.newDescription', 'Upload a product label image for compliance analysis.')}
           </SheetDescription>
         </SheetHeader>
 
@@ -220,22 +226,22 @@ export function ScanSheet({ scan, isOpen, onClose, onSave }: ScanSheetProps) {
               <div className="space-y-4 pb-4 border-b">
                 <div className="flex items-center gap-4">
                   <div className="flex-1">
-                    <Label className="text-muted-foreground text-xs">Status</Label>
+                    <Label className="text-muted-foreground text-xs">{t('sheet.status', 'Status')}</Label>
                     <Badge variant="outline" className={statusColors[scan.status]}>
-                      {scan.status}
+                      {t(`status.${scan.status.toLowerCase()}`, scan.status)}
                     </Badge>
                   </div>
                   {scan.score !== null && (
                     <div className="flex-1">
-                      <Label className="text-muted-foreground text-xs">Compliance Score</Label>
+                      <Label className="text-muted-foreground text-xs">{t('sheet.complianceScore', 'Compliance Score')}</Label>
                       <div className="text-2xl font-bold">{scan.score}%</div>
                     </div>
                   )}
                   {scan.riskLevel && (
                     <div className="flex-1">
-                      <Label className="text-muted-foreground text-xs">Risk Level</Label>
+                      <Label className="text-muted-foreground text-xs">{t('sheet.riskLevel', 'Risk Level')}</Label>
                       <Badge variant="outline" className={riskColors[scan.riskLevel]}>
-                        {scan.riskLevel}
+                        {t(`risk.${scan.riskLevel.toLowerCase()}`, scan.riskLevel)}
                       </Badge>
                     </div>
                   )}
@@ -246,7 +252,7 @@ export function ScanSheet({ scan, isOpen, onClose, onSave }: ScanSheetProps) {
             {/* File Upload (Create Mode Only) */}
             {!isViewMode && (
               <div className="space-y-2">
-                <Label>Upload Label File *</Label>
+                <Label>{t('sheet.uploadLabel', 'Upload Label File')} *</Label>
                 <div
                   className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
                     dragActive
@@ -312,9 +318,9 @@ export function ScanSheet({ scan, isOpen, onClose, onSave }: ScanSheetProps) {
                     <div className="space-y-4">
                       <Upload className="mx-auto h-12 w-12 text-muted-foreground" />
                       <div>
-                        <p className="font-medium">Drag and drop your label here</p>
+                        <p className="font-medium">{t('sheet.dragDrop', 'Drag and drop your label here')}</p>
                         <p className="text-sm text-muted-foreground">
-                          or click to browse files (JPG, PNG, PDF)
+                          {t('sheet.browseFiles', 'or click to browse files (JPG, PNG, PDF)')}
                         </p>
                       </div>
                       <Button
@@ -323,7 +329,7 @@ export function ScanSheet({ scan, isOpen, onClose, onSave }: ScanSheetProps) {
                         onClick={() => fileInputRef.current?.click()}
                       >
                         <Upload className="mr-2 h-4 w-4" />
-                        Choose File
+                        {t('sheet.chooseFile', 'Choose File')}
                       </Button>
                       <input
                         ref={fileInputRef}
@@ -343,11 +349,11 @@ export function ScanSheet({ scan, isOpen, onClose, onSave }: ScanSheetProps) {
 
             {/* Product Name */}
             <div className="space-y-2">
-              <Label htmlFor="productName">Product Name *</Label>
+              <Label htmlFor="productName">{t('sheet.productName', 'Product Name')} *</Label>
               <Input
                 id="productName"
                 {...register("productName")}
-                placeholder="Enter product name"
+                placeholder={t('sheet.productNamePlaceholder', 'Enter product name')}
                 disabled={isViewMode}
               />
               {errors.productName && (
@@ -357,7 +363,7 @@ export function ScanSheet({ scan, isOpen, onClose, onSave }: ScanSheetProps) {
 
             {/* Category */}
             <div className="space-y-2">
-              <Label htmlFor="category">Category *</Label>
+              <Label htmlFor="category">{t('sheet.category', 'Category')} *</Label>
               <Select
                 value={category}
                 onValueChange={(value) =>
@@ -366,13 +372,13 @@ export function ScanSheet({ scan, isOpen, onClose, onSave }: ScanSheetProps) {
                 disabled={isViewMode}
               >
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select a category" />
+                  <SelectValue placeholder={t('sheet.selectCategory', 'Select a category')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="TOYS">{categoryLabels.TOYS}</SelectItem>
-                  <SelectItem value="BABY_PRODUCTS">{categoryLabels.BABY_PRODUCTS}</SelectItem>
+                  <SelectItem value="TOYS">{getCategoryLabel('TOYS')}</SelectItem>
+                  <SelectItem value="BABY_PRODUCTS">{getCategoryLabel('BABY_PRODUCTS')}</SelectItem>
                   <SelectItem value="COSMETICS_PERSONAL_CARE">
-                    {categoryLabels.COSMETICS_PERSONAL_CARE}
+                    {getCategoryLabel('COSMETICS_PERSONAL_CARE')}
                   </SelectItem>
                 </SelectContent>
               </Select>
@@ -383,7 +389,7 @@ export function ScanSheet({ scan, isOpen, onClose, onSave }: ScanSheetProps) {
 
             {/* Target Marketplaces */}
             <div className="space-y-3">
-              <Label>Target Marketplaces *</Label>
+              <Label>{t('sheet.targetMarketplaces', 'Target Marketplaces')} *</Label>
               <div className="space-y-2">
                 {marketplaceOptions.map((marketplace) => (
                   <div key={marketplace.id} className="flex items-center space-x-3">
@@ -398,7 +404,7 @@ export function ScanSheet({ scan, isOpen, onClose, onSave }: ScanSheetProps) {
                       className="flex items-center gap-2 cursor-pointer font-normal"
                     >
                       <span className="text-xl">{marketplace.flag}</span>
-                      {marketplace.name}
+                      {getMarketplaceName(marketplace.id)}
                     </Label>
                   </div>
                 ))}
@@ -423,11 +429,11 @@ export function ScanSheet({ scan, isOpen, onClose, onSave }: ScanSheetProps) {
               }}
               className="flex-1"
             >
-              {isViewMode ? "Close" : "Cancel"}
+              {isViewMode ? t('sheet.close', 'Close') : t('sheet.cancel', 'Cancel')}
             </Button>
             {!isViewMode && (
               <Button type="submit" disabled={isSubmitting || !selectedFile} className="flex-1">
-                {isSubmitting ? "Scanning..." : "Scan Label"}
+                {isSubmitting ? t('sheet.scanning', 'Scanning...') : t('sheet.scanLabel', 'Scan Label')}
               </Button>
             )}
           </SheetFooter>

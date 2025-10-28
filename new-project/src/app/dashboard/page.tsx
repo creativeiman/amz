@@ -11,6 +11,7 @@ import { StatsCard } from "./_components/stats-card"
 import { RecentScansTable } from "./_components/recent-scans-table"
 import { UsageCard } from "./_components/usage-card"
 import { api, ApiError } from "@/lib/api-client"
+import { useTranslation } from "@/hooks/useTranslation"
 
 interface DashboardData {
   stats: {
@@ -40,6 +41,7 @@ interface DashboardData {
 export default function DashboardPage() {
   const router = useRouter()
   const { data: session, status } = useSession()
+  const { t } = useTranslation('dashboard-home')
   const [isLoading, setIsLoading] = useState(true)
   const [data, setData] = useState<DashboardData | null>(null)
 
@@ -92,7 +94,7 @@ export default function DashboardPage() {
   if (!data) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <p className="text-muted-foreground">Failed to load dashboard</p>
+        <p className="text-muted-foreground">{t('failedToLoad', 'Failed to load dashboard')}</p>
       </div>
     )
   }
@@ -103,43 +105,43 @@ export default function DashboardPage() {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
         <div className="flex-1 min-w-0">
           <h1 className="text-2xl sm:text-3xl font-bold">
-            Welcome back, {session?.user?.name?.split(" ")[0]}!
+            {t('welcome', 'Welcome back')}, {session?.user?.name?.split(" ")[0]}!
           </h1>
           <p className="text-muted-foreground mt-1 text-sm sm:text-base">
-            Manage your product compliance and scan history
+            {t('subtitle', 'Manage your product compliance and scan history')}
           </p>
         </div>
         <Button onClick={handleNewScan} size="lg" className="w-full sm:w-auto">
           <Plus className="mr-2 h-4 w-4" />
-          New Scan
+          {t('newScan', 'New Scan')}
         </Button>
       </div>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
         <StatsCard
-          title="Total Scans"
+          title={t('stats.totalScans', 'Total Scans')}
           value={data.stats.totalScans}
           icon={FileText}
           iconColor="text-blue-600"
           iconBgColor="bg-blue-100 dark:bg-blue-950"
         />
         <StatsCard
-          title="Compliant"
+          title={t('stats.compliant', 'Compliant')}
           value={data.stats.compliantScans}
           icon={CheckCircle}
           iconColor="text-green-600"
           iconBgColor="bg-green-100 dark:bg-green-950"
         />
         <StatsCard
-          title="Issues Found"
+          title={t('stats.issuesFound', 'Issues Found')}
           value={data.stats.issuesFound}
           icon={AlertTriangle}
           iconColor="text-yellow-600"
           iconBgColor="bg-yellow-100 dark:bg-yellow-950"
         />
         <StatsCard
-          title="Avg Score"
+          title={t('stats.avgScore', 'Avg Score')}
           value={data.stats.avgScore !== null ? `${data.stats.avgScore}%` : "-"}
           icon={TrendingUp}
           iconColor="text-purple-600"
@@ -171,14 +173,14 @@ export default function DashboardPage() {
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
               <h3 className="text-lg font-semibold mb-1">
-                You&apos;ve reached your scan limit
+                {t('upgrade.title', "You've reached your scan limit")}
               </h3>
               <p className="text-sm text-muted-foreground">
-                Upgrade to Deluxe for unlimited scans and advanced features
+                {t('upgrade.description', 'Upgrade to Deluxe for unlimited scans and advanced features')}
               </p>
             </div>
             <Button onClick={handleUpgrade} size="lg" variant="default">
-              Upgrade Now
+              {t('upgrade.button', 'Upgrade Now')}
             </Button>
           </div>
         </div>

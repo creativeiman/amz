@@ -1,0 +1,23 @@
+{
+  "welcome": "Bienvenido de nuevo",
+  "subtitle": "Gestiona tu cumplimiento de productos e historial de escaneos",
+  "newScan": "Nuevo Escaneo",
+  "stats.totalScans": "Escaneos Totales",
+  "stats.compliant": "Cumplimiento",
+  "stats.issuesFound": "Problemas Encontrados",
+  "stats.avgScore": "Puntuación Promedio",
+  "recentScans.title": "Escaneos Recientes",
+  "recentScans.viewAll": "Ver Todo",
+  "recentScans.empty": "Aún no hay escaneos",
+  "recentScans.emptySubtitle": "Comienza creando tu primer escaneo de cumplimiento",
+  "usage.title": "Uso de Escaneos",
+  "usage.unlimited": "Ilimitado",
+  "usage.scansUsed": "escaneos utilizados",
+  "usage.upgrade": "Actualizar Plan",
+  "upgrade.title": "Has alcanzado tu límite de escaneos",
+  "upgrade.description": "Actualiza a Deluxe para escaneos ilimitados y funciones avanzadas",
+  "upgrade.button": "Actualizar Ahora",
+  "failedToLoad": "Error al cargar el panel de control",
+  "loading": "Cargando..."
+}
+

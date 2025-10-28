@@ -10,6 +10,7 @@ import { PLAN_LIMITS } from '@/config/plans'
 import { format } from 'date-fns'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { useFreshAccount } from '@/hooks/use-fresh-account'
+import { useTranslation } from '@/hooks/useTranslation'
 
 interface Payment {
   id: string
@@ -25,6 +26,7 @@ interface Payment {
 function BillingPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const { t } = useTranslation('dashboard-billing')
   const { account, refetch } = useFreshAccount() // ✅ Use centralized hook
   const [payments, setPayments] = useState<Payment[]>([])
   const [loading, setLoading] = useState(true)
@@ -152,9 +154,10 @@ function BillingPageContent() {
       REFUNDED: 'outline',
     }
 
+    const statusKey = status.toLowerCase()
     return (
       <Badge variant={variants[status] || 'secondary'}>
-        {status.toLowerCase()}
+        {t(`status.${statusKey}`, statusKey)}
       </Badge>
     )
   }
@@ -162,9 +165,9 @@ function BillingPageContent() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold mb-2">Billing & Subscription</h1>
+        <h1 className="text-3xl font-bold mb-2">{t('title', 'Billing & Subscription')}</h1>
         <p className="text-muted-foreground">
-          Manage your subscription and view payment history
+          {t('subtitle', 'Manage your subscription and view payment history')}
         </p>
       </div>
 
@@ -204,17 +207,17 @@ function BillingPageContent() {
       {/* Current Plan Card */}
       <Card>
         <CardHeader>
-          <CardTitle>Current Plan</CardTitle>
+          <CardTitle>{t('currentPlan', 'Current Plan')}</CardTitle>
           <CardDescription>Your active subscription details</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-start justify-between">
             <div>
               <p className="text-2xl font-bold">
-                {PLAN_LIMITS[currentPlan as keyof typeof PLAN_LIMITS]?.name || 'Free Plan'}
+                {t(`plan.${currentPlan.toLowerCase()}.name`, PLAN_LIMITS[currentPlan as keyof typeof PLAN_LIMITS]?.name || 'Free Plan')}
               </p>
               <p className="text-sm text-muted-foreground mt-1">
-                {currentPlan === 'DELUXE' && '$29.99 / month'}
+                {currentPlan === 'DELUXE' && t('pricing.monthly', '$29.99 / month')}
                 {currentPlan === 'ONE_TIME' && '$99.99 one-time'}
                 {currentPlan === 'FREE' && '$0.00 / month'}
               </p>
@@ -225,7 +228,7 @@ function BillingPageContent() {
           </div>
 
           <div className="space-y-2">
-            <p className="text-sm font-medium">Plan Features:</p>
+            <p className="text-sm font-medium">{t('features', 'Plan Features')}:</p>
             <ul className="text-muted-foreground space-y-1">
               {(PLAN_LIMITS[currentPlan as keyof typeof PLAN_LIMITS]?.features || PLAN_LIMITS.FREE.features).map((feature, index) => (
                 <li key={index} className="text-sm">• {feature}</li>
@@ -237,7 +240,7 @@ function BillingPageContent() {
             {/* Show "Upgrade Plan" only if NOT on ONE_TIME and NOT scheduled to cancel */}
             {currentPlan !== 'ONE_TIME' && !isScheduledToCancel && (
               <Button onClick={() => router.push('/pricing')}>
-                Upgrade Plan
+                {t('button.upgrade', 'Upgrade Plan')}
               </Button>
             )}
             
@@ -251,12 +254,12 @@ function BillingPageContent() {
                 {portalLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Loading...
+                    {t('loading', 'Loading...')}
                   </>
                 ) : (
                   <>
                     <CreditCard className="mr-2 h-4 w-4" />
-                    {isScheduledToCancel ? 'Reactivate Subscription' : 'Manage Subscription'}
+                    {isScheduledToCancel ? 'Reactivate Subscription' : t('button.manageBilling', 'Manage Subscription')}
                   </>
                 )}
               </Button>
@@ -275,7 +278,7 @@ function BillingPageContent() {
       {/* Payment History Card */}
       <Card>
         <CardHeader>
-          <CardTitle>Payment History</CardTitle>
+          <CardTitle>{t('billingHistory', 'Payment History')}</CardTitle>
           <CardDescription>View all your past transactions</CardDescription>
         </CardHeader>
         <CardContent>
@@ -286,7 +289,7 @@ function BillingPageContent() {
           ) : payments.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
               <CreditCard className="h-12 w-12 mx-auto mb-3 opacity-50" />
-              <p>No payment history yet</p>
+              <p>{t('billingHistory.empty', 'No payment history yet')}</p>
               <p className="text-sm mt-1">
                 Upgrade to a paid plan to see your transactions here
               </p>
@@ -296,11 +299,11 @@ function BillingPageContent() {
               <table className="w-full">
                 <thead>
                   <tr className="border-b text-left">
-                    <th className="pb-3 font-medium">Date</th>
-                    <th className="pb-3 font-medium">Plan</th>
-                    <th className="pb-3 font-medium">Amount</th>
-                    <th className="pb-3 font-medium">Status</th>
-                    <th className="pb-3 font-medium">Invoice</th>
+                    <th className="pb-3 font-medium">{t('billingHistory.date', 'Date')}</th>
+                    <th className="pb-3 font-medium">{t('billingHistory.description', 'Plan')}</th>
+                    <th className="pb-3 font-medium">{t('billingHistory.amount', 'Amount')}</th>
+                    <th className="pb-3 font-medium">{t('billingHistory.status', 'Status')}</th>
+                    <th className="pb-3 font-medium">{t('billingHistory.invoice', 'Invoice')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -326,7 +329,7 @@ function BillingPageContent() {
                             onClick={() => window.open(payment.invoiceUrl!, '_blank')}
                           >
                             <Download className="h-4 w-4 mr-1" />
-                            Download
+                            {t('billingHistory.download', 'Download')}
                           </Button>
                         ) : (
                           <span className="text-sm text-muted-foreground">N/A</span>

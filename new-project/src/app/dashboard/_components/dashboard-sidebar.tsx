@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { ScanSearch, CreditCard, Users, LayoutDashboard, ChevronUp, LogOut, UserCircle, Building2 } from "lucide-react"
+import { ScanSearch, CreditCard, Users, LayoutDashboard, ChevronUp, LogOut, UserCircle, Building2, Languages } from "lucide-react"
 import {
   Sidebar,
   SidebarContent,
@@ -28,45 +28,48 @@ import { ThemeToggle } from "@/components/theme-toggle"
 import Link from "next/link"
 import { api } from "@/lib/api-client"
 import { useFreshAccount } from "@/hooks/use-fresh-account"
+import { useTranslation } from "@/hooks/useTranslation"
+import { useLanguage, Language } from "@/contexts/LanguageContext"
+import { getLanguageName, getLanguageFlag } from "@/lib/translation-loader"
 
-interface MenuItem {
-  title: string
+interface MenuItemConfig {
+  key: string
   url: string
   icon: React.ComponentType<{ className?: string }>
   ownerOnly?: boolean
 }
 
-const menuItems: MenuItem[] = [
+const menuItemsConfig: MenuItemConfig[] = [
   {
-    title: "Dashboard",
+    key: "dashboard",
     url: "/dashboard",
     icon: LayoutDashboard,
   },
   {
-    title: "Scans",
+    key: "scans",
     url: "/dashboard/scans",
     icon: ScanSearch,
   },
   {
-    title: "Billing",
+    key: "billing",
     url: "/dashboard/billing",
     icon: CreditCard,
     ownerOnly: true,
   },
   {
-    title: "Team",
+    key: "team",
     url: "/dashboard/team",
     icon: Users,
     ownerOnly: true,
   },
   {
-    title: "Account Settings",
+    key: "accountSettings",
     url: "/dashboard/settings/account",
     icon: Building2,
     ownerOnly: true,
   },
   {
-    title: "Profile",
+    key: "profile",
     url: "/dashboard/settings/profile",
     icon: UserCircle,
   },
@@ -100,6 +103,8 @@ export function DashboardSidebar() {
   const { data: session } = useSession()
   const user = session?.user
   const { account } = useFreshAccount() // ✅ Use centralized hook for fresh account data
+  const { t } = useTranslation('dashboard-sidebar')
+  const { language, setLanguage } = useLanguage()
 
   // Use fresh account data for plan badge, fallback to JWT if API fails
   const planBadge = getPlanBadge(account?.plan || user?.plan || 'FREE')
@@ -107,6 +112,12 @@ export function DashboardSidebar() {
   // Check if user is an account owner by checking if they have the "isOwner" flag
   // This will be added to the session in the auth callback
   const isAccountOwner = Boolean((user as { isOwner?: boolean })?.isOwner)
+
+  // Map menu items with translations
+  const menuItems = menuItemsConfig.map(item => ({
+    ...item,
+    title: t(`menu.${item.key}`, item.key)
+  }))
 
   // Filter menu items based on user role
   const visibleMenuItems = menuItems.filter((item) => {
@@ -125,20 +136,20 @@ export function DashboardSidebar() {
             <Building2 className="h-5 w-5 text-muted-foreground" />
             <div className="flex-1 min-w-0">
               <h2 className="text-sm font-semibold truncate">
-                {account?.name || 'Loading...'}
+                {account?.name || t('loading', 'Loading...')}
               </h2>
-              <p className="text-xs text-muted-foreground">Workspace</p>
+              <p className="text-xs text-muted-foreground">{t('workspace', 'Workspace')}</p>
             </div>
           </div>
         </div>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+          <SidebarGroupLabel>{t('navigation', 'Navigation')}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {visibleMenuItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
+                <SidebarMenuItem key={item.key}>
                   <SidebarMenuButton asChild>
                     <Link href={item.url}>
                       <item.icon />
@@ -195,11 +206,33 @@ export function DashboardSidebar() {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem className="flex items-center justify-between">
-                  <span className="text-xs text-muted-foreground">Current Plan</span>
+                  <span className="text-xs text-muted-foreground">{t('user.currentPlan', 'Current Plan')}</span>
                   <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${planBadge.color}`}>
-                    {planBadge.label}
+                    {t(`plan.${planBadge.label.toLowerCase().replace('-', '')}`, planBadge.label)}
                   </span>
                 </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <div className="flex items-center px-2 py-1.5 text-sm cursor-pointer hover:bg-accent rounded-sm">
+                      <Languages className="mr-2 h-4 w-4" />
+                      <span className="flex-1">Language</span>
+                      <span className="text-xs">{getLanguageFlag(language)}</span>
+                    </div>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent side="right" align="start">
+                    {(['en', 'es', 'fr', 'de'] as Language[]).map((lang) => (
+                      <DropdownMenuItem
+                        key={lang}
+                        onClick={() => setLanguage(lang)}
+                        className={language === lang ? 'bg-accent' : ''}
+                      >
+                        <span className="mr-2">{getLanguageFlag(lang)}</span>
+                        {getLanguageName(lang)}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
                 <DropdownMenuSeparator />
                 <ThemeToggle />
                 <DropdownMenuSeparator />
@@ -208,7 +241,7 @@ export function DashboardSidebar() {
                   onClick={() => signOut({ callbackUrl: '/login' })}
                 >
                   <LogOut className="mr-2 h-4 w-4" />
-                  <span>Log Out</span>
+                  <span>{t('user.logout', 'Log Out')}</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

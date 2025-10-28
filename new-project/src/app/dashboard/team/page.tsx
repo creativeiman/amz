@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation"
 import { getPlanLimits, canAddTeamMember } from "@/config/plans"
 import { api, ApiError } from "@/lib/api-client"
 import { useFreshAccount } from "@/hooks/use-fresh-account"
+import { useTranslation } from "@/hooks/useTranslation"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -68,6 +69,7 @@ type Invitation = {
 export default function TeamPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
+  const { t } = useTranslation('dashboard-team')
   const { account } = useFreshAccount() // ✅ Use centralized hook
   const [members, setMembers] = React.useState<Member[]>([])
   const [invitations, setInvitations] = React.useState<Invitation[]>([])
@@ -87,10 +89,10 @@ export default function TeamPage() {
     if (status === 'loading') return
     
     if (!session || !isAccountOwner) {
-      toast.error('Access denied. Only account owners can manage team members.')
+      toast.error(t('error.accessDenied', 'Access denied. Only account owners can manage team members.'))
       router.push('/dashboard')
     }
-  }, [session, isAccountOwner, status, router])
+  }, [session, isAccountOwner, status, router, t])
 
   // Fetch team members
   const fetchMembers = React.useCallback(async () => {
@@ -102,10 +104,10 @@ export default function TeamPage() {
       setMembers(data.members || [])
     } catch (error) {
       console.error("Error fetching members:", error)
-      const message = error instanceof ApiError ? error.message : "Failed to load team members"
+      const message = error instanceof ApiError ? error.message : t('failedToLoad', 'Failed to load team members')
       toast.error(message)
     }
-  }, [isAccountOwner])
+  }, [isAccountOwner, t])
 
   // Fetch invitations
   const fetchInvitations = React.useCallback(async () => {
@@ -117,12 +119,12 @@ export default function TeamPage() {
       setInvitations(data.invitations || [])
     } catch (error) {
       console.error("Error fetching invitations:", error)
-      const message = error instanceof ApiError ? error.message : "Failed to load invitations"
+      const message = error instanceof ApiError ? error.message : t('failedToLoad', 'Failed to load invitations')
       toast.error(message)
     } finally {
       setIsLoading(false)
     }
-  }, [isAccountOwner])
+  }, [isAccountOwner, t])
 
   React.useEffect(() => {
     // Only fetch data if user is an account owner (plan fetched by hook)
@@ -143,13 +145,13 @@ export default function TeamPage() {
     try {
       await api.post("/dashboard/api/team/invitations", data)
       
-      toast.success("Invitation sent successfully")
+      toast.success(t('invite.success', 'Invitation sent successfully'))
       fetchInvitations()
       setIsInviteDialogOpen(false)
       return true
     } catch (error) {
       console.error("Error sending invitation:", error)
-      const errorMessage = error instanceof ApiError ? error.message : "Failed to send invitation"
+      const errorMessage = error instanceof ApiError ? error.message : t('invite.failed', 'Failed to send invitation')
       
       // Check for specific error types in the message
       if (errorMessage.includes("Upgrade") || errorMessage.includes("not available")) {
@@ -174,11 +176,11 @@ export default function TeamPage() {
   const handleToggleMemberStatus = async (memberId: string, currentStatus: boolean) => {
     try {
       await api.patch(`/dashboard/api/team/members/${memberId}`, { isActive: !currentStatus })
-      toast.success(`Member ${!currentStatus ? "activated" : "deactivated"} successfully`)
+      toast.success(t(!currentStatus ? 'memberActivated' : 'memberDeactivated', `Member ${!currentStatus ? "activated" : "deactivated"} successfully`))
       fetchMembers()
     } catch (error) {
       console.error("Error updating member status:", error)
-      const message = error instanceof ApiError ? error.message : "Failed to update member status"
+      const message = error instanceof ApiError ? error.message : t('updateFailed', 'Failed to update member status')
       toast.error(message)
     }
   }
@@ -187,12 +189,12 @@ export default function TeamPage() {
   const handleRemoveMember = async (memberId: string) => {
     try {
       await api.delete(`/dashboard/api/team/members/${memberId}`)
-      toast.success("Member removed successfully")
+      toast.success(t('remove.success', 'Member removed successfully'))
       fetchMembers()
       setMemberToRemove(null)
     } catch (error) {
       console.error("Error removing member:", error)
-      const message = error instanceof ApiError ? error.message : "Failed to remove member"
+      const message = error instanceof ApiError ? error.message : t('remove.failed', 'Failed to remove member')
       toast.error(message)
     }
   }
@@ -201,12 +203,12 @@ export default function TeamPage() {
   const handleCancelInvite = async (inviteId: string) => {
     try {
       await api.delete(`/dashboard/api/team/invitations/${inviteId}`)
-      toast.success("Invitation cancelled")
+      toast.success(t('cancel.success', 'Invitation cancelled successfully'))
       fetchInvitations()
       setInviteToCancel(null)
     } catch (error) {
       console.error("Error cancelling invitation:", error)
-      const message = error instanceof ApiError ? error.message : "Failed to cancel invitation"
+      const message = error instanceof ApiError ? error.message : t('cancel.failed', 'Failed to cancel invitation')
       toast.error(message)
     }
   }
@@ -215,11 +217,11 @@ export default function TeamPage() {
   const handleResendInvite = async (inviteId: string) => {
     try {
       await api.post(`/dashboard/api/team/invitations/${inviteId}/resend`)
-      toast.success("Invitation resent successfully")
+      toast.success(t('resend.success', 'Invitation resent successfully'))
       fetchInvitations()
     } catch (error) {
       console.error("Error resending invitation:", error)
-      const message = error instanceof ApiError ? error.message : "Failed to resend invitation"
+      const message = error instanceof ApiError ? error.message : t('resend.failed', 'Failed to resend invitation')
       toast.error(message)
     }
   }
@@ -231,10 +233,10 @@ export default function TeamPage() {
       const inviteLink = `${baseUrl}/accept-invite?token=${token}`
       
       await navigator.clipboard.writeText(inviteLink)
-      toast.success("Invitation link copied to clipboard!")
+      toast.success(t('copySuccess', 'Invitation link copied to clipboard!'))
     } catch (error) {
       console.error("Error copying link:", error)
-      toast.error("Failed to copy link")
+      toast.error(t('copyFailed', 'Failed to copy link'))
     }
   }
 
@@ -264,17 +266,17 @@ export default function TeamPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-amber-900 dark:text-amber-100">
               <Crown className="h-5 w-5" />
-              Upgrade for Team Collaboration
+              {t('upgrade.title', 'Upgrade for Team Collaboration')}
             </CardTitle>
             <CardDescription className="text-amber-800 dark:text-amber-200">
-              Team collaboration is not available on your current plan. Upgrade to Deluxe ($29.99/month) or One-Time ($99.99 forever) to invite up to 2 team members and unlock unlimited scans.
+              {t('upgrade.description', 'Team collaboration is not available on your current plan. Upgrade to Deluxe ($29.99/month) or One-Time ($99.99 forever) to invite up to 2 team members and unlock unlimited scans.')}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Button variant="default" asChild>
               <a href="/pricing">
                 <Crown className="mr-2 h-4 w-4" />
-                View Plans
+                {t('upgrade.button', 'View Plans')}
               </a>
             </Button>
           </CardContent>
@@ -283,12 +285,12 @@ export default function TeamPage() {
 
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Team Management</h1>
+          <h1 className="text-3xl font-bold">{t('title', 'Team Management')}</h1>
           <p className="text-muted-foreground mt-2">
-            Manage your team members and invitations
+            {t('subtitle', 'Manage your team members and invitations')}
             {planLimits.maxTeamMembers > 0 && (
               <span className="block mt-1 text-sm">
-                <strong>{remainingSlots}</strong> of <strong>{planLimits.maxTeamMembers}</strong> team slots available
+                <strong>{remainingSlots}</strong> {t('of', 'of')} <strong>{planLimits.maxTeamMembers}</strong> {t('slotsAvailable', 'team slots available')}
               </span>
             )}
           </p>
@@ -298,7 +300,7 @@ export default function TeamPage() {
           disabled={!canInvite}
         >
           <Plus className="mr-2 h-4 w-4" />
-          Invite Member
+          {t('inviteMember', 'Invite Member')}
         </Button>
       </div>
 
@@ -306,54 +308,54 @@ export default function TeamPage() {
         <TabsList>
           <TabsTrigger value="members">
             <UserCheck className="mr-2 h-4 w-4" />
-            Members ({members.length})
+            {t('tabs.members', 'Members')} ({members.length})
           </TabsTrigger>
           <TabsTrigger value="invitations">
             <Mail className="mr-2 h-4 w-4" />
-            Invitations ({invitations.length})
+            {t('tabs.invitations', 'Invitations')} ({invitations.length})
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="members" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Team Members</CardTitle>
+              <CardTitle>{t('members.title', 'Team Members')}</CardTitle>
               <CardDescription>
-                People who have access to this account
+                {t('members.description', 'People who have access to this account')}
               </CardDescription>
             </CardHeader>
             <CardContent>
               {members.length === 0 ? (
                 <div className="text-center py-8 text-muted-foreground">
-                  No team members yet. Invite someone to get started!
+                  {t('members.empty', 'No team members yet. Invite someone to get started!')}
                 </div>
               ) : (
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Name</TableHead>
-                      <TableHead>Email</TableHead>
-                      <TableHead>Role</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Joined</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
+                      <TableHead>{t('table.name', 'Name')}</TableHead>
+                      <TableHead>{t('table.email', 'Email')}</TableHead>
+                      <TableHead>{t('table.role', 'Role')}</TableHead>
+                      <TableHead>{t('table.status', 'Status')}</TableHead>
+                      <TableHead>{t('table.joined', 'Joined')}</TableHead>
+                      <TableHead className="text-right">{t('table.actions', 'Actions')}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {members.map((member) => (
                       <TableRow key={member.id} className={!member.isActive ? "opacity-60" : ""}>
                         <TableCell className="font-medium">
-                          {member.name || "Unnamed"}
+                          {member.name || t('unnamed', 'Unnamed')}
                         </TableCell>
                         <TableCell>{member.email}</TableCell>
                         <TableCell>
                           <Badge variant={member.role === "EDITOR" ? "default" : "secondary"}>
-                            {member.role}
+                            {t(`role.${member.role.toLowerCase()}`, member.role)}
                           </Badge>
                         </TableCell>
                         <TableCell>
                           <Badge variant={member.isActive ? "default" : "secondary"}>
-                            {member.isActive ? "Active" : "Inactive"}
+                            {t(member.isActive ? 'status.active' : 'status.inactive', member.isActive ? "Active" : "Inactive")}
                           </Badge>
                         </TableCell>
                         <TableCell>
@@ -373,12 +375,12 @@ export default function TeamPage() {
                                 {member.isActive ? (
                                   <>
                                     <UserX className="mr-2 h-4 w-4" />
-                                    Deactivate
+                                    {t('actions.deactivate', 'Deactivate')}
                                   </>
                                 ) : (
                                   <>
                                     <UserPlus className="mr-2 h-4 w-4" />
-                                    Activate
+                                    {t('actions.activate', 'Activate')}
                                   </>
                                 )}
                               </DropdownMenuItem>
@@ -387,7 +389,7 @@ export default function TeamPage() {
                                 className="text-red-600"
                               >
                                 <Trash2 className="mr-2 h-4 w-4" />
-                                Remove
+                                {t('actions.remove', 'Remove')}
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
@@ -404,26 +406,26 @@ export default function TeamPage() {
         <TabsContent value="invitations" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Pending Invitations</CardTitle>
+              <CardTitle>{t('invitations.title', 'Pending Invitations')}</CardTitle>
               <CardDescription>
-                Invitations sent to join your team
+                {t('invitations.description', 'Invitations sent to join your team')}
               </CardDescription>
             </CardHeader>
             <CardContent>
               {invitations.length === 0 ? (
                 <div className="text-center py-8 text-muted-foreground">
-                  No pending invitations
+                  {t('invitations.empty', 'No pending invitations')}
                 </div>
               ) : (
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Email</TableHead>
-                      <TableHead>Role</TableHead>
-                      <TableHead>Invited By</TableHead>
-                      <TableHead>Sent</TableHead>
-                      <TableHead>Expires</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
+                      <TableHead>{t('table.email', 'Email')}</TableHead>
+                      <TableHead>{t('table.role', 'Role')}</TableHead>
+                      <TableHead>{t('table.invitedBy', 'Invited By')}</TableHead>
+                      <TableHead>{t('table.sent', 'Sent')}</TableHead>
+                      <TableHead>{t('table.expires', 'Expires')}</TableHead>
+                      <TableHead className="text-right">{t('table.actions', 'Actions')}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -434,10 +436,10 @@ export default function TeamPage() {
                           <TableCell className="font-medium">{invite.email}</TableCell>
                           <TableCell>
                             <Badge variant={invite.role === "EDITOR" ? "default" : "secondary"}>
-                              {invite.role}
+                              {t(`role.${invite.role.toLowerCase()}`, invite.role)}
                             </Badge>
                           </TableCell>
-                          <TableCell>{invite.invitedByName || "N/A"}</TableCell>
+                          <TableCell>{invite.invitedByName || t('na', 'N/A')}</TableCell>
                           <TableCell>
                             {new Date(invite.createdAt).toLocaleDateString()}
                           </TableCell>
@@ -446,7 +448,7 @@ export default function TeamPage() {
                               {new Date(invite.expiresAt).toLocaleDateString()}
                               {isExpired && (
                                 <Badge variant="destructive" className="text-xs">
-                                  Expired
+                                  {t('status.expired', 'Expired')}
                                 </Badge>
                               )}
                             </div>
@@ -461,18 +463,18 @@ export default function TeamPage() {
                               <DropdownMenuContent align="end">
                                 <DropdownMenuItem onClick={() => handleCopyInviteLink(invite.token)}>
                                   <Copy className="mr-2 h-4 w-4" />
-                                  Copy Link
+                                  {t('actions.copyLink', 'Copy Link')}
                                 </DropdownMenuItem>
                                 <DropdownMenuItem onClick={() => handleResendInvite(invite.id)}>
                                   <Mail className="mr-2 h-4 w-4" />
-                                  Resend
+                                  {t('actions.resend', 'Resend')}
                                 </DropdownMenuItem>
                                 <DropdownMenuItem
                                   onClick={() => setInviteToCancel(invite)}
                                   className="text-red-600"
                                 >
                                   <Trash2 className="mr-2 h-4 w-4" />
-                                  Cancel
+                                  {t('actions.cancel', 'Cancel')}
                                 </DropdownMenuItem>
                               </DropdownMenuContent>
                             </DropdownMenu>
@@ -502,19 +504,19 @@ export default function TeamPage() {
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Remove Team Member</AlertDialogTitle>
+            <AlertDialogTitle>{t('remove.title', 'Remove Team Member')}</AlertDialogTitle>
             <AlertDialogDescription asChild>
               <div className="space-y-2">
                 <div>
-                  Are you sure you want to remove this team member? They will lose access to the account.
+                  {t('remove.description', 'Are you sure you want to remove this team member? They will lose access to the account.')}
                 </div>
                 {memberToRemove && (
                   <div className="mt-4 rounded-md bg-muted p-3 space-y-1">
                     <div className="text-sm font-medium text-foreground">
-                      <span className="text-muted-foreground">Name:</span> {memberToRemove.name || "Unnamed"}
+                      <span className="text-muted-foreground">{t('table.name', 'Name')}:</span> {memberToRemove.name || t('unnamed', 'Unnamed')}
                     </div>
                     <div className="text-sm font-medium text-foreground">
-                      <span className="text-muted-foreground">Email:</span> {memberToRemove.email}
+                      <span className="text-muted-foreground">{t('table.email', 'Email')}:</span> {memberToRemove.email}
                     </div>
                   </div>
                 )}
@@ -522,12 +524,12 @@ export default function TeamPage() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{t('cancel', 'Cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => memberToRemove && handleRemoveMember(memberToRemove.id)}
               className="bg-red-600 hover:bg-red-700"
             >
-              Remove Member
+              {t('remove.confirm', 'Remove Member')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -540,16 +542,16 @@ export default function TeamPage() {
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Cancel Invitation</AlertDialogTitle>
+            <AlertDialogTitle>{t('cancel.title', 'Cancel Invitation')}</AlertDialogTitle>
             <AlertDialogDescription asChild>
               <div className="space-y-2">
                 <div>
-                  Are you sure you want to cancel this invitation?
+                  {t('cancel.description', 'Are you sure you want to cancel this invitation?')}
                 </div>
                 {inviteToCancel && (
                   <div className="mt-4 rounded-md bg-muted p-3">
                     <div className="text-sm font-medium text-foreground">
-                      <span className="text-muted-foreground">Email:</span> {inviteToCancel.email}
+                      <span className="text-muted-foreground">{t('table.email', 'Email')}:</span> {inviteToCancel.email}
                     </div>
                   </div>
                 )}
@@ -557,12 +559,12 @@ export default function TeamPage() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{t('cancel', 'Cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => inviteToCancel && handleCancelInvite(inviteToCancel.id)}
               className="bg-red-600 hover:bg-red-700"
             >
-              Cancel Invitation
+              {t('cancel.confirm', 'Cancel Invitation')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

@@ -1,0 +1,91 @@
+{
+  "title": "Gestion d'Équipe",
+  "subtitle": "Gérez les membres de votre équipe et les invitations",
+  "inviteMember": "Inviter un Membre",
+  "of": "de",
+  "slotsAvailable": "places d'équipe disponibles",
+  "loading": "Chargement de l'équipe...",
+  "failedToLoad": "Échec du chargement des membres de l'équipe",
+  "error.accessDenied": "Accès refusé. Seuls les propriétaires de comptes peuvent gérer les membres de l'équipe.",
+  
+  "upgrade.title": "Mise à Niveau pour la Collaboration d'Équipe",
+  "upgrade.description": "La collaboration d'équipe n'est pas disponible sur votre plan actuel. Passez à Deluxe (29,99 $/mois) ou One-Time (99,99 $ pour toujours) pour inviter jusqu'à 2 membres d'équipe et débloquer des analyses illimitées.",
+  "upgrade.button": "Voir les Plans",
+  
+  "tabs.members": "Membres",
+  "tabs.invitations": "Invitations",
+  
+  "members.title": "Membres de l'Équipe",
+  "members.description": "Personnes ayant accès à ce compte",
+  "members.empty": "Pas encore de membres d'équipe. Invitez quelqu'un pour commencer !",
+  
+  "invitations.title": "Invitations en Attente",
+  "invitations.description": "Invitations envoyées pour rejoindre votre équipe",
+  "invitations.empty": "Aucune invitation en attente",
+  
+  "table.name": "Nom",
+  "table.email": "Email",
+  "table.role": "Rôle",
+  "table.status": "Statut",
+  "table.joined": "Rejoint",
+  "table.invitedBy": "Invité Par",
+  "table.sent": "Envoyé",
+  "table.expires": "Expire",
+  "table.actions": "Actions",
+  
+  "unnamed": "Sans Nom",
+  "na": "N/A",
+  
+  "role.editor": "Éditeur",
+  "role.viewer": "Spectateur",
+  "role.editorDesc": "Peut voir et créer des analyses",
+  "role.viewerDesc": "Peut voir les analyses et les rapports",
+  
+  "status.active": "Actif",
+  "status.inactive": "Inactif",
+  "status.expired": "Expiré",
+  
+  "actions.activate": "Activer",
+  "actions.deactivate": "Désactiver",
+  "actions.remove": "Supprimer",
+  "actions.copyLink": "Copier le Lien",
+  "actions.resend": "Renvoyer",
+  "actions.cancel": "Annuler",
+  
+  "invite.success": "Invitation envoyée avec succès",
+  "invite.failed": "Échec de l'envoi de l'invitation",
+  
+  "memberActivated": "Membre activé avec succès",
+  "memberDeactivated": "Membre désactivé avec succès",
+  "updateFailed": "Échec de la mise à jour du statut du membre",
+  
+  "remove.title": "Supprimer le Membre de l'Équipe",
+  "remove.description": "Êtes-vous sûr de vouloir supprimer ce membre de l'équipe ? Ils perdront l'accès au compte.",
+  "remove.confirm": "Supprimer le Membre",
+  "remove.success": "Membre supprimé avec succès",
+  "remove.failed": "Échec de la suppression du membre",
+  
+  "cancel": "Annuler",
+  "cancel.title": "Annuler l'Invitation",
+  "cancel.description": "Êtes-vous sûr de vouloir annuler cette invitation ?",
+  "cancel.confirm": "Annuler l'Invitation",
+  "cancel.success": "Invitation annulée avec succès",
+  "cancel.failed": "Échec de l'annulation de l'invitation",
+  
+  "resend.success": "Invitation renvoyée avec succès",
+  "resend.failed": "Échec du renvoi de l'invitation",
+  
+  "copySuccess": "Lien d'invitation copié dans le presse-papiers !",
+  "copyFailed": "Échec de la copie du lien",
+  
+  "sheet.title": "Inviter un Membre de l'Équipe",
+  "sheet.description": "Envoyez une invitation pour rejoindre votre équipe. Ils recevront un email avec les instructions.",
+  "sheet.emailLabel": "Adresse Email",
+  "sheet.emailPlaceholder": "collegue@exemple.com",
+  "sheet.roleLabel": "Rôle",
+  "sheet.rolePlaceholder": "Sélectionnez un rôle",
+  "sheet.noteTitle": "Note :",
+  "sheet.noteDescription": "L'invitation sera envoyée par email et expirera dans 7 jours. Le destinataire doit accepter l'invitation pour rejoindre votre équipe.",
+  "sheet.sending": "Envoi...",
+  "sheet.sendInvitation": "Envoyer l'Invitation"
+}

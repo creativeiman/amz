@@ -1,0 +1,92 @@
+{
+  "title": "Scan Results",
+  "loading": "Loading scan details...",
+  "error.notFound": "Scan not found",
+  "error.failedToLoad": "Failed to load scan details",
+  
+  "notFound.title": "Scan Not Found",
+  "notFound.description": "The scan you're looking for doesn't exist.",
+  "notFound.backButton": "Back to Scans",
+  
+  "processing.queuedTitle": "Scan Queued",
+  "processing.processingTitle": "Processing...",
+  "processing.queuedDescription": "Your scan is waiting in the queue. It will be processed shortly.",
+  "processing.processingDescription": "Your scan is being analyzed by AI. This usually takes 30-90 seconds.",
+  "processing.refreshButton": "Refresh Status",
+  "processing.backButton": "Back to Scans",
+  
+  "failed.title": "Analysis Failed",
+  "failed.description": "The AI analysis failed for this scan.",
+  "failed.backButton": "Back to Scans",
+  
+  "complianceScore": "Compliance Score",
+  "complianceSubtitle": "Overall compliance assessment",
+  "risk": "RISK",
+  "risk.low": "LOW",
+  "risk.medium": "MEDIUM",
+  "risk.high": "HIGH",
+  "risk.critical": "CRITICAL",
+  
+  "stats.issuesFound": "Issues Found",
+  "stats.status": "Status",
+  "stats.passed": "PASSED",
+  "stats.failed": "FAILED",
+  "stats.category": "Category",
+  "stats.marketplaces": "Marketplaces",
+  
+  "productLabel": "Product Label",
+  "download.button": "Download Label",
+  "download.preparing": "Preparing download...",
+  "download.success": "Download started!",
+  "download.failed": "Failed to download label",
+  
+  "tabs.overview": "Overview",
+  "tabs.issues": "Issues",
+  "tabs.summary": "Summary",
+  "tabs.extractedInfo": "Extracted Info",
+  
+  "extracted.title": "Extracted Information",
+  "extracted.productName": "Product Name",
+  "extracted.manufacturer": "Manufacturer",
+  "extracted.weight": "Weight",
+  "extracted.countryOfOrigin": "Country of Origin",
+  "extracted.certificationsFound": "Certifications Found",
+  "extracted.warningsFound": "Warnings Found",
+  
+  "issues.recommendation": "Recommendation",
+  "issues.regulation": "Regulation",
+  "issues.noIssues": "No Issues Found",
+  "issues.compliant": "Your label appears to be compliant!",
+  
+  "premium.title": "Premium Feature",
+  "premium.upgradeToUnlock": "Upgrade to unlock:",
+  "premium.upgradeButton": "Upgrade Your Plan",
+  "premium.issuesDescription": "Detailed issue analysis and recommendations are available with our Deluxe or One-Time plans.",
+  "premium.issuesFeature1": "Detailed compliance issues breakdown",
+  "premium.issuesFeature2": "Actionable recommendations",
+  "premium.issuesFeature3": "Regulatory references & citations",
+  "premium.issuesFeature4": "Priority levels for each issue",
+  "premium.summaryDescription": "The detailed AI-generated analysis summary is available with our Deluxe or One-Time plans.",
+  "premium.summaryFeature1": "Comprehensive AI-written summary",
+  "premium.summaryFeature2": "Complete OCR extracted text",
+  "premium.summaryFeature3": "In-depth compliance analysis",
+  "premium.summaryFeature4": "Market-specific recommendations",
+  "premium.infoDescription": "AI-extracted label information and detailed data extraction are available with our Deluxe or One-Time plans.",
+  "premium.infoFeature1": "AI-extracted ingredients list",
+  "premium.infoFeature2": "Product details & certifications",
+  "premium.infoFeature3": "Warnings & safety information",
+  "premium.infoFeature4": "Manufacturer & origin data",
+  
+  "summary.title": "Analysis Summary",
+  "summary.noSummary": "No summary available.",
+  "summary.extractedText": "Extracted Text (OCR)",
+  
+  "info.ingredients": "Ingredients",
+  "info.productNameAI": "Product Name (AI)",
+  "info.viewRaw": "View Raw Extracted Information",
+  "info.noInfo": "No Extracted Information",
+  "info.noInfoDescription": "No additional information was extracted.",
+  
+  "debug.title": "View Raw AI Response (Debug)"
+}
+

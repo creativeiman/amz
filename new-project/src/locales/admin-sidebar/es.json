@@ -1,0 +1,12 @@
+{
+  "title": "Panel de Administrador",
+  "menu.dashboard": "Panel de Control",
+  "menu.accounts": "Cuentas",
+  "menu.settings": "Configuración",
+  "user.role": "Rol",
+  "user.role.admin": "Administrador",
+  "user.role.user": "Usuario",
+  "user.adminSettings": "Configuración de Admin",
+  "user.logout": "Cerrar Sesión"
+}
+

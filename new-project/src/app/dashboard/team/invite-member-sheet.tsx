@@ -4,6 +4,7 @@ import * as React from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
+import { useTranslation } from "@/hooks/useTranslation"
 
 import {
   Sheet,
@@ -41,6 +42,7 @@ interface InviteMemberSheetProps {
 
 export function InviteMemberSheet({ isOpen, onClose, onInvite }: InviteMemberSheetProps) {
   const [isSubmitting, setIsSubmitting] = React.useState(false)
+  const { t } = useTranslation('dashboard-team')
 
   const {
     register,
@@ -88,20 +90,20 @@ export function InviteMemberSheet({ isOpen, onClose, onInvite }: InviteMemberShe
     <Sheet open={isOpen} onOpenChange={handleClose}>
       <SheetContent className="sm:max-w-[540px] flex flex-col">
         <SheetHeader>
-          <SheetTitle>Invite Team Member</SheetTitle>
+          <SheetTitle>{t('sheet.title', 'Invite Team Member')}</SheetTitle>
           <SheetDescription>
-            Send an invitation to join your team. They&apos;ll receive an email with instructions.
+            {t('sheet.description', "Send an invitation to join your team. They'll receive an email with instructions.")}
           </SheetDescription>
         </SheetHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col flex-1">
           <div className="flex-1 overflow-y-auto space-y-6 p-6 pt-0">
             <div className="space-y-2">
-              <Label htmlFor="email">Email Address</Label>
+              <Label htmlFor="email">{t('sheet.emailLabel', 'Email Address')}</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="colleague@example.com"
+                placeholder={t('sheet.emailPlaceholder', 'colleague@example.com')}
                 {...register("email")}
               />
               {errors.email && (
@@ -110,25 +112,25 @@ export function InviteMemberSheet({ isOpen, onClose, onInvite }: InviteMemberShe
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="role">Role</Label>
+              <Label htmlFor="role">{t('sheet.roleLabel', 'Role')}</Label>
               <Select
                 value={role}
                 onValueChange={(value) => setValue("role", value as "EDITOR" | "VIEWER")}
               >
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select a role" />
+                  <SelectValue placeholder={t('sheet.rolePlaceholder', 'Select a role')} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="VIEWER">
                     <div className="flex flex-col items-start">
-                      <div className="font-medium">Viewer</div>
-                      <div className="text-xs text-muted-foreground">Can view scans and reports</div>
+                      <div className="font-medium">{t('role.viewer', 'Viewer')}</div>
+                      <div className="text-xs text-muted-foreground">{t('role.viewerDesc', 'Can view scans and reports')}</div>
                     </div>
                   </SelectItem>
                   <SelectItem value="EDITOR">
                     <div className="flex flex-col items-start">
-                      <div className="font-medium">Editor</div>
-                      <div className="text-xs text-muted-foreground">Can view and create scans</div>
+                      <div className="font-medium">{t('role.editor', 'Editor')}</div>
+                      <div className="text-xs text-muted-foreground">{t('role.editorDesc', 'Can view and create scans')}</div>
                     </div>
                   </SelectItem>
                 </SelectContent>
@@ -139,20 +141,19 @@ export function InviteMemberSheet({ isOpen, onClose, onInvite }: InviteMemberShe
             </div>
 
             <div className="rounded-lg bg-blue-50 dark:bg-blue-950 p-4 text-sm text-blue-900 dark:text-blue-100">
-              <p className="font-medium mb-1">Note:</p>
+              <p className="font-medium mb-1">{t('sheet.noteTitle', 'Note:')}</p>
               <p>
-                The invitation will be sent via email and will expire in 7 days. The recipient must
-                accept the invitation to join your team.
+                {t('sheet.noteDescription', 'The invitation will be sent via email and will expire in 7 days. The recipient must accept the invitation to join your team.')}
               </p>
             </div>
           </div>
 
           <SheetFooter className="flex-shrink-0 border-t pt-6 gap-2">
             <Button type="button" variant="outline" onClick={handleClose} className="flex-1">
-              Cancel
+              {t('cancel', 'Cancel')}
             </Button>
             <Button type="submit" disabled={isSubmitting} className="flex-1">
-              {isSubmitting ? "Sending..." : "Send Invitation"}
+              {isSubmitting ? t('sheet.sending', 'Sending...') : t('sheet.sendInvitation', 'Send Invitation')}
             </Button>
           </SheetFooter>
         </form>

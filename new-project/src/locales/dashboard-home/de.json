@@ -1,0 +1,23 @@
+{
+  "welcome": "Willkommen zurück",
+  "subtitle": "Verwalten Sie Ihre Produktkonformität und Scan-Verlauf",
+  "newScan": "Neuer Scan",
+  "stats.totalScans": "Gesamte Scans",
+  "stats.compliant": "Konform",
+  "stats.issuesFound": "Gefundene Probleme",
+  "stats.avgScore": "Durchschn. Bewertung",
+  "recentScans.title": "Aktuelle Scans",
+  "recentScans.viewAll": "Alle Anzeigen",
+  "recentScans.empty": "Noch keine Scans",
+  "recentScans.emptySubtitle": "Beginnen Sie mit der Erstellung Ihres ersten Compliance-Scans",
+  "usage.title": "Scan-Nutzung",
+  "usage.unlimited": "Unbegrenzt",
+  "usage.scansUsed": "Scans verwendet",
+  "usage.upgrade": "Plan Upgraden",
+  "upgrade.title": "Sie haben Ihr Scan-Limit erreicht",
+  "upgrade.description": "Upgraden Sie auf Deluxe für unbegrenzte Scans und erweiterte Funktionen",
+  "upgrade.button": "Jetzt Upgraden",
+  "failedToLoad": "Fehler beim Laden des Dashboards",
+  "loading": "Laden..."
+}
+

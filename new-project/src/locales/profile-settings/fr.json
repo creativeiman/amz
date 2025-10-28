@@ -1,0 +1,44 @@
+{
+  "title": "Paramètres du Profil",
+  "subtitle": "Gérez vos informations personnelles et votre sécurité",
+  
+  "profile.title": "Informations Personnelles",
+  "profile.description": "Mettez à jour votre nom et votre adresse e-mail",
+  "profile.name": "Nom",
+  "profile.namePlaceholder": "Votre nom",
+  "profile.email": "E-mail",
+  "profile.emailPlaceholder": "votre@email.com",
+  "profile.emailDisabled": "L'e-mail ne peut pas être modifié pour le moment",
+  "profile.saving": "Enregistrement...",
+  "profile.saveChanges": "Enregistrer les Modifications",
+  "profile.cancel": "Annuler",
+  
+  "password.title": "Changer le Mot de Passe",
+  "password.description": "Mettez à jour votre mot de passe pour sécuriser votre compte",
+  "password.currentPassword": "Mot de Passe Actuel",
+  "password.currentPasswordPlaceholder": "Entrez votre mot de passe actuel",
+  "password.newPassword": "Nouveau Mot de Passe",
+  "password.newPasswordPlaceholder": "Entrez votre nouveau mot de passe (min. 8 caractères)",
+  "password.confirmPassword": "Confirmer le Nouveau Mot de Passe",
+  "password.confirmPasswordPlaceholder": "Confirmez votre nouveau mot de passe",
+  "password.changing": "Changement...",
+  "password.changePassword": "Changer le Mot de Passe",
+  "password.cancel": "Annuler",
+  
+  "security.title": "Sécurité du Compte",
+  "security.googleDescription": "Vous vous êtes connecté avec Google. Votre compte est sécurisé via l'authentification de Google.",
+  "security.googleSignedIn": "Connecté avec Google",
+  "security.googleSecured": "Votre compte est sécurisé via le système d'authentification de Google.",
+  
+  "validation.nameMin": "Le nom doit comporter au moins 2 caractères",
+  "validation.invalidEmail": "Adresse e-mail invalide",
+  "validation.currentPasswordRequired": "Le mot de passe actuel est requis",
+  "validation.newPasswordMin": "Le nouveau mot de passe doit comporter au moins 8 caractères",
+  "validation.passwordsMatch": "Les mots de passe ne correspondent pas",
+  
+  "toast.profileUpdated": "Profil mis à jour avec succès",
+  "toast.profileFailed": "Échec de la mise à jour du profil",
+  "toast.passwordChanged": "Mot de passe changé avec succès",
+  "toast.unexpectedError": "Une erreur inattendue s'est produite"
+}
+

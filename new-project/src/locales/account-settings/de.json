@@ -1,0 +1,32 @@
+{
+  "title": "Kontoeinstellungen",
+  "subtitle": "Verwalten Sie Ihren Arbeitsbereich und Ihre Kontoinformationen",
+  
+  "alert.workspaceSettings": "Diese Einstellungen gelten für Ihren gesamten Arbeitsbereich und sind für alle Teammitglieder sichtbar.",
+  
+  "workspace.title": "Arbeitsbereichsinformationen",
+  "workspace.description": "Aktualisieren Sie Ihren Arbeitsbereichsnamen und Geschäftsdetails",
+  "workspace.name": "Name des Arbeitsbereichs",
+  "workspace.namePlaceholder": "z.B., Mein Unternehmen, ACME Corp",
+  "workspace.nameHint": "Dieser Name wird in der Seitenleiste und im gesamten Dashboard angezeigt",
+  "workspace.businessName": "Geschäftsname (Optional)",
+  "workspace.businessNamePlaceholder": "Rechtlicher Geschäftsname",
+  "workspace.billingEmail": "Rechnungs-E-Mail (Optional)",
+  "workspace.billingEmailPlaceholder": "rechnung@beispiel.com",
+  "workspace.billingEmailHint": "Wird für Rechnungen und Abrechnungsbenachrichtigungen verwendet",
+  "workspace.plan": "Plan",
+  "workspace.workspaceId": "Arbeitsbereichs-ID",
+  "workspace.saving": "Wird gespeichert...",
+  "workspace.saveChanges": "Änderungen Speichern",
+  "workspace.cancel": "Abbrechen",
+  
+  "validation.nameMin": "Der Kontoname muss mindestens 2 Zeichen lang sein",
+  "validation.invalidEmail": "Ungültige E-Mail-Adresse",
+  
+  "toast.failedToLoad": "Fehler beim Laden der Kontoeinstellungen",
+  "toast.updateSuccess": "Kontoeinstellungen erfolgreich aktualisiert",
+  "toast.updateFailed": "Fehler beim Aktualisieren des Kontos",
+  
+  "error.ownersOnly": "Nur Kontoinhaber können auf die Kontoeinstellungen zugreifen"
+}
+

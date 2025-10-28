@@ -1,0 +1,91 @@
+{
+  "title": "Gestión de Equipo",
+  "subtitle": "Administre los miembros de su equipo e invitaciones",
+  "inviteMember": "Invitar Miembro",
+  "of": "de",
+  "slotsAvailable": "espacios de equipo disponibles",
+  "loading": "Cargando equipo...",
+  "failedToLoad": "Error al cargar miembros del equipo",
+  "error.accessDenied": "Acceso denegado. Solo los propietarios de cuentas pueden administrar miembros del equipo.",
+  
+  "upgrade.title": "Actualice para Colaboración en Equipo",
+  "upgrade.description": "La colaboración en equipo no está disponible en su plan actual. Actualice a Deluxe ($29.99/mes) o One-Time ($99.99 para siempre) para invitar hasta 2 miembros del equipo y desbloquear escaneos ilimitados.",
+  "upgrade.button": "Ver Planes",
+  
+  "tabs.members": "Miembros",
+  "tabs.invitations": "Invitaciones",
+  
+  "members.title": "Miembros del Equipo",
+  "members.description": "Personas que tienen acceso a esta cuenta",
+  "members.empty": "Aún no hay miembros del equipo. ¡Invita a alguien para comenzar!",
+  
+  "invitations.title": "Invitaciones Pendientes",
+  "invitations.description": "Invitaciones enviadas para unirse a su equipo",
+  "invitations.empty": "No hay invitaciones pendientes",
+  
+  "table.name": "Nombre",
+  "table.email": "Correo Electrónico",
+  "table.role": "Rol",
+  "table.status": "Estado",
+  "table.joined": "Se Unió",
+  "table.invitedBy": "Invitado Por",
+  "table.sent": "Enviado",
+  "table.expires": "Expira",
+  "table.actions": "Acciones",
+  
+  "unnamed": "Sin Nombre",
+  "na": "N/A",
+  
+  "role.editor": "Editor",
+  "role.viewer": "Espectador",
+  "role.editorDesc": "Puede ver y crear escaneos",
+  "role.viewerDesc": "Puede ver escaneos e informes",
+  
+  "status.active": "Activo",
+  "status.inactive": "Inactivo",
+  "status.expired": "Expirado",
+  
+  "actions.activate": "Activar",
+  "actions.deactivate": "Desactivar",
+  "actions.remove": "Eliminar",
+  "actions.copyLink": "Copiar Enlace",
+  "actions.resend": "Reenviar",
+  "actions.cancel": "Cancelar",
+  
+  "invite.success": "Invitación enviada exitosamente",
+  "invite.failed": "Error al enviar invitación",
+  
+  "memberActivated": "Miembro activado exitosamente",
+  "memberDeactivated": "Miembro desactivado exitosamente",
+  "updateFailed": "Error al actualizar estado del miembro",
+  
+  "remove.title": "Eliminar Miembro del Equipo",
+  "remove.description": "¿Está seguro de que desea eliminar este miembro del equipo? Perderán el acceso a la cuenta.",
+  "remove.confirm": "Eliminar Miembro",
+  "remove.success": "Miembro eliminado exitosamente",
+  "remove.failed": "Error al eliminar miembro",
+  
+  "cancel": "Cancelar",
+  "cancel.title": "Cancelar Invitación",
+  "cancel.description": "¿Está seguro de que desea cancelar esta invitación?",
+  "cancel.confirm": "Cancelar Invitación",
+  "cancel.success": "Invitación cancelada exitosamente",
+  "cancel.failed": "Error al cancelar invitación",
+  
+  "resend.success": "Invitación reenviada exitosamente",
+  "resend.failed": "Error al reenviar invitación",
+  
+  "copySuccess": "¡Enlace de invitación copiado al portapapeles!",
+  "copyFailed": "Error al copiar enlace",
+  
+  "sheet.title": "Invitar Miembro del Equipo",
+  "sheet.description": "Envíe una invitación para unirse a su equipo. Recibirán un correo electrónico con instrucciones.",
+  "sheet.emailLabel": "Dirección de Correo Electrónico",
+  "sheet.emailPlaceholder": "colega@ejemplo.com",
+  "sheet.roleLabel": "Rol",
+  "sheet.rolePlaceholder": "Seleccione un rol",
+  "sheet.noteTitle": "Nota:",
+  "sheet.noteDescription": "La invitación se enviará por correo electrónico y expirará en 7 días. El destinatario debe aceptar la invitación para unirse a su equipo.",
+  "sheet.sending": "Enviando...",
+  "sheet.sendInvitation": "Enviar Invitación"
+}

@@ -1,7 +1,10 @@
+"use client"
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { Button } from "@/components/ui/button"
 import { ArrowUpRight } from "lucide-react"
+import { useTranslation } from "@/hooks/useTranslation"
 
 interface UsageCardProps {
   scansUsed: number
@@ -11,9 +14,10 @@ interface UsageCardProps {
 }
 
 export function UsageCard({ scansUsed, scanLimit, plan, onUpgrade }: UsageCardProps) {
+  const { t } = useTranslation('dashboard-home')
   const isUnlimited = scanLimit === null
   const percentage = isUnlimited ? 0 : (scansUsed / scanLimit) * 100
-  const remaining = isUnlimited ? 'Unlimited' : Math.max(0, scanLimit - scansUsed)
+  const remaining = isUnlimited ? t('usage.unlimited', 'Unlimited') : Math.max(0, scanLimit - scansUsed)
 
   const getPlanBadgeColor = (planType: string) => {
     switch (planType) {
@@ -31,15 +35,15 @@ export function UsageCard({ scansUsed, scanLimit, plan, onUpgrade }: UsageCardPr
       <CardHeader className="pb-3">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex-1 min-w-0">
-            <CardTitle className="text-lg">Scan Usage</CardTitle>
+            <CardTitle className="text-lg">{t('usage.title', 'Scan Usage')}</CardTitle>
             <CardDescription className="text-sm">
-              Current plan: <span className={`font-semibold ${getPlanBadgeColor(plan)}`}>{plan}</span>
+              {t('usage.currentPlan', 'Current plan')}: <span className={`font-semibold ${getPlanBadgeColor(plan)}`}>{plan}</span>
             </CardDescription>
           </div>
           {plan === 'FREE' && (
             <Button onClick={onUpgrade} size="sm" variant="outline" className="flex-shrink-0">
               <ArrowUpRight className="mr-2 h-4 w-4" />
-              Upgrade
+              {t('usage.upgrade', 'Upgrade')}
             </Button>
           )}
         </div>
@@ -47,7 +51,7 @@ export function UsageCard({ scansUsed, scanLimit, plan, onUpgrade }: UsageCardPr
       <CardContent className="pt-0">
         <div className="space-y-3 sm:space-y-4">
           <div className="flex items-center justify-between">
-            <span className="text-sm text-muted-foreground">Scans used</span>
+            <span className="text-sm text-muted-foreground">{t('usage.scansUsed', 'Scans used')}</span>
             <span className="text-xl sm:text-2xl font-bold">
               {scansUsed} {!isUnlimited && `/ ${scanLimit}`}
             </span>
@@ -56,13 +60,13 @@ export function UsageCard({ scansUsed, scanLimit, plan, onUpgrade }: UsageCardPr
             <>
               <Progress value={percentage} className="h-2" />
               <p className="text-xs sm:text-sm text-muted-foreground">
-                {remaining} scan{remaining !== 1 && 's'} remaining this month
+                {remaining} {t('usage.scansRemaining', 'scan(s) remaining this month')}
               </p>
             </>
           )}
           {isUnlimited && (
             <p className="text-xs sm:text-sm text-green-600 font-medium">
-              ✨ Unlimited scans available
+              ✨ {t('usage.unlimitedAvailable', 'Unlimited scans available')}
             </p>
           )}
         </div>

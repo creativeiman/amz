@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { FileText, Eye } from "lucide-react"
+import { useTranslation } from "@/hooks/useTranslation"
 
 interface Scan {
   id: string
@@ -23,6 +24,19 @@ interface RecentScansTableProps {
 
 export function RecentScansTable({ scans, onNewScan }: RecentScansTableProps) {
   const router = useRouter()
+  const { t } = useTranslation('dashboard-home')
+
+  const getCategoryLabel = (category: string) => {
+    return t(`categories.${category.toLowerCase()}`, category.replace('_', ' '))
+  }
+
+  const getStatusLabel = (status: string) => {
+    return t(`statuses.${status.toLowerCase()}`, status)
+  }
+
+  const getRiskLabel = (riskLevel: string) => {
+    return t(`risk.${riskLevel.toLowerCase()}`, riskLevel)
+  }
 
   const getRiskBadgeVariant = (riskLevel: string | null) => {
     switch (riskLevel) {
@@ -56,20 +70,20 @@ export function RecentScansTable({ scans, onNewScan }: RecentScansTableProps) {
     return (
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-lg">Recent Scans</CardTitle>
+          <CardTitle className="text-lg">{t('recentScans.title', 'Recent Scans')}</CardTitle>
         </CardHeader>
         <CardContent className="pt-0">
           <div className="flex flex-col items-center justify-center py-8 sm:py-12 text-center px-4">
             <div className="h-12 w-12 sm:h-16 sm:w-16 bg-muted rounded-full flex items-center justify-center mb-3 sm:mb-4">
               <FileText className="h-6 w-6 sm:h-8 sm:w-8 text-muted-foreground" />
             </div>
-            <h3 className="text-base sm:text-lg font-semibold mb-2">No scans yet</h3>
+            <h3 className="text-base sm:text-lg font-semibold mb-2">{t('recentScans.empty.title', 'No scans yet')}</h3>
             <p className="text-sm sm:text-base text-muted-foreground mb-4 sm:mb-6 max-w-sm">
-              Upload your first product label to get started with compliance checking
+              {t('recentScans.empty.description', 'Upload your first product label to get started with compliance checking')}
             </p>
             <Button onClick={onNewScan} size="lg" className="w-full sm:w-auto">
               <FileText className="mr-2 h-4 w-4" />
-              Start Your First Scan
+              {t('recentScans.empty.button', 'Start Your First Scan')}
             </Button>
           </div>
         </CardContent>
@@ -80,7 +94,7 @@ export function RecentScansTable({ scans, onNewScan }: RecentScansTableProps) {
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-lg">Recent Scans</CardTitle>
+        <CardTitle className="text-lg">{t('recentScans.title', 'Recent Scans')}</CardTitle>
       </CardHeader>
       <CardContent className="pt-0">
         <div className="space-y-3">
@@ -94,14 +108,14 @@ export function RecentScansTable({ scans, onNewScan }: RecentScansTableProps) {
                 <h4 className="font-semibold text-sm sm:text-base truncate">{scan.productName}</h4>
                 <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mt-1.5">
                   <Badge variant="outline" className="text-xs">
-                    {scan.category.replace('_', ' ')}
+                    {getCategoryLabel(scan.category)}
                   </Badge>
                   <Badge variant={getStatusBadgeVariant(scan.status)} className="text-xs">
-                    {scan.status}
+                    {getStatusLabel(scan.status)}
                   </Badge>
                   {scan.riskLevel && (
                     <Badge variant={getRiskBadgeVariant(scan.riskLevel)} className="text-xs">
-                      {scan.riskLevel}
+                      {getRiskLabel(scan.riskLevel)}
                     </Badge>
                   )}
                 </div>
@@ -113,7 +127,7 @@ export function RecentScansTable({ scans, onNewScan }: RecentScansTableProps) {
                 {scan.score !== null && (
                   <div className="text-left sm:text-right">
                     <p className="text-xl sm:text-2xl font-bold">{scan.score}</p>
-                    <p className="text-xs text-muted-foreground">Score</p>
+                    <p className="text-xs text-muted-foreground">{t('recentScans.score', 'Score')}</p>
                   </div>
                 )}
                 <Button variant="ghost" size="icon" className="flex-shrink-0">

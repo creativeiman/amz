@@ -24,14 +24,14 @@ import {
 } from "@/components/ui/select"
 import { Scan } from "./columns"
 import { Badge } from "@/components/ui/badge"
-import { Checkbox } from "@/components/ui/checkbox"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Upload, X, FileImage } from "lucide-react"
 import { useTranslation } from "@/hooks/useTranslation"
 
 const scanSchema = z.object({
   productName: z.string().min(2, "Product name must be at least 2 characters"),
   category: z.enum(["TOYS", "BABY_PRODUCTS", "COSMETICS_PERSONAL_CARE"]),
-  marketplaces: z.array(z.string()).min(1, "Select at least one marketplace"),
+  marketplaces: z.string().min(1, "Select a marketplace"),
   labelFile: z.any().optional(),
 })
 
@@ -86,7 +86,7 @@ export function ScanSheet({ scan, isOpen, onClose, onSave }: ScanSheetProps) {
     defaultValues: {
       productName: "",
       category: "TOYS",
-      marketplaces: [],
+      marketplaces: "",
     },
   })
 
@@ -96,7 +96,7 @@ export function ScanSheet({ scan, isOpen, onClose, onSave }: ScanSheetProps) {
       reset({
         productName: scan.productName,
         category: scan.category,
-        marketplaces: scan.marketplaces,
+        marketplaces: Array.isArray(scan.marketplaces) ? scan.marketplaces[0] || "" : scan.marketplaces,
       })
       setSelectedFile(null)
       setFilePreview(null)
@@ -104,7 +104,7 @@ export function ScanSheet({ scan, isOpen, onClose, onSave }: ScanSheetProps) {
       reset({
         productName: "",
         category: "TOYS",
-        marketplaces: [],
+        marketplaces: "",
       })
       setSelectedFile(null)
       setFilePreview(null)
@@ -112,7 +112,7 @@ export function ScanSheet({ scan, isOpen, onClose, onSave }: ScanSheetProps) {
   }, [scan, reset])
 
   const category = watch("category")
-  const marketplaces = watch("marketplaces") || []
+  const marketplaces = watch("marketplaces") || ""
 
   const handleFileSelect = (file: File) => {
     if (!file.type.startsWith("image/") && file.type !== "application/pdf") {
@@ -161,14 +161,6 @@ export function ScanSheet({ scan, isOpen, onClose, onSave }: ScanSheetProps) {
     }
   }
 
-  const handleMarketplaceToggle = (marketplaceId: string) => {
-    const current = marketplaces
-    const updated = current.includes(marketplaceId)
-      ? current.filter((id) => id !== marketplaceId)
-      : [...current, marketplaceId]
-    setValue("marketplaces", updated)
-  }
-
   const onSubmit = async (data: ScanFormData) => {
     if (!scan && !selectedFile) {
       return
@@ -179,7 +171,7 @@ export function ScanSheet({ scan, isOpen, onClose, onSave }: ScanSheetProps) {
       const formData = new FormData()
       formData.append("productName", data.productName)
       formData.append("category", data.category)
-      formData.append("marketplaces", JSON.stringify(data.marketplaces))
+      formData.append("marketplaces", JSON.stringify([data.marketplaces]))
       
       if (selectedFile) {
         formData.append("labelFile", selectedFile)
@@ -387,28 +379,33 @@ export function ScanSheet({ scan, isOpen, onClose, onSave }: ScanSheetProps) {
               )}
             </div>
 
-            {/* Target Marketplaces */}
+            {/* Target Marketplace */}
             <div className="space-y-3">
-              <Label>{t('sheet.targetMarketplaces', 'Target Marketplaces')} *</Label>
-              <div className="space-y-2">
-                {marketplaceOptions.map((marketplace) => (
-                  <div key={marketplace.id} className="flex items-center space-x-3">
-                    <Checkbox
-                      id={marketplace.id}
-                      checked={marketplaces.includes(marketplace.id)}
-                      onCheckedChange={() => handleMarketplaceToggle(marketplace.id)}
-                      disabled={isViewMode}
-                    />
-                    <Label
-                      htmlFor={marketplace.id}
-                      className="flex items-center gap-2 cursor-pointer font-normal"
-                    >
-                      <span className="text-xl">{marketplace.flag}</span>
-                      {getMarketplaceName(marketplace.id)}
-                    </Label>
-                  </div>
-                ))}
-              </div>
+              <Label>{t('sheet.targetMarketplace', 'Target Marketplace')} *</Label>
+              <RadioGroup
+                value={marketplaces}
+                onValueChange={(value) => setValue("marketplaces", value)}
+                disabled={isViewMode}
+              >
+                <div className="space-y-2">
+                  {marketplaceOptions.map((marketplace) => (
+                    <div key={marketplace.id} className="flex items-center space-x-3">
+                      <RadioGroupItem
+                        value={marketplace.id}
+                        id={marketplace.id}
+                        disabled={isViewMode}
+                      />
+                      <Label
+                        htmlFor={marketplace.id}
+                        className="flex items-center gap-2 cursor-pointer font-normal"
+                      >
+                        <span className="text-xl">{marketplace.flag}</span>
+                        {getMarketplaceName(marketplace.id)}
+                      </Label>
+                    </div>
+                  ))}
+                </div>
+              </RadioGroup>
               {errors.marketplaces && (
                 <p className="text-sm text-red-600">{errors.marketplaces.message}</p>
               )}

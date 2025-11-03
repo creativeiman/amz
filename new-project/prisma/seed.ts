@@ -9,11 +9,11 @@ async function main() {
   // Create admin user (system administrator)
   const adminPassword = await bcrypt.hash('admin123', 12)
   const admin = await prisma.user.upsert({
-    where: { email: 'admin@productlabelchecker.com' },
+    where: { email: 'admin@plabiq.com' },
     update: {},
     create: {
       name: 'Admin User',
-      email: 'admin@productlabelchecker.com',
+      email: 'admin@plabiq.com',
       password: adminPassword,
       role: 'ADMIN',
       emailVerified: new Date(),
@@ -411,7 +411,7 @@ async function main() {
   console.log('\n🎉 Database seeding completed!')
   console.log('\n📝 Test Credentials (all passwords: test123 or admin123):')
   console.log('   ═══════════════════════════════════════════════════════════')
-  console.log('   System Admin: admin@productlabelchecker.com / admin123')
+  console.log('   System Admin: admin@plabiq.com / admin123')
   console.log('   ═══════════════════════════════════════════════════════════')
   console.log('   Free Plan Owner: free@test.com / test123')
   console.log('   Deluxe Plan Owner: deluxe@test.com / test123')

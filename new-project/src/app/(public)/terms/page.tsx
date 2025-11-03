@@ -2,8 +2,8 @@ import { Metadata } from 'next'
 import { Shield, FileText, Scale, AlertTriangle } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Terms of Service | Product Label Checker',
-  description: 'Terms of Service for Product Label Checker - AI-powered compliance validation for Amazon sellers',
+  title: 'Terms of Service | PlabIQ',
+  description: 'Terms of Service for PlabIQ - AI-powered compliance validation for Amazon sellers',
 }
 
 export default function TermsPage() {
@@ -38,9 +38,9 @@ export default function TermsPage() {
                 <FileText className="w-8 h-8 text-orange-600" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold mb-4">Welcome to Product Label Checker</h2>
+                <h2 className="text-2xl font-bold mb-4">Welcome to PlabIQ</h2>
                 <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                  These Terms of Service ("Terms") govern your access to and use of Product Label Checker's services, 
+                  These Terms of Service ("Terms") govern your access to and use of PlabIQ's services, 
                   including our website, AI-powered compliance analysis tools, and related services (collectively, the "Service"). 
                   By accessing or using our Service, you agree to be bound by these Terms.
                 </p>
@@ -69,7 +69,7 @@ export default function TermsPage() {
             title="Service Description"
             icon={<FileText className="w-6 h-6" />}
           >
-            <p>Product Label Checker provides AI-powered compliance analysis for product labels intended for sale on Amazon marketplaces, including:</p>
+            <p>PlabIQ provides AI-powered compliance analysis for product labels intended for sale on Amazon marketplaces, including:</p>
             <ul className="list-disc pl-6 mt-4 space-y-2">
               <li><strong>Label Scanning:</strong> Upload and analyze product label images</li>
               <li><strong>Compliance Checking:</strong> Automated validation against FDA, CPSC, and EU regulations</li>
@@ -150,7 +150,7 @@ export default function TermsPage() {
             <h3 className="font-semibold text-lg mb-3">5.1 Our Rights</h3>
             <p className="mb-4">
               The Service, including all content, features, functionality, software, AI models, and technology, 
-              is owned by Product Label Checker and is protected by copyright, trademark, and other intellectual property laws.
+              is owned by PlabIQ and is protected by copyright, trademark, and other intellectual property laws.
             </p>
 
             <h3 className="font-semibold text-lg mb-3 mt-6">5.2 Your Content</h3>
@@ -174,7 +174,7 @@ export default function TermsPage() {
             <div className="bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-500 p-4 mb-6">
               <p className="font-semibold text-yellow-800 dark:text-yellow-200">IMPORTANT DISCLAIMER</p>
               <p className="text-yellow-700 dark:text-yellow-300 mt-2 text-sm">
-                Product Label Checker is a compliance assistance tool. Our AI-powered analysis is provided "AS IS" 
+                PlabIQ is a compliance assistance tool. Our AI-powered analysis is provided "AS IS" 
                 and should not be considered as legal advice or a guarantee of regulatory compliance.
               </p>
             </div>
@@ -189,7 +189,7 @@ export default function TermsPage() {
 
             <h3 className="font-semibold text-lg mb-3">6.2 Limitation of Liability</h3>
             <p className="mb-4">
-              TO THE MAXIMUM EXTENT PERMITTED BY LAW, PRODUCT LABEL CHECKER SHALL NOT BE LIABLE FOR ANY INDIRECT, 
+              TO THE MAXIMUM EXTENT PERMITTED BY LAW, PLABIQ SHALL NOT BE LIABLE FOR ANY INDIRECT, 
               INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, INCLUDING BUT NOT LIMITED TO:
             </p>
             <ul className="list-disc pl-6 space-y-2">
@@ -287,7 +287,7 @@ export default function TermsPage() {
           >
             <ul className="space-y-3">
               <li>
-                <strong>Entire Agreement:</strong> These Terms constitute the entire agreement between you and Product Label Checker.
+                <strong>Entire Agreement:</strong> These Terms constitute the entire agreement between you and PlabIQ.
               </li>
               <li>
                 <strong>Severability:</strong> If any provision is found unenforceable, the remaining provisions will remain in effect.
@@ -311,8 +311,8 @@ export default function TermsPage() {
               If you have any questions about these Terms of Service, please contact us:
             </p>
             <div className="space-y-2 text-gray-700 dark:text-gray-300">
-              <p><strong>Email:</strong> <a href="mailto:legal@productlabelchecker.com" className="text-orange-600 hover:text-orange-700 underline">legal@productlabelchecker.com</a></p>
-              <p><strong>Support:</strong> <a href="mailto:support@productlabelchecker.com" className="text-orange-600 hover:text-orange-700 underline">support@productlabelchecker.com</a></p>
+              <p><strong>Email:</strong> <a href="mailto:legal@plabiq.com" className="text-orange-600 hover:text-orange-700 underline">legal@plabiq.com</a></p>
+              <p><strong>Support:</strong> <a href="mailto:support@plabiq.com" className="text-orange-600 hover:text-orange-700 underline">support@plabiq.com</a></p>
               <p><strong>Website:</strong> <a href="https://www.plabiq.com" className="text-orange-600 hover:text-orange-700 underline">www.plabiq.com</a></p>
             </div>
           </div>

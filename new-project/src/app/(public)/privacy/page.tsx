@@ -2,8 +2,8 @@ import { Metadata } from 'next'
 import { Shield, Lock, Eye, Database, Cookie, Mail, UserCheck, Globe } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy | Product Label Checker',
-  description: 'Privacy Policy for Product Label Checker - Learn how we collect, use, and protect your data',
+  title: 'Privacy Policy | PlabIQ',
+  description: 'Privacy Policy for PlabIQ - Learn how we collect, use, and protect your data',
 }
 
 export default function PrivacyPage() {
@@ -40,7 +40,7 @@ export default function PrivacyPage() {
               <div>
                 <h2 className="text-2xl font-bold mb-4">Our Commitment to Your Privacy</h2>
                 <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
-                  At Product Label Checker, we take your privacy seriously. This Privacy Policy explains how we collect, 
+                  At PlabIQ, we take your privacy seriously. This Privacy Policy explains how we collect, 
                   use, disclose, and safeguard your information when you use our AI-powered compliance analysis service.
                 </p>
                 <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
@@ -334,7 +334,7 @@ export default function PrivacyPage() {
             </div>
 
             <p className="mt-6 text-sm text-gray-600 dark:text-gray-400">
-              To exercise these rights, please contact us at <a href="mailto:privacy@productlabelchecker.com" className="text-orange-600 hover:text-orange-700 underline">privacy@productlabelchecker.com</a>. 
+              To exercise these rights, please contact us at <a href="mailto:privacy@plabiq.com" className="text-orange-600 hover:text-orange-700 underline">privacy@plabiq.com</a>. 
               We will respond within 30 days.
             </p>
           </Section>
@@ -420,8 +420,8 @@ export default function PrivacyPage() {
               If you have questions, concerns, or requests regarding this Privacy Policy or our data practices, please contact us:
             </p>
             <div className="space-y-2 text-gray-700 dark:text-gray-300">
-              <p><strong>Privacy Officer:</strong> <a href="mailto:privacy@productlabelchecker.com" className="text-orange-600 hover:text-orange-700 underline">privacy@productlabelchecker.com</a></p>
-              <p><strong>Support:</strong> <a href="mailto:support@productlabelchecker.com" className="text-orange-600 hover:text-orange-700 underline">support@productlabelchecker.com</a></p>
+              <p><strong>Privacy Officer:</strong> <a href="mailto:privacy@plabiq.com" className="text-orange-600 hover:text-orange-700 underline">privacy@plabiq.com</a></p>
+              <p><strong>Support:</strong> <a href="mailto:support@plabiq.com" className="text-orange-600 hover:text-orange-700 underline">support@plabiq.com</a></p>
               <p><strong>Website:</strong> <a href="https://www.plabiq.com" className="text-orange-600 hover:text-orange-700 underline">www.plabiq.com</a></p>
             </div>
 

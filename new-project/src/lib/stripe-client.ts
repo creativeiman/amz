@@ -19,7 +19,7 @@ export const stripe = new Stripe(secretKey || 'sk_test_placeholder', {
   apiVersion: '2025-09-30.clover',
   typescript: true,
   appInfo: {
-    name: 'AMZ Product Label Checker',
+    name: 'PlabIQ',
     version: '1.0.0',
   },
 })

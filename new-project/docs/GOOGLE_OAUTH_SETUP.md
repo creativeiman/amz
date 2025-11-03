@@ -1,6 +1,6 @@
 # Google OAuth Setup Guide
 
-This guide walks you through setting up Google OAuth authentication for the Product Label Checker application.
+This guide walks you through setting up Google OAuth authentication for the PlabIQ application.
 
 ## Prerequisites
 
@@ -12,7 +12,7 @@ This guide walks you through setting up Google OAuth authentication for the Prod
 1. Go to [Google Cloud Console](https://console.cloud.google.com/)
 2. Click on the project dropdown at the top
 3. Click "New Project"
-4. Enter project name (e.g., "Product Label Checker")
+4. Enter project name (e.g., "PlabIQ")
 5. Click "Create"
 
 ## Step 2: Enable Google+ API
@@ -29,7 +29,7 @@ This guide walks you through setting up Google OAuth authentication for the Prod
 3. If prompted, configure the OAuth consent screen:
    - Choose "External" user type
    - Fill in required fields:
-     - App name: Product Label Checker
+     - App name: PlabIQ
      - User support email: your email
      - Developer contact: your email
    - Click "Save and Continue"
@@ -39,7 +39,7 @@ This guide walks you through setting up Google OAuth authentication for the Prod
 
 4. Create OAuth Client ID:
    - Application type: "Web application"
-   - Name: "Product Label Checker Web"
+   - Name: "PlabIQ Web"
    - Authorized JavaScript origins:
      - Development: `http://localhost:3001`
      - Production: `https://yourdomain.com`

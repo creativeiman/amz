@@ -169,7 +169,7 @@ export default function DashboardPage() {
 
       {/* Quick Actions */}
       {data.account.plan === "FREE" && data.usage.scanLimit && data.usage.scansUsed >= data.usage.scanLimit && (
-        <div className="bg-gradient-to-r from-orange-50 to-blue-50 dark:from-orange-950/20 dark:to-blue-950/20 border border-orange-200 dark:border-orange-800 rounded-lg p-6">
+        <div className="bg-[#2e3192]/5 dark:bg-[#2e3192]/10 border border-[#2e3192]/20 dark:border-[#2e3192]/30 rounded-lg p-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
               <h3 className="text-lg font-semibold mb-1">

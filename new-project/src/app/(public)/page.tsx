@@ -1,4 +1,5 @@
 import { HeroSection } from '@/components/sections/HeroSection'
+import { WhyTrustSection } from '@/components/sections/WhyTrustSection'
 import { FeaturesSection } from '@/components/sections/FeaturesSection'
 import { MarketplacesSection } from '@/components/sections/MarketplacesSection'
 import { ProcessSection } from '@/components/sections/ProcessSection'
@@ -10,10 +11,11 @@ export default function HomePage() {
     <div className="min-h-screen">
       <main>
         <HeroSection />
+        <WhyTrustSection />
+        <PricingSection />
         <FeaturesSection />
         <MarketplacesSection />
         <ProcessSection />
-        <PricingSection />
         <TestimonialsSection />
       </main>
     </div>

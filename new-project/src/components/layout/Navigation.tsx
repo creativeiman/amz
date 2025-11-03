@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useSession, signOut } from 'next-auth/react'
 import { useTheme } from 'next-themes'
 import { Menu, X, User, LogOut, Settings, Moon, Sun } from 'lucide-react'
@@ -42,8 +43,27 @@ export function Navigation() {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex items-center">
-            <Link href="/" className="text-xl font-bold text-foreground">
-              Product Label Checker
+            <Link href="/" className="flex items-center">
+              {mounted && (
+                <Image
+                  src={theme === 'dark' ? '/plabiq-logo-white.png' : '/plabiq-logo-black.png'}
+                  alt="PlabIQ"
+                  width={120}
+                  height={40}
+                  priority
+                  className="h-8 w-auto"
+                />
+              )}
+              {!mounted && (
+                <Image
+                  src="/plabiq-logo-black.png"
+                  alt="PlabIQ"
+                  width={120}
+                  height={40}
+                  priority
+                  className="h-8 w-auto"
+                />
+              )}
             </Link>
           </div>
 
@@ -73,7 +93,7 @@ export function Navigation() {
                   }}
                   className="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
                 >
-                  <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-blue-500 rounded-full flex items-center justify-center">
+                  <div className="w-8 h-8 bg-[#2e3192] rounded-full flex items-center justify-center">
                     <User className="w-4 h-4 text-white" />
                   </div>
                   <span className="font-medium">{session.user?.name || session.user?.email}</span>
@@ -140,7 +160,7 @@ export function Navigation() {
                 </Link>
                 <a
                   href="#pricing"
-                  className="bg-gradient-to-r from-orange-600 to-blue-600 text-white px-6 py-2 rounded-full font-semibold hover:from-orange-700 hover:to-blue-700 transition-all duration-200 transform hover:scale-105 shadow-lg"
+                  className="bg-[#2e3192] hover:bg-[#252776] text-white px-6 py-2 rounded-full font-semibold transition-all duration-200 transform hover:scale-105 shadow-lg"
                 >
                   Get Started
                 </a>
@@ -228,7 +248,7 @@ export function Navigation() {
                     </Link>
                     <a
                       href="#pricing"
-                      className="block w-full text-center bg-gradient-to-r from-orange-600 to-blue-600 text-white px-6 py-2 rounded-full font-semibold hover:from-orange-700 hover:to-blue-700 transition-all duration-200"
+                      className="block w-full text-center bg-[#2e3192] hover:bg-[#252776] text-white px-6 py-2 rounded-full font-semibold transition-all duration-200"
                       onClick={() => setIsMenuOpen(false)}
                     >
                       Get Started

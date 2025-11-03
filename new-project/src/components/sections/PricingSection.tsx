@@ -11,17 +11,13 @@ const plans = [
     description: 'Get started with free analysis',
     price: 'Free',
     period: '',
+    subtitle: 'Best for quick checks',
     features: [
-      '1 scan per account lifetime',
+      '1 full audit',
       'Basic compliance report',
-      'View-only results',
-      'Marketplace check',
+      'No card needed',
     ],
-    limitations: [
-      'No PDF export',
-      'No visual annotations',
-      'No risk profiling',
-    ],
+    limitations: [],
     buttonText: 'Get Started Free',
     buttonStyle: 'outline',
     popular: false,
@@ -30,41 +26,23 @@ const plans = [
   {
     name: 'Deluxe',
     description: 'For regular sellers',
-    price: '$29.99',
-    period: 'per month',
+    price: '$39.99',
+    period: '/mo',
+    subtitle: 'Best for growing brands',
     features: [
       'Unlimited scans',
-      'Full visual annotations with AI',
-      'Unlimited PDF exports',
-      'Risk profiling & insights',
-      'Team collaboration (up to 2 users)',
-      'Priority email support',
       'Unlimited scan history',
+      'Detailed reports',
+      'Risk alerts',
+      'Team access',
+      'Priority customer support',
+      'Cancel anytime/No contracts',
     ],
     limitations: [],
     buttonText: 'Choose Deluxe',
     buttonStyle: 'primary',
     popular: true,
     planId: 'deluxe',
-  },
-  {
-    name: 'One-Time Use',
-    description: 'Perfect for geo-expansion',
-    price: '$99.99',
-    period: 'one-time',
-    features: [
-      '1 comprehensive in-depth scan',
-      'All Deluxe features for single product',
-      '30-day access to results',
-      'Dedicated compliance review summary',
-      'No recurring charges',
-      'Geo-expansion validation',
-    ],
-    limitations: [],
-    buttonText: 'Choose One-Time',
-    buttonStyle: 'outline',
-    popular: false,
-    planId: 'one-time',
   },
 ]
 
@@ -213,31 +191,24 @@ export function PricingSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-12 sm:mb-16 lg:mb-20">
-          <div className="inline-flex items-center px-4 py-2 bg-green-100 dark:bg-green-950 text-green-700 dark:text-green-400 rounded-full text-sm font-semibold mb-6">
-            <CreditCard className="w-4 h-4 mr-2" />
-            Pricing
-          </div>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-gray-100 leading-tight mb-4 px-4">
-            Flexible Plans for Every Seller
+            Clear Pricing. No Surprises.
           </h2>
-          <p className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto px-4">
-            Choose the perfect plan to ensure your Amazon products are always compliant.
-          </p>
         </div>
 
         {/* Pricing Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-4xl mx-auto">
           {plans.map((plan, index) => (
             <div
               key={index}
               className={`relative flex flex-col rounded-3xl shadow-xl overflow-hidden transition-all duration-300 hover:scale-[1.02] ${
                 plan.popular
-                  ? 'bg-gradient-to-br from-orange-700 to-blue-700 text-white ring-4 ring-orange-500 dark:ring-orange-400'
+                  ? 'bg-[#2e3192] text-white ring-4 ring-[#2e3192] dark:ring-[#2e3192]'
                   : 'bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border border-gray-200 dark:border-slate-800'
               }`}
             >
               {plan.popular && (
-                <div className="absolute top-0 right-0 bg-orange-500 text-white text-xs font-bold px-4 py-2 rounded-bl-lg">
+                <div className="absolute top-0 right-0 bg-white text-[#2e3192] text-xs font-bold px-4 py-2 rounded-bl-lg">
                   Popular
                 </div>
               )}
@@ -251,12 +222,12 @@ export function PricingSection() {
                 </h3>
                 <p
                   className={`text-sm ${
-                    plan.popular ? 'text-orange-200' : 'text-gray-500 dark:text-gray-400'
+                    plan.popular ? 'text-white/80' : 'text-gray-500 dark:text-gray-400'
                   }`}
                 >
                   {plan.description}
                 </p>
-                <div className="mt-6 mb-8">
+                <div className="mt-6 mb-2">
                   <span
                     className={`text-4xl sm:text-5xl font-extrabold ${
                       plan.popular ? 'text-white' : 'text-gray-900 dark:text-gray-100'
@@ -267,13 +238,18 @@ export function PricingSection() {
                   {plan.period && (
                     <span
                       className={`text-lg sm:text-xl font-medium ${
-                        plan.popular ? 'text-orange-200' : 'text-gray-600 dark:text-gray-400'
+                        plan.popular ? 'text-white/80' : 'text-gray-600 dark:text-gray-400'
                       }`}
                     >
-                      /{plan.period}
+                      {plan.period}
                     </span>
                   )}
                 </div>
+                {plan.subtitle && (
+                  <p className={`text-sm font-semibold ${plan.popular ? 'text-white/90' : 'text-[#2e3192] dark:text-[#2e3192]'}`}>
+                    {plan.subtitle}
+                  </p>
+                )}
               </div>
 
               {/* Features */}
@@ -311,10 +287,10 @@ export function PricingSection() {
                   disabled={loading === plan.planId || isPlanDisabled(plan.planId)}
                   className={`group w-full py-4 rounded-full font-bold transition-all duration-300 hover:scale-105 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed ${
                     plan.popular
-                      ? 'bg-white text-orange-600 hover:bg-gray-100 shadow-xl'
+                      ? 'bg-white text-[#2e3192] hover:bg-gray-100 shadow-xl'
                       : plan.buttonStyle === 'primary'
-                      ? 'bg-gradient-to-r from-orange-600 to-blue-600 text-white hover:from-orange-700 hover:to-blue-700 shadow-xl'
-                      : 'bg-white dark:bg-slate-800 border-2 border-orange-500 dark:border-orange-400 text-orange-600 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-950/30'
+                      ? 'bg-[#2e3192] hover:bg-[#252776] text-white shadow-xl'
+                      : 'bg-white dark:bg-slate-800 border-2 border-[#2e3192] dark:border-[#2e3192] text-[#2e3192] dark:text-[#2e3192] hover:bg-[#2e3192]/10 dark:hover:bg-[#2e3192]/20'
                   }`}
                 >
                   {loading === plan.planId ? (
@@ -336,6 +312,13 @@ export function PricingSection() {
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Tagline */}
+        <div className="text-center mt-16">
+          <p className="text-lg sm:text-xl font-semibold text-gray-700 dark:text-gray-300">
+            PlabIQ – The only compliance tool that reads your label like a regulator.
+          </p>
         </div>
       </div>
 
@@ -370,7 +353,7 @@ export function PricingSection() {
                       key={member.id}
                       className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-slate-700 rounded-lg"
                     >
-                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-blue-500 flex items-center justify-center text-white text-sm font-semibold">
+                      <div className="w-8 h-8 rounded-full bg-[#2e3192] flex items-center justify-center text-white text-sm font-semibold">
                         {member.name?.[0] || member.email[0].toUpperCase()}
                       </div>
                       <div className="flex-1 min-w-0">
@@ -432,7 +415,7 @@ export function PricingSection() {
                   setTeamBlockModal({ show: false, members: [], invites: [] })
                   window.location.href = '/dashboard/team'
                 }}
-                className="flex-1 px-4 py-3 rounded-lg bg-gradient-to-r from-orange-600 to-blue-600 text-white font-semibold hover:from-orange-700 hover:to-blue-700 transition-all shadow-lg flex items-center justify-center gap-2"
+                className="flex-1 px-4 py-3 rounded-lg bg-[#2e3192] hover:bg-[#252776] text-white font-semibold transition-all shadow-lg flex items-center justify-center gap-2"
               >
                 <Users className="w-4 h-4" />
                 Go to Team Management

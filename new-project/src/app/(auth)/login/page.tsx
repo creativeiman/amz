@@ -196,13 +196,6 @@ function LoginForm() {
                 </div>
               )}
             />
-
-            {/* Test Credentials Helper */}
-            <div className="p-2.5 sm:p-3 text-xs sm:text-sm bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg">
-              <p className="font-semibold text-blue-900 dark:text-blue-400 mb-1">Test Credentials:</p>
-              <p className="text-blue-700 dark:text-blue-300 text-xs sm:text-sm">Admin: admin@productlabelchecker.com / admin123</p>
-              <p className="text-blue-700 dark:text-blue-300 text-xs sm:text-sm">User: deluxe@test.com / test123</p>
-            </div>
           </CardContent>
 
           <CardFooter className="flex flex-col space-y-3 sm:space-y-4 pt-4 sm:pt-6 px-4 sm:px-6 pb-4 sm:pb-6">

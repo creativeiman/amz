@@ -109,7 +109,7 @@ function RegisterForm() {
           
           {/* Plan Selection Indicator */}
           {selectedPlan && (
-            <div className="mt-3 sm:mt-4 p-2.5 sm:p-3 bg-gradient-to-r from-orange-50 to-blue-50 dark:from-orange-950/30 dark:to-blue-950/30 border border-orange-200 dark:border-orange-800 rounded-lg">
+            <div className="mt-3 sm:mt-4 p-2.5 sm:p-3 bg-[#2e3192]/5 dark:bg-[#2e3192]/10 border border-[#2e3192]/20 dark:border-[#2e3192]/30 rounded-lg">
               <p className="text-xs sm:text-sm text-center text-gray-700 dark:text-gray-300">
                 Selected Plan: <span className="font-semibold capitalize">{selectedPlan === 'one-time' ? 'One-Time Use' : selectedPlan}</span>
                 {selectedPlan !== 'free' && (

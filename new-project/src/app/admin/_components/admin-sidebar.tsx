@@ -51,7 +51,7 @@ const menuItemsConfig = [
 function getRoleBadge(role: string) {
   switch (role) {
     case 'ADMIN':
-      return { label: 'Admin', color: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300' }
+      return { label: 'Admin', color: 'bg-[#2e3192] text-white dark:bg-[#2e3192] dark:text-white' }
     case 'USER':
     default:
       return { label: 'User', color: 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300' }
@@ -120,7 +120,7 @@ export function AdminSidebar() {
                 >
                   <Avatar className="h-8 w-8 rounded-lg">
                     <AvatarImage src={user?.image || ''} alt={user?.name || ''} />
-                    <AvatarFallback className="rounded-lg bg-red-100 text-red-800">
+                    <AvatarFallback className="rounded-lg bg-[#2e3192] text-white">
                       {getUserInitials(user?.name)}
                     </AvatarFallback>
                   </Avatar>
@@ -141,7 +141,7 @@ export function AdminSidebar() {
                   <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                     <Avatar className="h-8 w-8 rounded-lg">
                       <AvatarImage src={user?.image || ''} alt={user?.name || ''} />
-                      <AvatarFallback className="rounded-lg bg-red-100 text-red-800">
+                      <AvatarFallback className="rounded-lg bg-[#2e3192] text-white">
                         {getUserInitials(user?.name)}
                       </AvatarFallback>
                     </Avatar>
@@ -191,7 +191,7 @@ export function AdminSidebar() {
                 <ThemeToggle />
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
-                  className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-950"
+                  className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-950/50"
                   onClick={() => signOut({ callbackUrl: '/login' })}
                 >
                   <LogOut className="mr-2 h-4 w-4" />

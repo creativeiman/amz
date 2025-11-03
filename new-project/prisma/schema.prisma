@@ -1,4 +1,4 @@
-// Product Label Checker - Prisma Schema
+// PlabIQ - Prisma Schema
 // Production-ready schema with proper relations and naming
 
 generator client {

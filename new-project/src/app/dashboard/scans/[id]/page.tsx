@@ -593,7 +593,7 @@ export default function ScanDetailPage() {
                 ) : (
                   <div className="text-center py-12 px-4">
                     <div className="max-w-md mx-auto">
-                      <div className="p-4 rounded-full bg-gradient-to-br from-orange-500 to-blue-600 w-20 h-20 flex items-center justify-center mx-auto mb-6">
+                      <div className="p-4 rounded-full bg-[#2e3192] w-20 h-20 flex items-center justify-center mx-auto mb-6">
                         <Sparkles className="w-10 h-10 text-white" />
                       </div>
                       <h3 className="text-2xl font-bold text-foreground mb-3">{t('premium.title', 'Premium Feature')}</h3>
@@ -623,7 +623,7 @@ export default function ScanDetailPage() {
                       </div>
                       <Link
                         href="/dashboard/billing"
-                        className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-orange-600 to-blue-600 text-white font-semibold rounded-lg hover:from-orange-700 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl"
+                        className="inline-flex items-center px-6 py-3 bg-[#2e3192] hover:bg-[#252776] text-white font-semibold rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl"
                       >
                         <Star className="w-4 h-4 mr-2" />
                         {t('premium.upgradeButton', 'Upgrade Your Plan')}
@@ -669,7 +669,7 @@ export default function ScanDetailPage() {
                 ) : (
                   <div className="text-center py-12 px-4">
                     <div className="max-w-md mx-auto">
-                      <div className="p-4 rounded-full bg-gradient-to-br from-orange-500 to-blue-600 w-20 h-20 flex items-center justify-center mx-auto mb-6">
+                      <div className="p-4 rounded-full bg-[#2e3192] w-20 h-20 flex items-center justify-center mx-auto mb-6">
                         <FileText className="w-10 h-10 text-white" />
                       </div>
                       <h3 className="text-2xl font-bold text-foreground mb-3">{t('premium.title', 'Premium Feature')}</h3>
@@ -699,7 +699,7 @@ export default function ScanDetailPage() {
                       </div>
                       <Link
                         href="/dashboard/billing"
-                        className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-orange-600 to-blue-600 text-white font-semibold rounded-lg hover:from-orange-700 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl"
+                        className="inline-flex items-center px-6 py-3 bg-[#2e3192] hover:bg-[#252776] text-white font-semibold rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl"
                       >
                         <Star className="w-4 h-4 mr-2" />
                         {t('premium.upgradeButton', 'Upgrade Your Plan')}
@@ -737,16 +737,6 @@ export default function ScanDetailPage() {
                             <p className="text-sm text-muted-foreground">{results.extractedInfo.productName}</p>
                           </div>
                         )}
-
-                        {/* All Extracted Info as JSON */}
-                        <details className="bg-muted rounded-lg p-4">
-                          <summary className="font-medium text-foreground cursor-pointer">
-                            {t('info.viewRaw', 'View Raw Extracted Information')}
-                          </summary>
-                          <pre className="mt-4 text-xs text-muted-foreground overflow-auto">
-                            {JSON.stringify(results.extractedInfo, null, 2)}
-                          </pre>
-                        </details>
                       </div>
                     )}
 
@@ -761,7 +751,7 @@ export default function ScanDetailPage() {
                 ) : (
                   <div className="text-center py-12 px-4">
                     <div className="max-w-md mx-auto">
-                      <div className="p-4 rounded-full bg-gradient-to-br from-orange-500 to-blue-600 w-20 h-20 flex items-center justify-center mx-auto mb-6">
+                      <div className="p-4 rounded-full bg-[#2e3192] w-20 h-20 flex items-center justify-center mx-auto mb-6">
                         <Star className="w-10 h-10 text-white" />
                       </div>
                       <h3 className="text-2xl font-bold text-foreground mb-3">{t('premium.title', 'Premium Feature')}</h3>
@@ -791,7 +781,7 @@ export default function ScanDetailPage() {
                       </div>
                       <Link
                         href="/dashboard/billing"
-                        className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-orange-600 to-blue-600 text-white font-semibold rounded-lg hover:from-orange-700 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl"
+                        className="inline-flex items-center px-6 py-3 bg-[#2e3192] hover:bg-[#252776] text-white font-semibold rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl"
                       >
                         <Star className="w-4 h-4 mr-2" />
                         {t('premium.upgradeButton', 'Upgrade Your Plan')}
@@ -804,16 +794,6 @@ export default function ScanDetailPage() {
             )}
           </div>
         </div>
-
-        {/* Raw AI Response (Debug) */}
-        <details className="bg-card rounded-2xl shadow-lg border p-6">
-          <summary className="font-semibold text-foreground cursor-pointer">
-            {t('debug.title', 'View Raw AI Response (Debug)')}
-          </summary>
-          <pre className="mt-4 text-xs text-muted-foreground overflow-auto bg-muted p-4 rounded-lg">
-            {JSON.stringify(results, null, 2)}
-          </pre>
-        </details>
       </div>
     </div>
   )

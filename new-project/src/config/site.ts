@@ -6,13 +6,13 @@
 import { PLAN_LIMITS } from './plans'
 
 export const siteConfig = {
-  name: 'Product Label Checker',
+  name: 'PlabIQ',
   description: 'AI-powered compliance validation for Amazon sellers',
-  url: 'https://productlabelchecker.com',
+  url: 'https://plabiq.com',
   ogImage: '/og-image.jpg',
   links: {
-    twitter: 'https://twitter.com/youraccount',
-    github: 'https://github.com/youraccount',
+    twitter: 'https://twitter.com/plabiq',
+    github: 'https://github.com/plabiq',
   },
 } as const
 

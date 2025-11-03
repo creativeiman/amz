@@ -204,7 +204,7 @@ function ScansPageContent() {
                 </span>
                 <Link 
                   href="/dashboard/billing"
-                  className="inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-orange-600 to-blue-600 text-white text-sm font-semibold rounded-lg hover:from-orange-700 hover:to-blue-700 transition-all duration-200 shadow-md hover:shadow-lg whitespace-nowrap"
+                  className="inline-flex items-center justify-center px-4 py-2 bg-[#2e3192] hover:bg-[#252776] text-white text-sm font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg whitespace-nowrap"
                 >
                   {t('upgradePlan', 'Upgrade Plan')}
                   <ArrowRight className="w-4 h-4 ml-2" />

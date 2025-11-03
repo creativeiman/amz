@@ -22,7 +22,7 @@ export class EmailService {
       
       const emailData: EmailData = {
         to: userEmail,
-        subject: 'Reset Your Password - Product Label Checker',
+        subject: 'Reset Your Password - PlabIQ',
         html: this.getPasswordResetEmailHTML(userName, resetLink),
         text: this.getPasswordResetEmailText(userName, resetLink),
       }
@@ -61,7 +61,7 @@ export class EmailService {
     try {
       const emailData: EmailData = {
         to: userEmail,
-        subject: 'Welcome to Product Label Checker! 🎉',
+        subject: 'Welcome to PlabIQ! 🎉',
         html: this.getWelcomeEmailHTML(userName),
         text: this.getWelcomeEmailText(userName),
       }
@@ -103,7 +103,7 @@ export class EmailService {
       
       const emailData: EmailData = {
         to: userEmail,
-        subject: `You've been invited to join ${accountName} - Product Label Checker`,
+        subject: `You've been invited to join ${accountName} - PlabIQ`,
         html: this.getInvitationEmailHTML(inviterName, accountName, invitationLink, role),
         text: this.getInvitationEmailText(inviterName, accountName, invitationLink, role),
       }
@@ -139,7 +139,7 @@ export class EmailService {
     const resend = new Resend(env.RESEND_API_KEY)
     
     const { error } = await resend.emails.send({
-      from: `Product Label Checker <${env.RESEND_FROM_EMAIL}>`,
+      from: `PlabIQ <${env.RESEND_FROM_EMAIL}>`,
       to: [emailData.to],
       subject: emailData.subject,
       html: emailData.html,
@@ -167,13 +167,13 @@ export class EmailService {
           <div style="background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
             <div style="background: linear-gradient(135deg, #ea580c 0%, #2563eb 100%); padding: 30px; text-align: center;">
               <h1 style="color: white; margin: 0; font-size: 28px;">Reset Your Password</h1>
-              <p style="color: white; margin: 10px 0 0 0; font-size: 16px;">Product Label Checker</p>
+              <p style="color: white; margin: 10px 0 0 0; font-size: 16px;">PlabIQ</p>
             </div>
             
             <div style="padding: 30px;">
               <h2 style="color: #333; margin-top: 0;">Hi ${userName}! 👋</h2>
               
-              <p>We received a request to reset your password for your Product Label Checker account.</p>
+              <p>We received a request to reset your password for your PlabIQ account.</p>
               
               <div style="background: #fef3c7; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #f59e0b;">
                 <p style="margin: 0; color: #92400e;"><strong>⏱️ This link expires in 1 hour</strong></p>
@@ -201,13 +201,13 @@ export class EmailService {
               </div>
               
               <p style="font-size: 14px; color: #666; margin-top: 30px; border-top: 1px solid #e5e5e5; padding-top: 20px;">
-                Need help? Contact us at <a href="mailto:support@productlabelchecker.com" style="color: #2563eb;">support@productlabelchecker.com</a>
+                Need help? Contact us at <a href="mailto:support@plabiq.com" style="color: #2563eb;">support@plabiq.com</a>
               </p>
             </div>
           </div>
           
           <p style="text-align: center; font-size: 12px; color: #999; margin-top: 20px;">
-            © 2025 Product Label Checker. All rights reserved.
+            © 2025 PlabIQ. All rights reserved.
           </p>
         </body>
       </html>
@@ -219,11 +219,11 @@ export class EmailService {
    */
   private static getPasswordResetEmailText(userName: string, resetLink: string): string {
     return `
-Reset Your Password - Product Label Checker
+Reset Your Password - PlabIQ
 
 Hi ${userName}!
 
-We received a request to reset your password for your Product Label Checker account.
+We received a request to reset your password for your PlabIQ account.
 
 ⏱️ This link expires in 1 hour
 
@@ -233,9 +233,9 @@ ${resetLink}
 ⚠️ Security Notice:
 If you didn't request this password reset, please ignore this email or contact support if you have concerns.
 
-Need help? Contact us at support@productlabelchecker.com
+Need help? Contact us at support@plabiq.com
 
-© 2025 Product Label Checker. All rights reserved.
+© 2025 PlabIQ. All rights reserved.
     `.trim()
   }
 
@@ -260,13 +260,13 @@ Need help? Contact us at support@productlabelchecker.com
           <div style="background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
             <div style="background: linear-gradient(135deg, #ea580c 0%, #2563eb 100%); padding: 30px; text-align: center;">
               <h1 style="color: white; margin: 0; font-size: 28px;">🎉 You're Invited!</h1>
-              <p style="color: white; margin: 10px 0 0 0; font-size: 16px;">Product Label Checker</p>
+              <p style="color: white; margin: 10px 0 0 0; font-size: 16px;">PlabIQ</p>
             </div>
             
             <div style="padding: 30px;">
               <h2 style="color: #333; margin-top: 0;">Join ${accountName}'s Team</h2>
               
-              <p><strong>${inviterName}</strong> has invited you to join their team on Product Label Checker as a <strong>${role}</strong>.</p>
+              <p><strong>${inviterName}</strong> has invited you to join their team on PlabIQ as a <strong>${role}</strong>.</p>
               
               <div style="background: #dbeafe; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #2563eb;">
                 <p style="margin: 0; color: #1e40af;"><strong>🎯 Role:</strong> ${role}</p>
@@ -298,13 +298,13 @@ Need help? Contact us at support@productlabelchecker.com
               </div>
               
               <p style="font-size: 14px; color: #666; margin-top: 30px; border-top: 1px solid #e5e5e5; padding-top: 20px;">
-                Need help? Contact us at <a href="mailto:support@productlabelchecker.com" style="color: #2563eb;">support@productlabelchecker.com</a>
+                Need help? Contact us at <a href="mailto:support@plabiq.com" style="color: #2563eb;">support@plabiq.com</a>
               </p>
             </div>
           </div>
           
           <p style="text-align: center; font-size: 12px; color: #999; margin-top: 20px;">
-            © 2025 Product Label Checker. All rights reserved.
+            © 2025 PlabIQ. All rights reserved.
           </p>
         </body>
       </html>
@@ -321,9 +321,9 @@ Need help? Contact us at support@productlabelchecker.com
     role: string
   ): string {
     return `
-You're Invited to Join ${accountName}'s Team - Product Label Checker
+You're Invited to Join ${accountName}'s Team - PlabIQ
 
-${inviterName} has invited you to join their team on Product Label Checker as a ${role}.
+${inviterName} has invited you to join their team on PlabIQ as a ${role}.
 
 🎯 Role: ${role}
 
@@ -337,9 +337,9 @@ ${invitationLink}
 ⚠️ Notice:
 If you didn't expect this invitation, you can safely ignore this email.
 
-Need help? Contact us at support@productlabelchecker.com
+Need help? Contact us at support@plabiq.com
 
-© 2025 Product Label Checker. All rights reserved.
+© 2025 PlabIQ. All rights reserved.
     `.trim()
   }
 
@@ -353,19 +353,19 @@ Need help? Contact us at support@productlabelchecker.com
         <head>
           <meta charset="utf-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Welcome to Product Label Checker</title>
+          <title>Welcome to PlabIQ</title>
         </head>
         <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f5f5f5;">
           <div style="background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
             <div style="background: linear-gradient(135deg, #ea580c 0%, #2563eb 100%); padding: 30px; text-align: center;">
               <h1 style="color: white; margin: 0; font-size: 32px;">🎉 Welcome!</h1>
-              <p style="color: white; margin: 10px 0 0 0; font-size: 18px;">Product Label Checker</p>
+              <p style="color: white; margin: 10px 0 0 0; font-size: 18px;">PlabIQ</p>
             </div>
             
             <div style="padding: 30px;">
               <h2 style="color: #333; margin-top: 0;">Hi ${userName}! 👋</h2>
               
-              <p>Thank you for joining <strong>Product Label Checker</strong>! We're excited to help you navigate Amazon's complex regulatory requirements and avoid costly compliance mistakes.</p>
+              <p>Thank you for joining <strong>PlabIQ</strong>! We're excited to help you navigate Amazon's complex regulatory requirements and avoid costly compliance mistakes.</p>
               
               <div style="background: #dbeafe; padding: 20px; border-radius: 8px; margin: 25px 0; border-left: 4px solid #2563eb;">
                 <h3 style="margin-top: 0; color: #1e40af;">🚀 What's Next?</h3>
@@ -392,13 +392,13 @@ Need help? Contact us at support@productlabelchecker.com
               </div>
               
               <p style="font-size: 14px; color: #666; margin-top: 30px; border-top: 1px solid #e5e5e5; padding-top: 20px;">
-                Need help getting started? Reply to this email or contact us at <a href="mailto:support@productlabelchecker.com" style="color: #2563eb;">support@productlabelchecker.com</a>
+                Need help getting started? Reply to this email or contact us at <a href="mailto:support@plabiq.com" style="color: #2563eb;">support@plabiq.com</a>
               </p>
             </div>
           </div>
           
           <p style="text-align: center; font-size: 12px; color: #999; margin-top: 20px;">
-            © 2025 Product Label Checker. All rights reserved.
+            © 2025 PlabIQ. All rights reserved.
           </p>
         </body>
       </html>
@@ -410,11 +410,11 @@ Need help? Contact us at support@productlabelchecker.com
    */
   private static getWelcomeEmailText(userName: string): string {
     return `
-Welcome to Product Label Checker! 🎉
+Welcome to PlabIQ! 🎉
 
 Hi ${userName}!
 
-Thank you for joining Product Label Checker! We're excited to help you navigate Amazon's complex regulatory requirements and avoid costly compliance mistakes.
+Thank you for joining PlabIQ! We're excited to help you navigate Amazon's complex regulatory requirements and avoid costly compliance mistakes.
 
 🚀 What's Next?
 • Upload your product labels for compliance checking
@@ -427,9 +427,9 @@ Get started: ${publicEnv.NEXT_PUBLIC_APP_URL}/dashboard
 💡 Pro Tip:
 Start with your best-selling product to see immediate value from our compliance analysis!
 
-Need help getting started? Reply to this email or contact us at support@productlabelchecker.com
+Need help getting started? Reply to this email or contact us at support@plabiq.com
 
-© 2025 Product Label Checker. All rights reserved.
+© 2025 PlabIQ. All rights reserved.
     `.trim()
   }
 }

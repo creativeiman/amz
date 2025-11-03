@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { Upload, Play, Shield, Zap, CheckCircle } from 'lucide-react'
+import { Upload, Shield, Zap, CheckCircle } from 'lucide-react'
 
 export function HeroSection() {
   return (
@@ -28,33 +28,34 @@ export function HeroSection() {
           </div>
 
           {/* Main Heading */}
-          <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-white leading-tight mb-8 drop-shadow-2xl">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6 drop-shadow-2xl">
             <span className="bg-gradient-to-r from-white via-blue-100 to-orange-100 bg-clip-text text-transparent drop-shadow-2xl">
-              Avoid Costly Label Compliance Pitfalls
+              Stop Losing Sales to Label Errors and Compliance Pitfalls
             </span>
-            <br />
-            <span className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-white drop-shadow-2xl">Audit Your Amazon Product Labels with Confidence</span>
           </h1>
 
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-8 drop-shadow-lg">
+            Audit Your Product Labels in 60 Seconds
+          </h2>
+
           {/* Subtitle */}
-          <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-white mb-12 max-w-3xl leading-relaxed drop-shadow-lg">
-            Our AI-powered Label Compliance Reviewer is built for Amazon sellers. It scans your product labels, flags potential issues, and provides tailored recommendations based on your category and marketplace; helping you stay compliant and protect your business.
+          <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-white mb-6 max-w-3xl leading-relaxed drop-shadow-lg">
+            PlabIQ scans your label, flags every issue, and gives you exact fixes instantly.
+          </p>
+
+          <p className="text-lg sm:text-xl md:text-2xl font-semibold text-white mb-12 drop-shadow-lg">
+            No consultants. No guesswork. Just <span className="text-yellow-300">100% compliance confidence</span>.
           </p>
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-6 mb-16">
-            <a
-              href="#pricing"
-              className="group bg-gradient-to-r from-orange-600 to-blue-600 hover:from-orange-700 hover:to-blue-700 text-white font-bold py-4 px-10 rounded-full shadow-2xl transform transition-all duration-300 hover:scale-105 hover:shadow-orange-500/25 flex items-center justify-center"
+            <Link
+              href="/register"
+              className="group bg-[#2e3192] hover:bg-[#252776] text-white font-bold py-4 px-10 rounded-full shadow-2xl transform transition-all duration-300 hover:scale-105 hover:shadow-[#2e3192]/25 flex items-center justify-center"
             >
               <Upload className="w-5 h-5 mr-2 group-hover:rotate-12 transition-transform duration-300" />
-              Get Started Now
-            </a>
-            
-            <button className="group bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white font-bold py-4 px-10 rounded-full border border-white/30 hover:border-white/50 shadow-xl transform transition-all duration-300 hover:scale-105 flex items-center justify-center">
-              <Play className="w-5 h-5 mr-2 group-hover:translate-x-1 transition-transform duration-300" />
-              Watch Demo
-            </button>
+              Start Free Label Audit
+            </Link>
           </div>
 
           {/* Trust Indicators */}

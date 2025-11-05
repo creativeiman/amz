@@ -20,12 +20,12 @@ export const metadata: Metadata = {
   description: "Get your Amazon product labels compliant with PlabIQ. Audit in 60 seconds and avoid costly errors. Start your free label scan today!",
   icons: {
     icon: [
-      { url: '/plabiq-logo-black.png' },
-      { url: '/plabiq-logo-black.png', sizes: '32x32', type: 'image/png' },
-      { url: '/plabiq-logo-black.png', sizes: '16x16', type: 'image/png' },
+      { url: '/fav-icon.svg', type: 'image/svg+xml' },
+      { url: '/fav-icon.png', sizes: '32x32', type: 'image/png' },
+      { url: '/fav-icon.png', sizes: '16x16', type: 'image/png' },
     ],
-    apple: '/plabiq-logo-black.png',
-    shortcut: '/plabiq-logo-black.png',
+    apple: '/fav-icon.png',
+    shortcut: '/fav-icon.svg',
   },
 };
 

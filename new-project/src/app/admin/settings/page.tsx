@@ -5,9 +5,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
 import { LoadingPage } from "@/components/loading"
-import { Save } from "lucide-react"
+import { Save, Lock, User } from "lucide-react"
 import { MarkdownEditor } from "@/components/markdown-editor"
 import { api, ApiError } from "@/lib/api-client"
 
@@ -29,6 +30,12 @@ export default function AdminSettingsPage() {
   })
   const [isLoading, setIsLoading] = React.useState(true)
   const [isSaving, setIsSaving] = React.useState(false)
+  
+  // Password change state
+  const [currentPassword, setCurrentPassword] = React.useState("")
+  const [newPassword, setNewPassword] = React.useState("")
+  const [confirmPassword, setConfirmPassword] = React.useState("")
+  const [isChangingPassword, setIsChangingPassword] = React.useState(false)
 
   // Fetch settings
   React.useEffect(() => {
@@ -63,6 +70,43 @@ export default function AdminSettingsPage() {
     }
   }
 
+  const handlePasswordChange = async () => {
+    // Validation
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      toast.error("All fields are required")
+      return
+    }
+
+    if (newPassword.length < 8) {
+      toast.error("New password must be at least 8 characters")
+      return
+    }
+
+    if (newPassword !== confirmPassword) {
+      toast.error("New passwords do not match")
+      return
+    }
+
+    setIsChangingPassword(true)
+    try {
+      await api.post("/api/auth/change-password", {
+        currentPassword,
+        newPassword,
+      })
+      toast.success("Password changed successfully")
+      // Clear form
+      setCurrentPassword("")
+      setNewPassword("")
+      setConfirmPassword("")
+    } catch (error) {
+      console.error("Error changing password:", error)
+      const message = error instanceof ApiError ? error.message : "Failed to change password"
+      toast.error(message)
+    } finally {
+      setIsChangingPassword(false)
+    }
+  }
+
   if (isLoading) {
     return <LoadingPage text="Loading settings..." />
   }
@@ -82,14 +126,86 @@ export default function AdminSettingsPage() {
         </Button>
       </div>
 
-      <Tabs defaultValue="prompt" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-5">
+      <Tabs defaultValue="account" className="space-y-4">
+        <TabsList className="grid w-full grid-cols-6">
+          <TabsTrigger value="account">Account</TabsTrigger>
           <TabsTrigger value="prompt">Master Prompt</TabsTrigger>
           <TabsTrigger value="common">Common Rules</TabsTrigger>
           <TabsTrigger value="us">US Rules</TabsTrigger>
           <TabsTrigger value="uk">UK Rules</TabsTrigger>
           <TabsTrigger value="eu">EU Rules</TabsTrigger>
         </TabsList>
+
+        {/* Account Tab */}
+        <TabsContent value="account">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <User className="h-5 w-5" />
+                Admin Account Settings
+              </CardTitle>
+              <CardDescription>
+                Manage your admin account security and preferences
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Change Password Section */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 pb-2 border-b">
+                  <Lock className="h-4 w-4 text-muted-foreground" />
+                  <h3 className="text-lg font-semibold">Change Password</h3>
+                </div>
+                
+                <div className="space-y-4 max-w-md">
+                  <div className="space-y-2">
+                    <Label htmlFor="currentPassword">Current Password</Label>
+                    <Input
+                      id="currentPassword"
+                      type="password"
+                      value={currentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
+                      placeholder="Enter your current password"
+                      disabled={isChangingPassword}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="newPassword">New Password</Label>
+                    <Input
+                      id="newPassword"
+                      type="password"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      placeholder="Enter your new password (min 8 characters)"
+                      disabled={isChangingPassword}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="confirmPassword">Confirm New Password</Label>
+                    <Input
+                      id="confirmPassword"
+                      type="password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder="Confirm your new password"
+                      disabled={isChangingPassword}
+                    />
+                  </div>
+
+                  <Button 
+                    onClick={handlePasswordChange} 
+                    disabled={isChangingPassword}
+                    className="w-full sm:w-auto"
+                  >
+                    <Lock className="mr-2 h-4 w-4" />
+                    {isChangingPassword ? "Changing Password..." : "Change Password"}
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
         {/* Master Prompt Tab */}
         <TabsContent value="prompt">

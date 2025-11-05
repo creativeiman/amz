@@ -53,20 +53,6 @@ async function main() {
   })
   console.log('✅ Created deluxe user:', deluxeUser.email)
 
-  const oneTimeUser = await prisma.user.upsert({
-    where: { email: 'onetime@test.com' },
-    update: {},
-    create: {
-      name: 'One-Time User',
-      email: 'onetime@test.com',
-      password: testPassword,
-      role: 'USER',
-      emailVerified: new Date(),
-      isActive: true,
-    },
-  })
-  console.log('✅ Created one-time user:', oneTimeUser.email)
-
   // Create accounts (workspaces) for users
   // Calculate next month's first day for scan limit reset
   const nextMonthReset = new Date()
@@ -111,22 +97,6 @@ async function main() {
     },
   })
   console.log('✅ Created deluxe account:', deluxeAccount.name)
-
-  const oneTimeAccount = await prisma.account.upsert({
-    where: { slug: 'onetime-workspace' },
-    update: {},
-    create: {
-      name: 'One-Time Workspace',
-      slug: 'onetime-workspace',
-      ownerId: oneTimeUser.id,
-      plan: 'ONE_TIME',
-      subscriptionStatus: 'ACTIVE',
-      isActive: true,
-      scanLimitPerMonth: 1,
-      scansUsedThisMonth: 0,
-    },
-  })
-  console.log('✅ Created one-time account:', oneTimeAccount.name)
 
   // Create team members for deluxe account
   const teamMember1 = await prisma.user.upsert({
@@ -389,11 +359,13 @@ async function main() {
   console.log('✅ Created sample scan 2:', scan2.productName)
 
   // Create a sample payment for deluxe account
-  await prisma.payment.create({
-    data: {
+  await prisma.payment.upsert({
+    where: { stripePaymentId: 'pi_test_1234567890' },
+    update: {},
+    create: {
       accountId: deluxeAccount.id,
       stripePaymentId: 'pi_test_1234567890',
-      amount: 2999, // $29.99
+      amount: 3999, // $39.99
       currency: 'usd',
       plan: 'DELUXE',
       status: 'COMPLETED',
@@ -415,7 +387,6 @@ async function main() {
   console.log('   ═══════════════════════════════════════════════════════════')
   console.log('   Free Plan Owner: free@test.com / test123')
   console.log('   Deluxe Plan Owner: deluxe@test.com / test123')
-  console.log('   One-Time Plan Owner: onetime@test.com / test123')
   console.log('   ═══════════════════════════════════════════════════════════')
   console.log('   Team Members (Test Business Inc.):')
   console.log('     - Editor: editor@test.com / test123')

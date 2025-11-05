@@ -34,7 +34,7 @@ export const PLAN_LIMITS = {
   },
   DELUXE: {
     name: 'Deluxe',
-    price: 29.99,
+    price: 39.99,
     stripePriceId: getStripeDeluxePriceId(), // Auto-switches between test/live based on STRIPE_MODE
     maxTeamMembers: 2, // Up to 2 team members (as per old project)
     scansPerMonth: null, // Unlimited (null = unlimited)

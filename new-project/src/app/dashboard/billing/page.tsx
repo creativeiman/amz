@@ -217,7 +217,7 @@ function BillingPageContent() {
                 {t(`plan.${currentPlan.toLowerCase()}.name`, PLAN_LIMITS[currentPlan as keyof typeof PLAN_LIMITS]?.name || 'Free Plan')}
               </p>
               <p className="text-sm text-muted-foreground mt-1">
-                {currentPlan === 'DELUXE' && t('pricing.monthly', '$29.99 / month')}
+                {currentPlan === 'DELUXE' && t('pricing.monthly', '$39.99 / month')}
                 {currentPlan === 'ONE_TIME' && '$99.99 one-time'}
                 {currentPlan === 'FREE' && '$0.00 / month'}
               </p>

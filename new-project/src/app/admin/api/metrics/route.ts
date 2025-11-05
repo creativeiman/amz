@@ -161,7 +161,7 @@ export async function GET() {
     const activeSubscriptions = accounts.filter(
       a => a.subscriptionStatus === 'ACTIVE' && a.plan === 'DELUXE'
     )
-    const mrr = activeSubscriptions.length * 29.99
+    const mrr = activeSubscriptions.length * 39.99
 
     // Calculate total revenue (amount is in cents, convert to dollars)
     const totalRevenue = totalPayments._sum.amount ? totalPayments._sum.amount / 100 : 0

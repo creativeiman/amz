@@ -269,7 +269,7 @@ export default function TeamPage() {
               {t('upgrade.title', 'Upgrade for Team Collaboration')}
             </CardTitle>
             <CardDescription className="text-amber-800 dark:text-amber-200">
-              {t('upgrade.description', 'Team collaboration is not available on your current plan. Upgrade to Deluxe ($29.99/month) or One-Time ($99.99 forever) to invite up to 2 team members and unlock unlimited scans.')}
+              {t('upgrade.description', 'Team collaboration is not available on your current plan. Upgrade to Deluxe ($39.99/month) or One-Time ($99.99 forever) to invite up to 2 team members and unlock unlimited scans.')}
             </CardDescription>
           </CardHeader>
           <CardContent>

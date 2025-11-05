@@ -97,7 +97,7 @@ export default function TermsPage() {
                 <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">Single comprehensive scan, 30-day access, all Deluxe features, no recurring charges</p>
               </div>
               <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-                <h4 className="font-semibold text-[#2e3192] dark:text-[#2e3192]">Deluxe ($29.99/month)</h4>
+                <h4 className="font-semibold text-[#2e3192] dark:text-[#2e3192]">Deluxe ($39.99/month)</h4>
                 <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">Unlimited scans, team collaboration (up to 2 users), priority support, unlimited history</p>
               </div>
             </div>

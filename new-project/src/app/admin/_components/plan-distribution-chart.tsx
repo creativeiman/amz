@@ -13,7 +13,7 @@ const chartConfig = {
     color: "var(--chart-1)",
   },
   deluxe: {
-    label: "Deluxe ($29.99/mo)",
+    label: "Deluxe ($39.99/mo)",
     color: "var(--chart-2)",
   },
   oneTime: {

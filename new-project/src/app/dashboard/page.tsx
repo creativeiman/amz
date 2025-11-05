@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useSession } from "next-auth/react"
 import { toast } from "sonner"
-import { FileText, CheckCircle, AlertTriangle, TrendingUp, Plus } from "lucide-react"
+import { FileText, CheckCircle, TrendingUp, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { StatsCard } from "./_components/stats-card"
@@ -81,8 +81,8 @@ export default function DashboardPage() {
           <Skeleton className="h-8 w-64 mb-2" />
           <Skeleton className="h-4 w-96" />
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {[...Array(4)].map((_, i) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[...Array(3)].map((_, i) => (
             <Skeleton key={i} className="h-32" />
           ))}
         </div>
@@ -118,7 +118,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
         <StatsCard
           title={t('stats.totalScans', 'Total Scans')}
           value={data.stats.totalScans}
@@ -132,13 +132,6 @@ export default function DashboardPage() {
           icon={CheckCircle}
           iconColor="text-green-600"
           iconBgColor="bg-green-100 dark:bg-green-950"
-        />
-        <StatsCard
-          title={t('stats.issuesFound', 'Issues Found')}
-          value={data.stats.issuesFound}
-          icon={AlertTriangle}
-          iconColor="text-yellow-600"
-          iconBgColor="bg-yellow-100 dark:bg-yellow-950"
         />
         <StatsCard
           title={t('stats.avgScore', 'Avg Score')}

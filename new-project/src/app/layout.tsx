@@ -62,6 +62,32 @@ export default function RootLayout({
       >
         <Providers>{children}</Providers>
         <Toaster />
+        
+        {/* Blogstraps */}
+        <Script
+          src="https://blogstraps.com/embed/blogstraps.min.js"
+          strategy="lazyOnload"
+          async
+        />
+
+        {/* Help Center Widget */}
+        <Script id="help-center-widget" strategy="lazyOnload">
+          {`
+            var EhAPI = EhAPI || {}; 
+            EhAPI.after_load = function(){
+              EhAPI.set_account('2m0rnhcrv3j0h1r8t94nv4n4qf', 'plabiq');
+              EhAPI.execute('rules');
+            };
+            (function(d,s,f) {
+              var sc=document.createElement(s);
+              sc.type='text/javascript';
+              sc.async=true;
+              sc.src=f;
+              var m=document.getElementsByTagName(s)[0];
+              m.parentNode.insertBefore(sc,m);
+            })(document, 'script', '//d2p078bqz5urf7.cloudfront.net/jsapi/ehform.js?v' + new Date().getHours());
+          `}
+        </Script>
       </body>
     </html>
   );

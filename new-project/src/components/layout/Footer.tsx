@@ -4,9 +4,8 @@ import { Mail, Twitter, Linkedin, Instagram } from 'lucide-react'
 
 const footerLinks = {
   support: [
-    { name: 'Help Center', href: '/help' },
-    { name: 'Contact Us', href: '/contact' },
-    { name: 'Blog', href: 'https://trof.ai/blog' },
+    { name: 'Help Center', href: 'https://plabiq.featurebase.app/', external: true },
+    { name: 'Blog', href: '/blog' },
   ],
   legal: [
     { name: 'Privacy Policy', href: '/privacy' },
@@ -57,12 +56,23 @@ export function Footer() {
             <ul className="space-y-3">
               {footerLinks.support.map((link) => (
                 <li key={link.name}>
-                  <Link
-                    href={link.href}
-                    className="text-gray-400 hover:text-white transition-colors duration-200"
-                  >
-                    {link.name}
-                  </Link>
+                  {link.external ? (
+                    <a
+                      href={link.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-gray-400 hover:text-white transition-colors duration-200"
+                    >
+                      {link.name}
+                    </a>
+                  ) : (
+                    <Link
+                      href={link.href}
+                      className="text-gray-400 hover:text-white transition-colors duration-200"
+                    >
+                      {link.name}
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>

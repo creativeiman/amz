@@ -7,7 +7,8 @@ import * as z from "zod"
 import { useRouter, useSearchParams } from "next/navigation"
 import { signIn } from "next-auth/react"
 import Link from "next/link"
-import { Loader2 } from "lucide-react"
+import Image from "next/image"
+import { Loader2, ArrowLeft } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -100,6 +101,34 @@ function RegisterForm() {
     <div className="container flex items-center justify-center min-h-screen py-4 sm:py-8 px-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1 px-4 sm:px-6 py-4 sm:py-6">
+          <Link 
+            href="/" 
+            className="flex items-center text-sm text-muted-foreground hover:text-primary transition-colors mb-2 w-fit"
+          >
+            <ArrowLeft className="w-4 h-4 mr-1" />
+            Back to Home
+          </Link>
+          
+          {/* Logo */}
+          <div className="flex justify-center mb-4">
+            <Link href="/">
+              <Image
+                src="/plabiq-logo-black.png"
+                alt="PlabIQ"
+                width={120}
+                height={40}
+                className="h-8 w-auto dark:hidden"
+              />
+              <Image
+                src="/plabiq-logo-white.png"
+                alt="PlabIQ"
+                width={120}
+                height={40}
+                className="h-8 w-auto hidden dark:block"
+              />
+            </Link>
+          </div>
+          
           <CardTitle className="text-xl sm:text-2xl font-bold text-center">
             Create an account
           </CardTitle>

@@ -10,7 +10,7 @@ export default function TermsPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-orange-600 via-orange-700 to-blue-700 dark:from-orange-900 dark:via-orange-950 dark:to-blue-950 py-20">
+      <section className="relative bg-[#2e3192] py-20">
         <div className="absolute inset-0 bg-black/20" />
         <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto text-center">
@@ -35,7 +35,7 @@ export default function TermsPage() {
           <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl p-8 mb-8 border border-gray-200 dark:border-gray-800">
             <div className="flex items-start space-x-4">
               <div className="flex-shrink-0">
-                <FileText className="w-8 h-8 text-orange-600" />
+                <FileText className="w-8 h-8 text-[#2e3192]" />
               </div>
               <div>
                 <h2 className="text-2xl font-bold mb-4">Welcome to PlabIQ</h2>
@@ -89,15 +89,15 @@ export default function TermsPage() {
             <h3 className="font-semibold text-lg mb-3">3.1 Available Plans</h3>
             <div className="space-y-4 mb-6">
               <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-                <h4 className="font-semibold text-orange-600 dark:text-orange-400">Basic (Free)</h4>
+                <h4 className="font-semibold text-[#2e3192] dark:text-[#2e3192]">Basic (Free)</h4>
                 <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">1 scan per account lifetime, basic compliance report, view-only results</p>
               </div>
               <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-                <h4 className="font-semibold text-orange-600 dark:text-orange-400">One-Time Use ($99.99)</h4>
+                <h4 className="font-semibold text-[#2e3192] dark:text-[#2e3192]">One-Time Use ($99.99)</h4>
                 <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">Single comprehensive scan, 30-day access, all Deluxe features, no recurring charges</p>
               </div>
               <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-                <h4 className="font-semibold text-orange-600 dark:text-orange-400">Deluxe ($29.99/month)</h4>
+                <h4 className="font-semibold text-[#2e3192] dark:text-[#2e3192]">Deluxe ($29.99/month)</h4>
                 <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">Unlimited scans, team collaboration (up to 2 users), priority support, unlimited history</p>
               </div>
             </div>
@@ -214,7 +214,7 @@ export default function TermsPage() {
             <p>
               We take data security seriously and implement industry-standard measures to protect your information. 
               However, no system is 100% secure. For detailed information about how we collect, use, and protect your data, 
-              please review our <a href="/privacy" className="text-orange-600 hover:text-orange-700 underline">Privacy Policy</a>.
+              please review our <a href="/privacy" className="text-[#2e3192] hover:text-[#2e3192] underline">Privacy Policy</a>.
             </p>
           </Section>
 
@@ -305,15 +305,15 @@ export default function TermsPage() {
           </Section>
 
           {/* Contact Section */}
-          <div className="bg-gradient-to-br from-orange-50 to-blue-50 dark:from-orange-950/30 dark:to-blue-950/30 rounded-2xl p-8 mt-12 border border-orange-200 dark:border-orange-800">
+          <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-[#2e3192]/10 dark:to-[#2e3192]/20 rounded-2xl p-8 mt-12 border border-[#2e3192]/20 dark:border-[#2e3192]/30">
             <h2 className="text-2xl font-bold mb-4">Questions About These Terms?</h2>
             <p className="text-gray-600 dark:text-gray-300 mb-6">
               If you have any questions about these Terms of Service, please contact us:
             </p>
             <div className="space-y-2 text-gray-700 dark:text-gray-300">
-              <p><strong>Email:</strong> <a href="mailto:legal@plabiq.com" className="text-orange-600 hover:text-orange-700 underline">legal@plabiq.com</a></p>
-              <p><strong>Support:</strong> <a href="mailto:support@plabiq.com" className="text-orange-600 hover:text-orange-700 underline">support@plabiq.com</a></p>
-              <p><strong>Website:</strong> <a href="https://www.plabiq.com" className="text-orange-600 hover:text-orange-700 underline">www.plabiq.com</a></p>
+              <p><strong>Email:</strong> <a href="mailto:legal@plabiq.com" className="text-[#2e3192] hover:text-[#2e3192] underline">legal@plabiq.com</a></p>
+              <p><strong>Support:</strong> <a href="mailto:support@plabiq.com" className="text-[#2e3192] hover:text-[#2e3192] underline">support@plabiq.com</a></p>
+              <p><strong>Website:</strong> <a href="https://www.plabiq.com" className="text-[#2e3192] hover:text-[#2e3192] underline">www.plabiq.com</a></p>
             </div>
           </div>
         </div>
@@ -336,12 +336,12 @@ function Section({
   return (
     <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 mb-8 border border-gray-200 dark:border-gray-800">
       <div className="flex items-start space-x-4 mb-6">
-        <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-orange-500 to-blue-500 rounded-xl flex items-center justify-center text-white font-bold">
+        <div className="flex-shrink-0 w-12 h-12 bg-[#2e3192] rounded-xl flex items-center justify-center text-white font-bold">
           {number}
         </div>
         <div className="flex-1">
           <div className="flex items-center space-x-3 mb-4">
-            <div className="text-orange-600 dark:text-orange-400">
+            <div className="text-[#2e3192] dark:text-[#2e3192]">
               {icon}
             </div>
             <h2 className="text-2xl font-bold">{title}</h2>

@@ -10,7 +10,7 @@ export default function PrivacyPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-orange-600 via-orange-700 to-blue-700 dark:from-orange-900 dark:via-orange-950 dark:to-blue-950 py-20">
+      <section className="relative bg-[#2e3192] py-20">
         <div className="absolute inset-0 bg-black/20" />
         <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto text-center">
@@ -35,7 +35,7 @@ export default function PrivacyPage() {
           <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl p-8 mb-8 border border-gray-200 dark:border-gray-800">
             <div className="flex items-start space-x-4">
               <div className="flex-shrink-0">
-                <Lock className="w-8 h-8 text-orange-600" />
+                <Lock className="w-8 h-8 text-[#2e3192]" />
               </div>
               <div>
                 <h2 className="text-2xl font-bold mb-4">Our Commitment to Your Privacy</h2>
@@ -59,7 +59,7 @@ export default function PrivacyPage() {
             <h3 className="font-semibold text-lg mb-3">1.1 Information You Provide to Us</h3>
             <div className="space-y-4 mb-6">
               <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-                <h4 className="font-semibold text-orange-600 dark:text-orange-400 mb-2">Account Information</h4>
+                <h4 className="font-semibold text-[#2e3192] dark:text-[#2e3192] mb-2">Account Information</h4>
                 <ul className="list-disc pl-6 text-sm text-gray-600 dark:text-gray-300 space-y-1">
                   <li>Name and email address</li>
                   <li>Password (encrypted and hashed)</li>
@@ -69,7 +69,7 @@ export default function PrivacyPage() {
               </div>
 
               <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-                <h4 className="font-semibold text-orange-600 dark:text-orange-400 mb-2">Payment Information</h4>
+                <h4 className="font-semibold text-[#2e3192] dark:text-[#2e3192] mb-2">Payment Information</h4>
                 <ul className="list-disc pl-6 text-sm text-gray-600 dark:text-gray-300 space-y-1">
                   <li>Billing details processed securely through Stripe</li>
                   <li>We do NOT store credit card numbers on our servers</li>
@@ -78,7 +78,7 @@ export default function PrivacyPage() {
               </div>
 
               <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-                <h4 className="font-semibold text-orange-600 dark:text-orange-400 mb-2">Product Label Data</h4>
+                <h4 className="font-semibold text-[#2e3192] dark:text-[#2e3192] mb-2">Product Label Data</h4>
                 <ul className="list-disc pl-6 text-sm text-gray-600 dark:text-gray-300 space-y-1">
                   <li>Product label images you upload</li>
                   <li>Product names and categories</li>
@@ -88,7 +88,7 @@ export default function PrivacyPage() {
               </div>
 
               <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-                <h4 className="font-semibold text-orange-600 dark:text-orange-400 mb-2">Communications</h4>
+                <h4 className="font-semibold text-[#2e3192] dark:text-[#2e3192] mb-2">Communications</h4>
                 <ul className="list-disc pl-6 text-sm text-gray-600 dark:text-gray-300 space-y-1">
                   <li>Support requests and correspondence</li>
                   <li>Feedback and survey responses</li>
@@ -122,42 +122,42 @@ export default function PrivacyPage() {
             
             <div className="space-y-4">
               <div className="flex items-start space-x-3">
-                <div className="flex-shrink-0 w-2 h-2 bg-orange-500 rounded-full mt-2"></div>
+                <div className="flex-shrink-0 w-2 h-2 bg-[#2e3192] rounded-full mt-2"></div>
                 <div>
                   <strong>To Provide Our Service:</strong> Process label scans, generate compliance reports, manage your account
                 </div>
               </div>
 
               <div className="flex items-start space-x-3">
-                <div className="flex-shrink-0 w-2 h-2 bg-orange-500 rounded-full mt-2"></div>
+                <div className="flex-shrink-0 w-2 h-2 bg-[#2e3192] rounded-full mt-2"></div>
                 <div>
                   <strong>To Process Payments:</strong> Handle subscriptions, process transactions, send invoices
                 </div>
               </div>
 
               <div className="flex items-start space-x-3">
-                <div className="flex-shrink-0 w-2 h-2 bg-orange-500 rounded-full mt-2"></div>
+                <div className="flex-shrink-0 w-2 h-2 bg-[#2e3192] rounded-full mt-2"></div>
                 <div>
                   <strong>To Communicate:</strong> Send welcome emails, password resets, team invitations, service updates
                 </div>
               </div>
 
               <div className="flex items-start space-x-3">
-                <div className="flex-shrink-0 w-2 h-2 bg-orange-500 rounded-full mt-2"></div>
+                <div className="flex-shrink-0 w-2 h-2 bg-[#2e3192] rounded-full mt-2"></div>
                 <div>
                   <strong>To Improve Our Service:</strong> Analyze usage patterns, train AI models, fix bugs, develop new features
                 </div>
               </div>
 
               <div className="flex items-start space-x-3">
-                <div className="flex-shrink-0 w-2 h-2 bg-orange-500 rounded-full mt-2"></div>
+                <div className="flex-shrink-0 w-2 h-2 bg-[#2e3192] rounded-full mt-2"></div>
                 <div>
                   <strong>To Ensure Security:</strong> Detect fraud, prevent abuse, protect against security threats
                 </div>
               </div>
 
               <div className="flex items-start space-x-3">
-                <div className="flex-shrink-0 w-2 h-2 bg-orange-500 rounded-full mt-2"></div>
+                <div className="flex-shrink-0 w-2 h-2 bg-[#2e3192] rounded-full mt-2"></div>
                 <div>
                   <strong>To Comply with Legal Obligations:</strong> Respond to legal requests, enforce our Terms of Service
                 </div>
@@ -223,27 +223,12 @@ export default function PrivacyPage() {
           >
             <p className="mb-4">We implement industry-standard security measures to protect your information:</p>
 
-            <div className="grid md:grid-cols-2 gap-4">
-              <div className="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-950/30 dark:to-orange-900/30 p-4 rounded-lg border border-orange-200 dark:border-orange-800">
-                <h4 className="font-semibold text-orange-700 dark:text-orange-300 mb-2">🔐 Encryption</h4>
-                <p className="text-sm text-gray-700 dark:text-gray-300">All data transmitted over HTTPS/TLS. Passwords are hashed with bcrypt.</p>
-              </div>
-
-              <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950/30 dark:to-blue-900/30 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
-                <h4 className="font-semibold text-blue-700 dark:text-blue-300 mb-2">🛡️ Access Controls</h4>
-                <p className="text-sm text-gray-700 dark:text-gray-300">Role-based permissions. Multi-factor authentication available.</p>
-              </div>
-
-              <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950/30 dark:to-green-900/30 p-4 rounded-lg border border-green-200 dark:border-green-800">
-                <h4 className="font-semibold text-green-700 dark:text-green-300 mb-2">💾 Secure Storage</h4>
-                <p className="text-sm text-gray-700 dark:text-gray-300">PostgreSQL database with encryption at rest. MinIO for file storage.</p>
-              </div>
-
-              <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950/30 dark:to-purple-900/30 p-4 rounded-lg border border-purple-200 dark:border-purple-800">
-                <h4 className="font-semibold text-purple-700 dark:text-purple-300 mb-2">🔍 Monitoring</h4>
-                <p className="text-sm text-gray-700 dark:text-gray-300">Regular security audits and vulnerability scanning.</p>
-              </div>
-            </div>
+            <ul className="list-disc pl-6 space-y-2">
+              <li><strong>Encryption:</strong> All data transmitted over HTTPS/TLS. Passwords are hashed with bcrypt.</li>
+              <li><strong>Access Controls:</strong> Role-based permissions. Multi-factor authentication available.</li>
+              <li><strong>Secure Storage:</strong> PostgreSQL database with encryption at rest. MinIO for file storage.</li>
+              <li><strong>Monitoring:</strong> Regular security audits and vulnerability scanning.</li>
+            </ul>
 
             <div className="bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-500 p-4 mt-6">
               <p className="font-semibold text-yellow-800 dark:text-yellow-200">Important Note</p>
@@ -284,49 +269,49 @@ export default function PrivacyPage() {
 
             <div className="space-y-4">
               <div className="flex items-start space-x-3">
-                <div className="flex-shrink-0 text-orange-600 dark:text-orange-400">✓</div>
+                <div className="flex-shrink-0 text-[#2e3192] dark:text-[#2e3192]">✓</div>
                 <div>
                   <strong>Access:</strong> Request a copy of the personal information we hold about you
                 </div>
               </div>
 
               <div className="flex items-start space-x-3">
-                <div className="flex-shrink-0 text-orange-600 dark:text-orange-400">✓</div>
+                <div className="flex-shrink-0 text-[#2e3192] dark:text-[#2e3192]">✓</div>
                 <div>
                   <strong>Correction:</strong> Request correction of inaccurate or incomplete information
                 </div>
               </div>
 
               <div className="flex items-start space-x-3">
-                <div className="flex-shrink-0 text-orange-600 dark:text-orange-400">✓</div>
+                <div className="flex-shrink-0 text-[#2e3192] dark:text-[#2e3192]">✓</div>
                 <div>
                   <strong>Deletion:</strong> Request deletion of your personal information (subject to legal requirements)
                 </div>
               </div>
 
               <div className="flex items-start space-x-3">
-                <div className="flex-shrink-0 text-orange-600 dark:text-orange-400">✓</div>
+                <div className="flex-shrink-0 text-[#2e3192] dark:text-[#2e3192]">✓</div>
                 <div>
                   <strong>Portability:</strong> Request a copy of your data in a machine-readable format
                 </div>
               </div>
 
               <div className="flex items-start space-x-3">
-                <div className="flex-shrink-0 text-orange-600 dark:text-orange-400">✓</div>
+                <div className="flex-shrink-0 text-[#2e3192] dark:text-[#2e3192]">✓</div>
                 <div>
                   <strong>Opt-Out:</strong> Unsubscribe from marketing emails (transactional emails cannot be opted out)
                 </div>
               </div>
 
               <div className="flex items-start space-x-3">
-                <div className="flex-shrink-0 text-orange-600 dark:text-orange-400">✓</div>
+                <div className="flex-shrink-0 text-[#2e3192] dark:text-[#2e3192]">✓</div>
                 <div>
                   <strong>Restrict Processing:</strong> Request limitation on how we use your information
                 </div>
               </div>
 
               <div className="flex items-start space-x-3">
-                <div className="flex-shrink-0 text-orange-600 dark:text-orange-400">✓</div>
+                <div className="flex-shrink-0 text-[#2e3192] dark:text-[#2e3192]">✓</div>
                 <div>
                   <strong>Object:</strong> Object to processing of your information for certain purposes
                 </div>
@@ -334,7 +319,7 @@ export default function PrivacyPage() {
             </div>
 
             <p className="mt-6 text-sm text-gray-600 dark:text-gray-400">
-              To exercise these rights, please contact us at <a href="mailto:privacy@plabiq.com" className="text-orange-600 hover:text-orange-700 underline">privacy@plabiq.com</a>. 
+              To exercise these rights, please contact us at <a href="mailto:privacy@plabiq.com" className="text-[#2e3192] hover:text-[#2e3192] underline">privacy@plabiq.com</a>. 
               We will respond within 30 days.
             </p>
           </Section>
@@ -348,21 +333,21 @@ export default function PrivacyPage() {
 
             <div className="space-y-4">
               <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-                <h4 className="font-semibold text-orange-600 dark:text-orange-400 mb-2">Essential Cookies</h4>
+                <h4 className="font-semibold text-[#2e3192] dark:text-[#2e3192] mb-2">Essential Cookies</h4>
                 <p className="text-sm text-gray-600 dark:text-gray-300">
                   Required for authentication, security, and basic functionality. Cannot be disabled.
                 </p>
               </div>
 
               <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-                <h4 className="font-semibold text-orange-600 dark:text-orange-400 mb-2">Analytics Cookies</h4>
+                <h4 className="font-semibold text-[#2e3192] dark:text-[#2e3192] mb-2">Analytics Cookies</h4>
                 <p className="text-sm text-gray-600 dark:text-gray-300">
                   Help us understand how you use our Service to improve performance and features.
                 </p>
               </div>
 
               <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-                <h4 className="font-semibold text-orange-600 dark:text-orange-400 mb-2">Preference Cookies</h4>
+                <h4 className="font-semibold text-[#2e3192] dark:text-[#2e3192] mb-2">Preference Cookies</h4>
                 <p className="text-sm text-gray-600 dark:text-gray-300">
                   Remember your settings like theme preference and language.
                 </p>
@@ -414,18 +399,18 @@ export default function PrivacyPage() {
           </Section>
 
           {/* Contact Section */}
-          <div className="bg-gradient-to-br from-orange-50 to-blue-50 dark:from-orange-950/30 dark:to-blue-950/30 rounded-2xl p-8 mt-12 border border-orange-200 dark:border-orange-800">
+          <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-[#2e3192]/10 dark:to-[#2e3192]/20 rounded-2xl p-8 mt-12 border border-[#2e3192]/20 dark:border-[#2e3192]/30">
             <h2 className="text-2xl font-bold mb-4">Contact Us About Privacy</h2>
             <p className="text-gray-600 dark:text-gray-300 mb-6">
               If you have questions, concerns, or requests regarding this Privacy Policy or our data practices, please contact us:
             </p>
             <div className="space-y-2 text-gray-700 dark:text-gray-300">
-              <p><strong>Privacy Officer:</strong> <a href="mailto:privacy@plabiq.com" className="text-orange-600 hover:text-orange-700 underline">privacy@plabiq.com</a></p>
-              <p><strong>Support:</strong> <a href="mailto:support@plabiq.com" className="text-orange-600 hover:text-orange-700 underline">support@plabiq.com</a></p>
-              <p><strong>Website:</strong> <a href="https://www.plabiq.com" className="text-orange-600 hover:text-orange-700 underline">www.plabiq.com</a></p>
+              <p><strong>Privacy Officer:</strong> <a href="mailto:privacy@plabiq.com" className="text-[#2e3192] hover:text-[#2e3192] underline">privacy@plabiq.com</a></p>
+              <p><strong>Support:</strong> <a href="mailto:support@plabiq.com" className="text-[#2e3192] hover:text-[#2e3192] underline">support@plabiq.com</a></p>
+              <p><strong>Website:</strong> <a href="https://www.plabiq.com" className="text-[#2e3192] hover:text-[#2e3192] underline">www.plabiq.com</a></p>
             </div>
 
-            <div className="mt-6 pt-6 border-t border-orange-200 dark:border-orange-700">
+            <div className="mt-6 pt-6 border-t border-[#2e3192]/20 dark:border-[#2e3192]/30">
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 <strong>Data Protection Rights:</strong> If you are located in the EEA or UK, you have the right to lodge 
                 a complaint with your local data protection authority if you believe we have not complied with applicable 
@@ -451,7 +436,7 @@ function Section({
   return (
     <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 mb-8 border border-gray-200 dark:border-gray-800">
       <div className="flex items-center space-x-3 mb-6">
-        <div className="text-orange-600 dark:text-orange-400">
+        <div className="text-[#2e3192] dark:text-[#2e3192]">
           {icon}
         </div>
         <h2 className="text-2xl font-bold">{title}</h2>

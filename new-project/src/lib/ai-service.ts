@@ -229,7 +229,7 @@ ${rulesSection}`
         },
       ],
       temperature: 0.3, // Lower temperature for more consistent, factual responses
-      maxTokens: 8000, // Increased from default 4096 to ensure complete responses
+      maxOutputTokens: 8000, // Increased from default 4096 to ensure complete responses
     })
 
     return object as LabelAnalysisResult
